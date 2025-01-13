@@ -2,6 +2,8 @@
 @section('title', __('rbac::users.users'))
 @section('content')
 
+<p><a class="btn btn-success" href="{{ route('create_user') }}">{!! __('rbac::roles.create_user') !!}</a></p>
+
     <section class="content container-fluid">
 
         @if ($errors->has('items'))
