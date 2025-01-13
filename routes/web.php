@@ -45,3 +45,13 @@ Route::get('/template/icon', function () {
 Route::get('/template/sample', function () {
     return view('/template/sample');
 });
+
+//Admin
+Route::get('/admin/revisi_dokumen', function () {
+    return view('/admin/revisi_dokumen');
+});
+
+Route::get('/admin/revisi_dokumen/forms', function () {
+    return view('/admin/revisi_dokumen_forms');
+});
+
