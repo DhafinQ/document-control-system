@@ -7,6 +7,9 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "itstructure/laravel-rbac": "3.0.15",
+        "jeroennoten/laravel-adminlte": "^3.14",
+        "laravel/fortify": "^1.25",
         "laravel/framework": "^11.31",
         "laravel/tinker": "^2.9"
     },
