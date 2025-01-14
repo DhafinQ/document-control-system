@@ -72,7 +72,7 @@
             <a href="/admin/daftar" class="btn btn-danger m-1">
               Batal
             </a>
-            <button type="submit" class="btn btn-secondary m-1">
+            <button type="submit" class="btn btn-admin m-1">
               Simpan Perubahan
             </button>
           </div>
