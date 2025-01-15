@@ -45,3 +45,8 @@ Route::get('/template/icon', function () {
 Route::get('/template/sample', function () {
     return view('/template/sample');
 });
+
+// Admin - Dokumen histori
+Route::get('/admin/dokumen-histori', function () {
+    return view('/admin/dokumen-histori');
+});
