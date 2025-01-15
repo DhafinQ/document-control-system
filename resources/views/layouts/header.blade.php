@@ -9,6 +9,11 @@
   <link rel="stylesheet" href="{{ asset('assets/css/styles.min.css') }}" />
    <!-- CSS DataTable -->
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/dataTables.bootstrap5.min.css">
+
+  <!-- select -->
+  <link rel="stylesheet" href="searchableOptionList.css">
+  <script type="text/javascript" src="jQuery.js"></script>
+  <script type="text/javascript" src="sol-{VERSION}.js"></script>
 </head>
 
 <body>

@@ -31,12 +31,39 @@
                   </div>
                   <div class="row mb-3 align-items-center">
                     <div class="col-md-6">
-                      <label for="exampleInputEmail1" class="form-label">Pengunggah</label>
+                      <label for="exampleInputEmail1" class="form-label">ID Dokumen</label>
                       <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
                     </div>
                     <div class="col-md-6">
                       <label for="dokumen" class="form-label">Dokumen</label>
                       <input type="file" class="form-control" id="dokumen" aria-describedby="dokumenHelp" accept=".pdf,.doc,.docx,.txt">
+                    </div>                    
+                  </div>
+                  <div class="row mb-3 align-items-center">
+                    <div class="col-md-6">
+                      <label for="exampleInputEmail1" class="form-label">Pengunggah</label>
+                      <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                    </div>
+                    <div class="col-md-6">
+                      <select id="my-select" name="character" multiple="multiple">
+                        <option value="Peter">Peter Griffin</option>
+                        <option value="Lois">Lois Griffin</option>
+                        <option value="Chris">Chris Griffin</option>
+                        <option value="Meg">Meg Griffin</option>
+                        <option value="Stewie">Stewie Griffin</option>
+                        <option value="Cleveland">Cleveland Brown</option>    
+                        <option value="Joe">Joe Swanson</option>    
+                        <option value="Quagmire">Glenn Quagmire</option>    
+                        <option value="Evil Monkey">Evil Monkey</option>
+                        <option value="Herbert">John Herbert</option>    
+                    </select>
+                    
+                    <script type="text/javascript">
+                        $(function() {
+                            // initialize sol
+                            $('#my-select').searchableOptionList();
+                        });
+                    </script>
                     </div>                    
                   </div>
                     <div class="mb-3">
