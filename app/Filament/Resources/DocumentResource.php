@@ -24,7 +24,18 @@ class DocumentResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('title')->required(),
-                Forms\Components\TextInput::make('category')->numeric()->required(),
+                Forms\Components\Select::make('category_id')->label('Category')->relationship('category','name')->required(),
+                Forms\Components\CheckboxList::make('rev')
+                ->options(function ($record) {
+                    if($record !== null){
+                        $currentDocumentId = $record->id;
+                        return Document::where('id', '!=', $currentDocumentId)
+                            ->pluck('title', 'id');
+                    }
+
+                    return Document::all()->pluck('title','id');
+                })
+                ->searchable(),
                 Forms\Components\Select::make('uploaded_by')->relationship('uploader','name')->required(),
                 Forms\Components\FileUpload::make('file_path')->label('File Docs')->acceptedFileTypes(['application/pdf','application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document','application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
                 ])->disk('dokumen')->required(),
@@ -38,7 +49,7 @@ class DocumentResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title')->sortable()->searchable(),
-                Tables\Columns\TextColumn::make('category')->sortable(),
+                Tables\Columns\TextColumn::make('category.name')->sortable(),
                 Tables\Columns\TextColumn::make('uploader.name')->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('currentRevision.file_path')
                 ->label('File Dokumen')
@@ -52,7 +63,7 @@ class DocumentResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()->hidden(fn($record) => $record->currentRevision->status === 'Draft'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

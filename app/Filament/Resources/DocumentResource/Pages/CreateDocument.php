@@ -32,6 +32,19 @@ class CreateDocument extends CreateRecord
             'description' => $data['description']
         ]);
 
+        $revisions = $data['rev'];
+        foreach($revisions as $rev){
+            $currentRevision = DocumentRevision::findOrFail($rev);
+
+            DocumentRevision::create([
+                'document_id' => $rev,
+                'file_path' => $filename,
+                'revised_by' => $data['uploaded_by'],
+                'revision_number' => $currentRevision->revision_number+1,
+                'description' => $data['description']
+            ]);
+        }
+
         $this->record->update([
             'current_revision_id' => $revision->id
         ]);
