@@ -16,7 +16,6 @@
                 </h2>
 
                 <div class="flex justify-between items-center mb-2">
-
                     <!-- Tambah Dokumen -->
                     <div>
                         <a href="/admin/tambah" class="px-2 py-2 bg-blue-500 text-secondary rounded-lg hover:bg-blue-600">

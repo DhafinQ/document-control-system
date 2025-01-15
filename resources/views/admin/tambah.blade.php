@@ -36,7 +36,6 @@
               <option value="kategori4">Kategori 4</option>
             </select>
           </div>
-
           <!-- Deskripsi -->
           <div>
             <label for="description" class="block text-sm font-medium text-gray-700">Deskripsi</label>
