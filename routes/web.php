@@ -55,3 +55,7 @@ Route::get('/admin/revisi_dokumen/forms', function () {
     return view('/admin/revisi_dokumen_forms');
 });
 
+Route::get('/admin/update_dokumen/forms', function () {
+    return view('/admin/update_dokumen_forms');
+});
+

@@ -11,6 +11,16 @@
   <!-- Script Datatable -->
   <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap5.min.js"></script>
+  <link rel="stylesheet"  href="{{ asset('assets/css/searchableOptionList.css') }}">
+  <script type="text/javascript" src="jQuery.js"></script>
+  <script type="text/javascript" src="{{ asset('assets/js/sol-2.0.0.js') }}"></script>
+
+  <script type="text/javascript">
+    $(function() {
+        // initialize sol
+        $('#my-select').searchableOptionList();
+    });
+</script>
 
   <!-- Inisialisasi DataTable -->
   <script>
@@ -22,6 +32,8 @@
           });
       });
   </script>
+
+
 </body>
 
 </html>
