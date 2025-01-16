@@ -15,9 +15,11 @@ return new class extends Migration
         Schema::create('documents', function (Blueprint $table) {
             $table->id();
             $table->string('title');
+            $table->string('code');
             $table->string('category');
             $table->foreignId('uploaded_by')->constrained('users')->onDelete('cascade');
             $table->boolean('is_active')->default(false);
+            $table->foreignId('category_id')->nullable()->constrained('categories')->onDelete('set null');
             $table->timestamps();
         });
     }
