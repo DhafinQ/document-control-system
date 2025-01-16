@@ -59,3 +59,12 @@ Route::get('/admin/update_dokumen/forms', function () {
     return view('/admin/update_dokumen_forms');
 });
 
+Route::get('/admin/approval_dokumen', function () {
+    return view('/admin/approval_dokumen');
+});
+
+Route::get('/admin/approval_dokumen/form', function () {
+    return view('/admin/approval_dokumen_forms');
+});
+
+

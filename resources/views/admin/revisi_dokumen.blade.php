@@ -23,6 +23,7 @@
                             <thead>
                                 <tr>
                                     <th>No</th>
+                                    <th>Id</th>
                                     <th>Judul</th>
                                     <th>Kategori</th>
                                     <th>Uploader</th>
@@ -33,30 +34,34 @@
                             <tbody>
                                 <tr>
                                     <td>1</td>
+                                    <td>DOC-001</td>
+                                    <td>Proposal Pengembangan Aplikasi</td>
+                                    <td>Teknologi</td>
                                     <td>Andika</td>
-                                    <td>Proposal</td>
-                                    <td>Admin</td>
-                                    <td><a href="#">Download</a></td>
+                                    <td><a href="/dokumen/DOC-001.pdf" target="_blank">Download</a></td>
                                     <td><a href="/admin/revisi_dokumen/forms" class="btn btn-sm btn-primary">Revisi</a></td>
                                 </tr>
                                 <tr>
                                     <td>2</td>
+                                    <td>DOC-002</td>
+                                    <td>Laporan Keuangan Q1 2025</td>
+                                    <td>Keuangan</td>
                                     <td>Rian</td>
-                                    <td>Report</td>
-                                    <td>Admin</td>
-                                    <td><a href="#">Download</a></td>
+                                    <td><a href="/dokumen/DOC-002.pdf" target="_blank">Download</a></td>
                                     <td><a href="/admin/revisi_dokumen/forms" class="btn btn-sm btn-primary">Revisi</a></td>
                                 </tr>
                                 <tr>
                                     <td>3</td>
+                                    <td>DOC-003</td>
+                                    <td>Rencana Strategis 2025</td>
+                                    <td>Manajemen</td>
                                     <td>Budi</td>
-                                    <td>Laporan</td>
-                                    <td>Admin</td>
-                                    <td><a href="/admin/revisi_dokumen/forms">Download</a></td>
+                                    <td><a href="/dokumen/DOC-003.pdf" target="_blank">Download</a></td>
                                     <td><a href="/admin/revisi_dokumen/forms" class="btn btn-sm btn-primary">Revisi</a></td>
                                 </tr>
                             </tbody>
                         </table>
+                        
                     </div>
                 </div>
             </div>
