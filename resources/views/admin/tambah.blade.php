@@ -18,10 +18,16 @@
             <path d="M9 14l6 0" />
           </svg> Tambah Dokumen Baru</h5>
         <form action="#" method="POST" class="space-y-6">
-          <div class="mb-6">
+
+            <!-- Nomor Dokumen -->
+        <div class="mb-6">
+            <label for="nomor" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Noomor Dokumen</label>
+            <input type="text" class="form-control" id="nomor" placeholder="Nomor Dokumen" required />
+          </div>
 
             <!-- Judul -->
-            <label for="title" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Judul</label>
+          <div class="mb-6">
+            <label for="judul" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Judul</label>
             <input type="text" class="form-control" id="title" placeholder="Judul Dokumen" required />
           </div>
 
@@ -45,9 +51,9 @@
 
           <!-- Role -->
           <div class="mb-6">
-            <label for="category"
+            <label for="role"
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Pengunggah</label>
-            <select id="category" name="category" class="form-control" required>
+            <select id="role" name="role" class="form-control" required>
               <option value="" disabled selected>Pilih </option>
               <option value="Admin">Admin</option>
               <option value="User">User</option>
