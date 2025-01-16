@@ -12,6 +12,7 @@
                     
                     
                     <div class="table-responsive mt-4">
+                        
                         <table id="example" class="table table-striped">
                             <thead>
                                 <tr>
