@@ -25,6 +25,7 @@
             $('#my-select').searchableOptionList();
        });
     </script>
+
     <!-- Inisialisasi DataTable -->
     <script>
         $(document).ready(function () {
@@ -34,7 +35,8 @@
                 "ordering": true,   
             });
         });
-    </script>
+        </script>
     </body>
+    @yield('customJS')
 
 </html>

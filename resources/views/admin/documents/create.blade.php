@@ -21,6 +21,10 @@
                     <input type="text" name="title" id="title" class="form-control" required>
                 </div>
                 <div class="mb-3">
+                    <label for="code" class="form-label">Kode Dokumen</label>
+                    <input type="text" name="code" id="code" class="form-control" required>
+                </div>
+                <div class="mb-3">
                     <label for="category_id" class="form-label">Kategori</label>
                     <select name="category_id" class="form-control" required>
                         @foreach($categories as $id => $name)

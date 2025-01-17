@@ -1,20 +1,33 @@
-@extends('layout.master')
-@section('content')
-<div class="row">
-    <div class="container-fluid">
-        <div class="card">
+@extends("layouts.layout")
+
+@section("title", "Document")
+
+@section("content")
+
+      <div class="container-fluid">
+        <div class="container-fluid">
+          <div class="card">
             <div class="card-body">
-                <h5 class="card-title fw-semibold mb-4">Add New Category</h5>
-                <form action="{{ route('categories.store') }}" method="POST">
-                    @csrf
-                    <div class="mb-3">
-                        <label for="name" class="form-label">Category Name</label>
-                        <input type="text" name="name" id="name" class="form-control" required />
+              <h5 class="card-title fw-semibold mb-4">Tambah Kategori Dokumen</h5>
+
+              <form action="{{ route('categories.store') }}" method="POST">
+                @csrf
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label for="exampleInputEmail1" class="form-label">Nama Kategori</label>
+                        <input type="text" class="form-control" name="name" id="exampleInputEmail1" style="width: 100%;">
                     </div>
+                </div>
+                <div class="d-flex justify-content-center gap-2">
+                    <button type="button" class="btn btn-danger" onclick="history.back()">Kembali</button>
                     <button type="submit" class="btn btn-primary">Submit</button>
-                </form>
+                </div>
+            </form>
+            
+
             </div>
+          </div>
         </div>
+      </div>
     </div>
-</div>
 @endsection

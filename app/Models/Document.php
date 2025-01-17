@@ -10,6 +10,7 @@ class Document extends Model
     protected $table = 'documents';
     protected $fillable = [
         'title',
+        'code',
         'category_id',
         'uploaded_by',
         'is_active',

@@ -47,6 +47,7 @@ class DocumentController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
+            'code' => 'required|string|max:30',
             'category_id' => 'required|exists:categories,id',
             'uploaded_by' => 'required|exists:users,id',
             'file_path' => 'required|file|mimes:pdf,doc,docx,ppt,pptx',
@@ -56,10 +57,14 @@ class DocumentController extends Controller
             'rev.*' => 'exists:documents,id',
         ]);
 
-        $path = $request->file('file_path')->store('', 'dokumen');
+        // $path = $request->file('file_path')->store('', 'dokumen');
+        $file = $request->file('file_path');
+        $fileName = uniqid() . '_' . $file->getClientOriginalName();
+        $path = Storage::disk('dokumen')->put($fileName, file_get_contents($file));
 
         $document = Document::create([
             'title' => $validated['title'],
+            'code' => $validated['code'],
             'category_id' => $validated['category_id'],
             'uploaded_by' => $validated['uploaded_by'],
             'current_revision_id' => null,
@@ -67,7 +72,7 @@ class DocumentController extends Controller
 
         $revision = DocumentRevision::create([
             'document_id' => $document->id,
-            'file_path' => $path,
+            'file_path' => $fileName,
             'revised_by' => $validated['uploaded_by'],
             'revision_number' => 1,
             'description' => $validated['description'],

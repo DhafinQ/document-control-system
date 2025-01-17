@@ -12,7 +12,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::orderBy('name', 'asc')->paginate(10); // Menampilkan data dengan pagination
+        $categories = Category::orderBy('name', 'asc')->get(); // Menampilkan data dengan pagination
         return view('admin.categories.index', compact('categories'));
     }
 

@@ -8,7 +8,6 @@ use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\DocumentHistoryController;
 use App\Http\Controllers\DocumentRevisionController;
 
-
 Route::get('/', function () {
     return view('/welcome');
 });
@@ -149,6 +148,8 @@ Route::get('/dashboard', function () {
     return view('admin.dashboard');
 });
 
+// ================================ BE ROUTE =============================
+
 Route::middleware(['auth'])->group(function () {
 
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
@@ -176,6 +177,8 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::middleware(['role:Staf'])->group(function () {
+        Route::get('/document_revision/create', [DocumentRevisionController::class, 'create'])->name('document_revision.create');
+        Route::post('/document_revision/store',[DocumentRevisionController::class,'store'])->name('document_revision.store');
         Route::get('/documents', [DocumentController::class, 'index'])->name('documents.index');
         Route::get('/documents/create', [DocumentController::class, 'create'])->name('documents.create');
         Route::post('/documents', [DocumentController::class, 'store'])->name('documents.store');

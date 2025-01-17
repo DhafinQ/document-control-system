@@ -20,7 +20,17 @@
         <tr>
             <th>Action</th>
             <td>
-                <span class="badge bg-{{ $documentHistory->action_color }}">
+                <span class="badge
+                    @if ($documentHistory->action === 'Created')
+                        bg-primary
+                    @elseif ($documentHistory->action === 'Revised')
+                        bg-warning
+                    @elseif ($documentHistory->action === 'Approved')
+                        bg-success
+                    @elseif ($documentHistory->action === 'Rejected')
+                        bg-danger
+                    @endif
+                    ">
                     {{ $documentHistory->action }}
                 </span>
             </td>
