@@ -6,6 +6,19 @@
   <script src="{{ asset('assets/libs/apexcharts/dist/apexcharts.min.js') }}"></script>
   <script src="{{ asset('assets/libs/simplebar/dist/simplebar.js') }}"></script>
   <script src="{{ asset('assets/js/dashboard.js') }}"></script>
-</body>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-</html>
+  <!-- Script Datatable -->
+  <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap5.min.js"></script>
+
+  <!-- Inisialisasi DataTable -->
+  <script>
+      $(document).ready(function () {
+          $('#myTable').DataTable({
+              "paging": true,     
+              "searching": true,  
+              "ordering": true,   
+          });
+      });
+  </script>

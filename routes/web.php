@@ -45,3 +45,19 @@ Route::get('/template/icon', function () {
 Route::get('/template/sample', function () {
     return view('/template/sample');
 });
+
+Route::get('/admin', function () {
+    return view('/admin/home');
+});
+
+Route::get('/admin/roles', function () {
+    return view('/admin/roles');
+});
+
+Route::get('/admin/add_role', function () {
+    return view('/admin/add_role');
+});
+
+Route::get('/admin/edit_role', function () {
+    return view('/admin/edit_role');
+});
