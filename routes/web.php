@@ -30,8 +30,9 @@ Route::get('/template/typography', function () {
     return view('/template/typography');
 });
 
-Route::get('/template/login', function () {
-    return view('/template/login');
+Route::get('/login', function () {
+    return view('/login/login');
+    // return view('/template/login');
 });
 
 Route::get('/template/register', function () {
