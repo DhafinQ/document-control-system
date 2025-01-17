@@ -67,4 +67,16 @@ Route::get('/admin/approval_dokumen/form', function () {
     return view('/admin/approval_dokumen_forms');
 });
 
+Route::get('/admin/kategori_dokumen', function () {
+    return view('/admin/kategori_dokumen');
+});
+
+Route::get('/admin/kategori_dokumen/edit', function () {
+    return view('/admin/kategori_dokumen_forms_edit');
+});
+
+Route::get('/admin/kategori_dokumen/add', function () {
+    return view('/admin/kategori_dokumen_forms_add');
+});
+
 

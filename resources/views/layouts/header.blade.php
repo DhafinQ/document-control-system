@@ -73,6 +73,14 @@
               <span class="hide-menu">Dokumen</span>
             </li>
             <li class="sidebar-item">
+              <a class="sidebar-link" href="/admin/kategori_dokumen" aria-expanded="false">
+                <span>
+                  <i class="ti ti-folder"></i>
+                </span>
+                <span class="hide-menu">Kategori Dokumen</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
               <a class="sidebar-link" href="/template/card" aria-expanded="false">
                 <span>
                   <i class="ti ti-file"></i>
