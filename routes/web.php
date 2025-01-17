@@ -55,3 +55,13 @@ Route::get('/admin/list-user', function () {
 Route::get('/admin/tambah-user', function () {
     return view('/admin/tambah-user');
 });
+
+// User - Tampilan Dashboard
+Route::get('/user/home', function () {
+    return view('/user/home');
+});
+
+// Approver - Tampilan Dashboard
+Route::get('/approver/home', function () {
+    return view('/approver/home');
+});
