@@ -133,3 +133,41 @@ Route::get('/admin/dokumen_aktif/add', function () {
 Route::get('/admin/dokumen_aktif/edit', function () {
     return view('/admin/dokumen_aktif_edit');
 });
+
+Route::get('/admin/settings', function () {
+    return view('/admin/settings');
+});
+
+Route::get('/admin/settings/change_password', function () {
+    return view('/admin/change_password');
+});
+
+// -- APPROVER ROLES --
+
+Route::get('/approver/settings', function () {
+    return view('/approver/settings');
+});
+
+Route::get('/approver/settings/change_password', function () {
+    return view('/approver/change_password');
+});
+
+// -- MANAGER ROLES --
+
+Route::get('/manager/settings', function () {
+    return view('/manager/settings');
+});
+
+Route::get('/manager/settings/change_password', function () {
+    return view('/manager/change_password');
+});
+
+// -- USER ROLES --
+
+Route::get('/user/settings', function () {
+    return view('/user/settings');
+});
+
+Route::get('/user/settings/change_password', function () {
+    return view('/user/change_password');
+});
