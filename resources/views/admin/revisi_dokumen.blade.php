@@ -19,7 +19,7 @@
                     
                     
                     <div class="table-responsive mt-4">
-                        <table id="example" class="table table-striped">
+                        <table id="myTable" class="table table-striped">
                             <thead>
                                 <tr>
                                     <th>No</th>

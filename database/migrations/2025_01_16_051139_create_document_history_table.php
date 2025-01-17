@@ -6,20 +6,18 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    //
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('document_revisions', function (Blueprint $table) {
+        Schema::create('document_history', function (Blueprint $table) {
             $table->id();
             $table->foreignId('document_id')->constrained('documents')->onDelete('cascade');
-            $table->text('file_path');
-            $table->foreignId('revised_by')->constrained('users')->onDelete('cascade');
-            $table->integer('revision_number');
-            $table->enum('status', ['Draft', 'Disetujui', 'Ditolak'])->default('Draft');
-            $table->text('description')->nullable();
+            $table->foreignId('revision_id')->nullable()->constrained('document_revisions')->onDelete('set null');
+            $table->enum('action', ['Created', 'Revised', 'Approved', 'Rejected']);
+            $table->foreignId('performed_by')->constrained('users')->onDelete('cascade');
+            $table->text('reason')->nullable();
             $table->timestamps();
         });
     }
@@ -29,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('document_revisions');
+        Schema::dropIfExists('document_history');
     }
 };

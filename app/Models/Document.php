@@ -10,7 +10,7 @@ class Document extends Model
     protected $table = 'documents';
     protected $fillable = [
         'title',
-        'category',
+        'category_id',
         'uploaded_by',
         'is_active',
         'current_revision_id',
@@ -20,15 +20,17 @@ class Document extends Model
     {
         return $this->hasMany(DocumentRevision::class);
     }
- 
     public function currentRevision()
     {
         return $this->belongsTo(DocumentRevision::class, 'current_revision_id');
     }
- 
     public function uploader()
     {
         return $this->belongsTo(User::class, 'uploaded_by');
+    }
+
+    public function category() : BelongsTo {
+        return $this->belongsTo(Category::class, 'category_id');
     }
 
 }
