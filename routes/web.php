@@ -45,3 +45,13 @@ Route::get('/template/icon', function () {
 Route::get('/template/sample', function () {
     return view('/template/sample');
 });
+
+// Admin - Tampilan list user
+Route::get('/admin/list-user', function () {
+    return view('/admin/list-user');
+});
+
+// Admin - Tampilan Form Tambah User
+Route::get('/admin/tambah-user', function () {
+    return view('/admin/tambah-user');
+});
