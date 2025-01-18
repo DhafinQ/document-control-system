@@ -25,6 +25,7 @@ Menggunakan package [laravel-rbac](https://github.com/itstructure/laravel-rbac).
    composer require itstructure/laravel-rbac "^3.0.15"
    php artisan rbac:publish
 2. Konfigurasi model User:
+     ```php
    <?php
 
     namespace App\Models;
@@ -62,8 +63,10 @@ Menggunakan package [laravel-rbac](https://github.com/itstructure/laravel-rbac).
             return $this->roles()->whereIn('slug', $roles)->exists();
         }
     }
+      ```
 
-3. Konfigurasi file config/rbac.php:
+
+4. Konfigurasi file config/rbac.php:
    <?php
 
     return [
@@ -78,7 +81,7 @@ Menggunakan package [laravel-rbac](https://github.com/itstructure/laravel-rbac).
         'rowsPerPage' => 10,
     ];
 
-4. Seeder
+5. Seeder
    <?php
     
     namespace Database\Seeders;
