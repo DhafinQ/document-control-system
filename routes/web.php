@@ -148,6 +148,10 @@ Route::get('/dashboards', function () {
     return view('admin.dashboard');
 });
 
+Route::get('/user/view_document', function () {
+    return view('user.view_document');
+});
+
 // ================================ BE ROUTE =============================
 
 Route::middleware(['auth'])->group(function () {
