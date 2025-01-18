@@ -17,7 +17,7 @@
             <div class="d-flex justify-content-end mb-2">
                 <!-- Tambah Dokumen -->
                 <div>
-                    <a href="/admin/tambah" class="btn btn-admin d-flex align-items-center">
+                    <a href="/manager/dokumen_aktif/add" class="btn btn-warning d-flex align-items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                             class="icon icon-tabler icons-tabler-outline icon-tabler-file-plus me-2">
@@ -56,7 +56,7 @@
                             <td class="px-6 py-4 text-center">Admin</td>
                             <td class="px-6 py-4 text-center">Dokumen 1.pdf</td>
                             <td class="px-6 py-4 text-center">
-                                <button class="btn btn-admin">Lihat File</button>
+                                <button class="btn btn-warning">Lihat File</button>
                             </td>
                         </tr>
                         <tr>
@@ -67,7 +67,7 @@
                             <td class="px-6 py-4 text-center">User </td>
                             <td class="px-6 py-4 text-center">Dokumen 2.pdf</td>
                             <td class="px-6 py-4 text-center">
-                                <button class="btn btn-admin">Lihat File</button>
+                                <button class="btn btn-warning">Lihat File</button>
                             </td>
                         </tr>
                         <tr>
@@ -78,7 +78,7 @@
                             <td class="px-6 py-4 text-center">Admin</td>
                             <td class="px-6 py-4 text-center">Dokumen 3.pdf</td>
                             <td class="px-6 py-4 text-center">
-                                <button class="btn btn-admin">Lihat File</button>
+                                <button class="btn btn-warning">Lihat File</button>
                             </td>
                         </tr>
                         <tr>
@@ -89,7 +89,7 @@
                             <td class="px-6 py-4 text-center">User  </td>
                             <td class="px-6 py-4 text-center">Dokumen 4.pdf</td>
                             <td class="px-6 py-4 text-center">
-                                <button class="btn btn-admin">Lihat File</button>
+                                <button class="btn btn-warning">Lihat File</button>
                             </td>
                         </tr>
                         <!-- Tambahkan baris lainnya di sini -->

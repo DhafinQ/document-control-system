@@ -7,11 +7,12 @@
   <title>@yield("title")</title>
   <link rel="shortcut icon" type="image/png" href="{{ asset('assets/images/logos/favicon.png') }}" />
   <link rel="stylesheet" href="{{ asset('assets/css/styles.min.css') }}" />
-   <!-- CSS DataTable -->
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/dataTables.bootstrap5.min.css">
+  <link rel="stylesheet"  href="{{ asset('assets/css/searchableOptionList.css') }}">
 </head>
 
 <body>
+
   <!--  Body Wrapper -->
   <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
     data-sidebar-position="fixed" data-header-position="fixed">
@@ -35,7 +36,7 @@
               <span class="hide-menu">Home</span>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="/template" aria-expanded="false">
+              <a class="sidebar-link" href="{{route('dashboard')}}" aria-expanded="false">
                 <span>
                   <i class="ti ti-layout-dashboard"></i>
                 </span>
@@ -43,47 +44,67 @@
               </a>
             </li>
             <li class="nav-small-cap">
+              <i class="ti ti-user nav-small-cap-icon fs-4"></i>
+              <span class="hide-menu">USER</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="{{route('roles.index')}}" aria-expanded="false">
+                <span>
+                  <i class="ti ti-user"></i>
+                </span>
+                <span class="hide-menu">Roles</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="{{route('users.index')}}" aria-expanded="false">
+                <span>
+                  <i class="ti ti-users"></i>
+                </span>
+                <span class="hide-menu">Users</span>
+              </a>
+            </li>
+            <li class="nav-small-cap">
               <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-              <span class="hide-menu">UI COMPONENTS</span>
+              <span class="hide-menu">Dokumen</span>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="/template/buttons" aria-expanded="false">
+              <a class="sidebar-link" href="{{route('categories.index')}}" aria-expanded="false">
                 <span>
-                  <i class="ti ti-article"></i>
+                  <i class="ti ti-folder"></i>
                 </span>
-                <span class="hide-menu">Buttons</span>
+                <span class="hide-menu">Kategori Dokumen</span>
               </a>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="/template/alerts" aria-expanded="false">
+              <a class="sidebar-link" href="{{route('document.active')}}" aria-expanded="false">
                 <span>
-                  <i class="ti ti-alert-circle"></i>
+                  <i class="ti ti-file"></i>
                 </span>
-                <span class="hide-menu">Alerts</span>
+                <span class="hide-menu">Dokumen Aktif</span>
               </a>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="/template/card" aria-expanded="false">
+              <a class="sidebar-link" href="{{route('document_revision.index')}}" aria-expanded="false">
                 <span>
-                  <i class="ti ti-cards"></i>
+                  <i class="ti ti-pencil"></i>
                 </span>
-                <span class="hide-menu">Card</span>
+                <span class="hide-menu">Revisi Dokumen</span>
               </a>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="/template/forms" aria-expanded="false">
+              <a class="sidebar-link" href="{{route('document_approval.index')}}" aria-expanded="false">
                 <span>
-                  <i class="ti ti-file-description"></i>
+                  <i class="ti ti-checks"></i>
                 </span>
-                <span class="hide-menu">Forms</span>
+                <span class="hide-menu">Pengesahan Dokumen</span>
               </a>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="/template/typography" aria-expanded="false">
+              <a class="sidebar-link" href="{{route('document_histories.index')}}" aria-expanded="false">
                 <span>
-                  <i class="ti ti-typography"></i>
+                  <i class="ti ti-history"></i>
                 </span>
-                <span class="hide-menu">Typography</span>
+                <span class="hide-menu">Riwayat Dokumen</span>
               </a>
             </li>
             <li class="nav-small-cap">
@@ -95,35 +116,7 @@
                 <span>
                   <i class="ti ti-login"></i>
                 </span>
-                <span class="hide-menu">Login</span>
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="/template/register" aria-expanded="false">
-                <span>
-                  <i class="ti ti-user-plus"></i>
-                </span>
-                <span class="hide-menu">Register</span>
-              </a>
-            </li>
-            <li class="nav-small-cap">
-              <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-              <span class="hide-menu">EXTRA</span>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="/template/icon" aria-expanded="false">
-                <span>
-                  <i class="ti ti-mood-happy"></i>
-                </span>
-                <span class="hide-menu">Icons</span>
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="/template/sample" aria-expanded="false">
-                <span>
-                  <i class="ti ti-aperture"></i>
-                </span>
-                <span class="hide-menu">Sample Page</span>
+                <span class="hide-menu">Log Out</span>
               </a>
             </li>
           </ul>

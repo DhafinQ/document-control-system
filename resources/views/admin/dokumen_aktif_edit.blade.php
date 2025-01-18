@@ -69,7 +69,7 @@
           </div>
 
           <div class="flex justify-center">
-            <a href="/admin/daftar" class="btn btn-danger m-1">
+            <a href="/admin/dokumen_aktif" class="btn btn-danger m-1">
               Batal
             </a>
             <button type="submit" class="btn btn-admin m-1">
