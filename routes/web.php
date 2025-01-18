@@ -195,3 +195,13 @@ Route::middleware(['auth'])->group(function () {
     });
 
 });
+
+// -- USER ROUTE -- //
+Route::get('/user/home', function () {
+    return view('/user/home');
+});
+
+// -- APPROVER ROUTE -- //
+Route::get('/approver/home', function () {
+    return view('/approver/home');
+});
