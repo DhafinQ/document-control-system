@@ -15,7 +15,9 @@ class DocumentHistoryController extends Controller
      */
     public function index()
     {
-        $documentHistories = DocumentHistory::with(['document', 'revision.reviser', 'performer'])->paginate(10);
+        $documentHistories = DocumentHistory::with(['document', 'revision.reviser', 'performer'])
+        ->orderBy('created_at', 'desc') 
+        ->get();
 
         return view('admin.document_histories.index', compact('documentHistories'));
     }

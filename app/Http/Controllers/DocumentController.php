@@ -9,6 +9,7 @@ use App\Models\Category;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Filesystem\FilesystemAdapter;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class DocumentController extends Controller
@@ -26,13 +27,27 @@ class DocumentController extends Controller
         return $filesystem->download($filename);
     }
 
+    public function dashboard(){
+        $totalDocs = Document::with('revisions')->count();
+        $totalApprovedDocs = DocumentRevision::with('document')->where('status','=','Disetujui')->count();
+        $totalDeniedDocs = DocumentRevision::with('document')->where('status','=','Ditolak')->count();
+        $totalRevisedDocs = DocumentRevision::with('document')->where('status','=','Draft')->count();
 
+        return view('admin.home',compact('totalDocs','totalApprovedDocs','totalDeniedDocs','totalRevisedDocs'));
+    }
 
     public function index()
     {
-        $documents = Document::with(['category', 'uploader', 'currentRevision'])->paginate(10);
+        $documents = Document::with(['category', 'uploader', 'currentRevision'])->get();
 
         return view('admin.documents.index', compact('documents'));
+    }
+
+    public function indexActive()
+    {
+        $documents = Document::with(['category', 'uploader', 'currentRevision'])->where('is_active','=',true)->get();
+
+        return view('admin.active_document.index', compact('documents'));
     }
 
     public function create()
@@ -78,17 +93,17 @@ class DocumentController extends Controller
             'description' => $validated['description'],
         ]);
 
-        foreach ($validated['rev'] ?? [] as $rev) {
-            $currentRevision = DocumentRevision::findOrFail($rev);
+        // foreach ($validated['rev'] ?? [] as $rev) {
+        //     $currentRevision = DocumentRevision::findOrFail($rev);
 
-            DocumentRevision::create([
-                'document_id' => $rev,
-                'file_path' => $path,
-                'revised_by' => $validated['uploaded_by'],
-                'revision_number' => $currentRevision->revision_number + 1,
-                'description' => $validated['description'],
-            ]);
-        }
+        //     DocumentRevision::create([
+        //         'document_id' => $rev,
+        //         'file_path' => $path,
+        //         'revised_by' => $validated['uploaded_by'],
+        //         'revision_number' => $currentRevision->revision_number + 1,
+        //         'description' => $validated['description'],
+        //     ]);
+        // }
 
         $document->update(['current_revision_id' => $revision->id]);
 

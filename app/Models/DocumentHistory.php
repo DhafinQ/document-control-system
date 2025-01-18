@@ -17,8 +17,6 @@ class DocumentHistory extends Model
         'reason',
     ];
 
-    public $timestamps = false;
-
     public function document() : BelongsTo {
         return $this->belongsTo(Document::class,'document_id');
     }

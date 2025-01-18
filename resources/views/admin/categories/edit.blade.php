@@ -15,7 +15,7 @@
                 @method('PUT')
                 <div class="row mb-3">
                     <div class="col-md-12">
-                        <label for="exampleInputEmail1" class="form-label">Nama Kategori</label>
+                        <label for="exampleInputEmail1" class="form-label">Nama Kategori<span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="exampleInputEmail1" name="name" value="{{ old('name') ?? $category->name}}" style="width: 100%;">
                     </div>
                 </div>

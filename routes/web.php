@@ -144,7 +144,7 @@ Route::get('/', function () {
     return view('auth.login');
 });
 
-Route::get('/dashboard', function () {
+Route::get('/dashboards', function () {
     return view('admin.dashboard');
 });
 
@@ -156,6 +156,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::post('/user/profile-information', [\Laravel\Fortify\Http\Controllers\ProfileInformationController::class, 'update'])
         ->middleware(['auth']);
+    
+    Route::get('/active_document',[DocumentController::class,'indexActive'])->name('document.active');
+    Route::get('/dashboard',[DocumentController::class,'dashboard'])->name('dashboard');
 
     Route::middleware(['role:Admin'])->group(function () {
         Route::get('/users/create', [UserController::class, 'create'])->name('create_users');
@@ -171,8 +174,11 @@ Route::middleware(['auth'])->group(function () {
 
     Route::middleware(['role:Reviewer'])->group(function () {
         Route::get('/document_revision', [DocumentRevisionController::class, 'index'])->name('document_revision.index');
-        Route::get('/document_revision/{revision}/edit', [DocumentRevisionController::class, 'edit'])->name('document_revision.edit');
-        Route::put('/document_revision/{revision}', [DocumentRevisionController::class, 'update'])->name('document_revision.update');
+        Route::get('/document_approval', [DocumentRevisionController::class, 'indexApproval'])->name('document_approval.index');
+        Route::get('/document_revision/{documentRevision}/edit', [DocumentRevisionController::class, 'edit'])->name('document_revision.edit');
+        Route::get('/document_approval/{documentRevision}/edit', [DocumentRevisionController::class, 'editApproval'])->name('document_approval.edit');
+        Route::put('/document_revision/{documentRevision}', [DocumentRevisionController::class, 'update'])->name('document_revision.update');
+        Route::put('/document_approval/{documentRevision}', [DocumentRevisionController::class, 'updateApproval'])->name('document_approval.update');
         Route::get('/file/dokumen/{filename}', [DocumentRevisionController::class, 'showFile'])->name('document_revision.show-file');
     });
 

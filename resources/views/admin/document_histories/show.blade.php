@@ -1,4 +1,6 @@
-@extends('layout.master')
+@extends('layouts.layout')
+
+@section("title", "Document")
 
 @section('content')
 <div class="container">
@@ -38,6 +40,10 @@
         <tr>
             <th>Performed By</th>
             <td>{{ $documentHistory->performer->name }}</td>
+        </tr>
+        <tr>
+            <th>Time</th>
+            <td>{{ \Carbon\Carbon::parse($documentHistory->created_at)->format('H:i:s-d/m/Y') }}</td>
         </tr>
         <tr>
             <th>Reason</th>

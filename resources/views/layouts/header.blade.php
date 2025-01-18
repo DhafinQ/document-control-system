@@ -36,7 +36,7 @@
               <span class="hide-menu">Home</span>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="/admin" aria-expanded="false">
+              <a class="sidebar-link" href="{{route('dashboard')}}" aria-expanded="false">
                 <span>
                   <i class="ti ti-layout-dashboard"></i>
                 </span>
@@ -48,7 +48,7 @@
               <span class="hide-menu">USER</span>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="/admin/roles" aria-expanded="false">
+              <a class="sidebar-link" href="{{route('roles.index')}}" aria-expanded="false">
                 <span>
                   <i class="ti ti-user"></i>
                 </span>
@@ -56,7 +56,7 @@
               </a>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="/admin/users" aria-expanded="false">
+              <a class="sidebar-link" href="{{route('users.index')}}" aria-expanded="false">
                 <span>
                   <i class="ti ti-users"></i>
                 </span>
@@ -68,7 +68,7 @@
               <span class="hide-menu">Dokumen</span>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="/admin/kategori_dokumen" aria-expanded="false">
+              <a class="sidebar-link" href="{{route('categories.index')}}" aria-expanded="false">
                 <span>
                   <i class="ti ti-folder"></i>
                 </span>
@@ -76,7 +76,7 @@
               </a>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="/admin/dokumen_aktif" aria-expanded="false">
+              <a class="sidebar-link" href="{{route('document.active')}}" aria-expanded="false">
                 <span>
                   <i class="ti ti-file"></i>
                 </span>
@@ -84,7 +84,7 @@
               </a>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="/admin/revisi_dokumen" aria-expanded="false">
+              <a class="sidebar-link" href="{{route('document_revision.index')}}" aria-expanded="false">
                 <span>
                   <i class="ti ti-pencil"></i>
                 </span>
@@ -92,7 +92,7 @@
               </a>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="/admin/pengesahan_dokumen" aria-expanded="false">
+              <a class="sidebar-link" href="{{route('document_approval.index')}}" aria-expanded="false">
                 <span>
                   <i class="ti ti-checks"></i>
                 </span>
@@ -100,7 +100,7 @@
               </a>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="/admin/histori_dokumen" aria-expanded="false">
+              <a class="sidebar-link" href="{{route('document_histories.index')}}" aria-expanded="false">
                 <span>
                   <i class="ti ti-history"></i>
                 </span>

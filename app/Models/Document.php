@@ -21,6 +21,7 @@ class Document extends Model
     {
         return $this->hasMany(DocumentRevision::class);
     }
+
     public function currentRevision()
     {
         return $this->belongsTo(DocumentRevision::class, 'current_revision_id');

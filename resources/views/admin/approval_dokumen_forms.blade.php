@@ -8,7 +8,7 @@
         <div class="container-fluid">
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title fw-semibold mb-4">Revisi Dokumen</h5>
+              <h5 class="card-title fw-semibold mb-4">Dokumen Approval</h5>
 
                   <form>
                   <div class="row mb-3 align-items-center">

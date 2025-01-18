@@ -37,7 +37,7 @@
               <div class="card-body pt-3 p-4">
               <h5 class="card-title mb-9 fw-semibold">Total Dokumen</h5>
                 <div class="col-8">
-                  <h4 class="fw-semibold mb-3">500</h4>
+                  <h4 class="fw-semibold mb-3">{{$totalDocs}}</h4>
                     <div class="d-flex align-items-center mb-3">
                       <span class="me-1 rounded-circle bg-light-success round-20 d-flex align-items-center justify-content-center">
                         <i class="ti ti-arrow-up-left text-success"></i>
@@ -54,7 +54,7 @@
               <div class="card-body pt-3 p-4">
               <h5 class="card-title mb-9 fw-semibold">Dokumen Yang Disetujui</h5>
                 <div class="col-8">
-                  <h4 class="fw-semibold mb-3">500</h4>
+                  <h4 class="fw-semibold mb-3">{{$totalApprovedDocs}}</h4>
                     <div class="d-flex align-items-center mb-3">
                       <span class="me-1 rounded-circle bg-light-success round-20 d-flex align-items-center justify-content-center">
                         <i class="ti ti-arrow-up-left text-success"></i>
@@ -71,7 +71,7 @@
               <div class="card-body pt-3 p-4">
               <h5 class="card-title mb-9 fw-semibold">Dokumen Yang Ditolak</h5>
                 <div class="col-8">
-                  <h4 class="fw-semibold mb-3">500</h4>
+                  <h4 class="fw-semibold mb-3">{{$totalDeniedDocs}}</h4>
                     <div class="d-flex align-items-center mb-3">
                       <span class="me-1 rounded-circle bg-light-success round-20 d-flex align-items-center justify-content-center">
                         <i class="ti ti-arrow-up-left text-success"></i>
@@ -88,7 +88,7 @@
               <div class="card-body pt-3 p-4">
               <h5 class="card-title mb-9 fw-semibold">Dokumen Yang Direvisi</h5>
                 <div class="col-8">
-                  <h4 class="fw-semibold mb-3">500</h4>
+                  <h4 class="fw-semibold mb-3">{{$totalRevisedDocs}}</h4>
                     <div class="d-flex align-items-center mb-3">
                       <span class="me-1 rounded-circle bg-light-success round-20 d-flex align-items-center justify-content-center">
                         <i class="ti ti-arrow-up-left text-success"></i>
