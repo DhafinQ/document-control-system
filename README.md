@@ -1,3 +1,19 @@
+# Document Management
+
+## How To Run
+1. Create Database name <b>db_dcs</b>
+2. Clone this project (branch develop for development)
+3. Run command "<b>composer install</b>" to cloned project folder
+4. Run command "<b>cp .env.example .env</b>"
+5. Run command "<b>php artisan key:generate</b>"
+6. Run command "<b>php artisan migrate:fresh --seed</b>"
+7. Run command "<b>php artisan serve</b>"
+8. Open browser to url "<b>http://127.0.0.1:8000/login</b>" and Login with admin Account
+
+## Account
+Email : <b>admin@gmail.com</b>
+Password : <b>password</b>
+
 # Implementasi RBAC dan Authentication
 
 ## RBAC
