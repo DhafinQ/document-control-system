@@ -7,6 +7,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "blade-ui-kit/blade-icons": "*",
         "itstructure/laravel-rbac": "3.0.15",
         "laravel/fortify": "^1.25",
         "laravel/framework": "^11.31",

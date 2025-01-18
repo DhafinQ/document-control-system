@@ -148,6 +148,22 @@ Route::get('/dashboards', function () {
     return view('admin.dashboard');
 });
 
+Route::get('/manager/dashboard', function () {
+    return view('/manager/home');
+});
+
+Route::get('/manager/revisi_dokumen', function () {
+    return view('/manager/revisi_dokumen');
+});
+
+Route::get('/manager/revisi_dokumen/forms', function () {
+    return view('/manager/revisi_dokumen_forms');
+});
+
+Route::get('/manager/update_dokumen/forms', function () {
+    return view('/manager/update_dokumen_forms');
+});
+
 // ================================ BE ROUTE =============================
 
 Route::middleware(['auth'])->group(function () {
