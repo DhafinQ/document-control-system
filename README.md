@@ -1,7 +1,7 @@
 # Document Management
 
 ## How To Run
-    1. Create Database name <b>db_dcs</b>
+    1. Create Database name **db_dcs**
     2. Clone this project (branch develop for development)
     3. Run command "<b>composer install</b>" to cloned project folder
     4. Run command "<b>cp .env.example .env</b>"
