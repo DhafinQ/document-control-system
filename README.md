@@ -1,14 +1,22 @@
 # Document Management
 
+**PENTING !!**
+Branch dan instruksi dalam branch dibawah ini sudah tidak sesuai
+https://github.com/DhafinQ/document-control-system/tree/feature-rbac-new
+
+Instruksi pada branch sekarang merupakan pengimplementasian dari awal untuk package :
+https://github.com/itstructure/laravel-rbac
+Dalam instruksi ini dapat dicustomize sesuai kebutuhan
+
 ## How To Run
-    1. Create Database name **db_dcs**
+    1. Create Database name db_dcs
     2. Clone this project (branch develop for development)
-    3. Run command "<b>composer install</b>" to cloned project folder
-    4. Run command "<b>cp .env.example .env</b>"
-    5. Run command "<b>php artisan key:generate</b>"
-    6. Run command "<b>php artisan migrate:fresh --seed</b>"
-    7. Run command "<b>php artisan serve</b>"
-    8. Open browser to url "<b>http://127.0.0.1:8000/login</b>" and Login with admin Account
+    3. Run command "composer install" to cloned project folder
+    4. Run command "cp .env.example .env"
+    5. Run command "php artisan key:generate"
+    6. Run command "php artisan migrate:fresh --seed"
+    7. Run command "php artisan serve"
+    8. Open browser to url "http://127.0.0.1:8000/login" and Login with admin Account
 
 ## Account
 Email : **admin@gmail.com**
@@ -290,8 +298,62 @@ Menggunakan package [laravel-rbac](https://github.com/itstructure/laravel-rbac).
 
 Read more in [Laravel gates](https://laravel.com/docs/9.x/authorization#gates)
 
+8 Untuk **Route** menggunakan **can:(namapermission)**. Contohnya :
+    ```php
 
-
+    Route::middleware(['auth'])->group(function () {
+    
+        Route::get('/dashboards', function () {
+            return view('admin.dashboard');
+        });
+    
+        Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
+        Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::post('/user/profile-information', [\Laravel\Fortify\Http\Controllers\ProfileInformationController::class, 'update']);
+    
+        Route::get('/active_document', [DocumentController::class, 'indexActive'])->name('document.active')->middleware('can:active-document');
+        Route::get('/dashboard', [DocumentController::class, 'dashboard'])->name('dashboard');
+    
+        Route::get('/users/create', [UserController::class, 'create'])->name('create_users')->middleware('can:create-users');
+        Route::post('rbac/users/store', [UserController::class, 'store'])->name('store_user')->middleware('can:create-users');
+    
+        Route::get('/document_histories', [DocumentHistoryController::class, 'index'])->name('document_histories.index')->middleware('can:view-histories');
+        Route::get('/document_histories/{document_history}', [DocumentHistoryController::class, 'show'])->name('document_histories.show')->middleware('can:view-histories');
+    
+    
+        Route::middleware('can:manage-categories')->group(function () {
+            Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
+            Route::get('/categories/create', [CategoryController::class, 'create'])->name('categories.create');
+            Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
+            Route::get('/categories/{category}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
+            Route::put('/categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
+            Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
+        });
+    
+    
+        Route::get('/document_revision', [DocumentRevisionController::class, 'index'])->name('document_revision.index')->middleware('can:view-revisions');
+        Route::get('/document_approval', [DocumentRevisionController::class, 'indexApproval'])->name('document_approval.index')->middleware('can:view-approval');
+        Route::get('/document_revision/{documentRevision}/edit', [DocumentRevisionController::class, 'edit'])->name('document_revision.edit')->middleware('can:edit-revisions');
+        Route::get('/document_approval/{documentRevision}/edit', [DocumentRevisionController::class, 'editApproval'])->name('document_approval.edit')->middleware('can:edit-approval');
+        Route::put('/document_revision/{documentRevision}', [DocumentRevisionController::class, 'update'])->name('document_revision.update')->middleware('can:edit-revisions');
+        Route::put('/document_approval/{documentRevision}', [DocumentRevisionController::class, 'updateApproval'])->name('document_approval.update')->middleware('can:edit-approval');
+        Route::get('/file/dokumen/{filename}', [DocumentRevisionController::class, 'showFile'])->name('document_revision.show-file')->middleware('can:view-revisions');
+    
+    
+        Route::get('/document_revision/create', [DocumentRevisionController::class, 'create'])->name('document_revision.create')->middleware('can:create-revisions');
+        Route::post('/document_revision/store', [DocumentRevisionController::class, 'store'])->name('document_revision.store')->middleware('can:create-revisions');
+    
+        
+        Route::get('/documents', [DocumentController::class, 'index'])->name('documents.index')->middleware('can:view-documents');
+        Route::get('/documents/create', [DocumentController::class, 'create'])->name('documents.create')->middleware('can:create-documents');
+        Route::post('/documents', [DocumentController::class, 'store'])->name('documents.store')->middleware('can:create-documents');
+        Route::get('/documents/{document}/edit', [DocumentController::class, 'edit'])->name('documents.edit')->middleware('can:edit-documents');
+        Route::put('/documents/{document}', [DocumentController::class, 'update'])->name('documents.update')->middleware('can:edit-documents');
+        Route::delete('/documents/{document}', [DocumentController::class, 'destroy'])->name('documents.destroy')->middleware('can:delete-documents');
+        Route::get('/documents/download/{filename}', [DocumentController::class, 'downloadDocument'])->name('file.dokumen')->middleware('can:view-documents');
+    });
+    
+    ```
 
 ## Authentication
 Pada Authentication menggunakan package Laravel Fortify.
@@ -305,10 +367,12 @@ Pada Authentication menggunakan package Laravel Fortify.
 
 ## Konfigurasi
 1. Instal package menggunakan composer:
-   composer require laravel/fortify
-    php artisan fortify:install
-
-2. Konfigurasi file FortifyServiceProvider.php:
+   ```
+   1. composer require laravel/fortify
+   2. php artisan fortify:install
+   ```
+   
+3. Konfigurasi file FortifyServiceProvider.php:
    
    ```php
     <?php
