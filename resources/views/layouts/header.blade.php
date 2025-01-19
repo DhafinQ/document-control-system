@@ -11,6 +11,23 @@
   <link rel="stylesheet"  href="{{ asset('assets/css/searchableOptionList.css') }}">
 </head>
 
+<style>
+  .dropdown-width {
+    width: 400px;
+  }
+
+  .notification-item {
+    padding: 10px;
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+  }
+  .highlight {
+    background-color: #f0f8ff;
+  }
+</style>
+
+
+
 <body>
 
   <!--  Body Wrapper -->
@@ -36,7 +53,7 @@
               <span class="hide-menu">Home</span>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="{{route('dashboard')}}" aria-expanded="false">
+              <a class="sidebar-link" href="/admin" aria-expanded="false">
                 <span>
                   <i class="ti ti-layout-dashboard"></i>
                 </span>
@@ -48,7 +65,7 @@
               <span class="hide-menu">USER</span>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="{{route('roles.index')}}" aria-expanded="false">
+              <a class="sidebar-link" href="/admin/roles" aria-expanded="false">
                 <span>
                   <i class="ti ti-user"></i>
                 </span>
@@ -56,7 +73,7 @@
               </a>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="{{route('users.index')}}" aria-expanded="false">
+              <a class="sidebar-link" href="/admin/users" aria-expanded="false">
                 <span>
                   <i class="ti ti-users"></i>
                 </span>
@@ -68,7 +85,7 @@
               <span class="hide-menu">Dokumen</span>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="{{route('categories.index')}}" aria-expanded="false">
+              <a class="sidebar-link" href="/admin/kategori_dokumen" aria-expanded="false">
                 <span>
                   <i class="ti ti-folder"></i>
                 </span>
@@ -76,7 +93,7 @@
               </a>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="{{route('document.active')}}" aria-expanded="false">
+              <a class="sidebar-link" href="/admin/dokumen_aktif" aria-expanded="false">
                 <span>
                   <i class="ti ti-file"></i>
                 </span>
@@ -84,7 +101,7 @@
               </a>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="{{route('document_revision.index')}}" aria-expanded="false">
+              <a class="sidebar-link" href="/admin/revisi_dokumen" aria-expanded="false">
                 <span>
                   <i class="ti ti-pencil"></i>
                 </span>
@@ -92,7 +109,7 @@
               </a>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="{{route('document_approval.index')}}" aria-expanded="false">
+              <a class="sidebar-link" href="/admin/pengesahan_dokumen" aria-expanded="false">
                 <span>
                   <i class="ti ti-checks"></i>
                 </span>
@@ -100,7 +117,7 @@
               </a>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="{{route('document_histories.index')}}" aria-expanded="false">
+              <a class="sidebar-link" href="/admin/histori_dokumen" aria-expanded="false">
                 <span>
                   <i class="ti ti-history"></i>
                 </span>
@@ -137,12 +154,46 @@
                 <i class="ti ti-menu-2"></i>
               </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link nav-icon-hover" href="javascript:void(0)">
-                <i class="ti ti-bell-ringing"></i>
-                <div class="notification bg-primary rounded-circle"></div>
-              </a>
-            </li>
+            <!-- Dropdown Notify Section Start -->
+            <div class="navbar-collapse justify-content-end px-0" id="navbarNav">
+            <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
+              <li class="nav-item dropdown">
+                <a class="nav-link nav-icon-hover" href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown"
+                  aria-expanded="false">
+                  <i class="ti ti-bell-ringing"></i>
+                  <div class="notification bg-primary rounded-circle"></div>
+                </a>
+                <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up start-50 dropdown-width" aria-labelledby="drop2">
+                <div class="notification-body">
+                <div class="d-flex justify-content-between align-items-center p-2">
+                  <p class="text-dark fw-bold fs-5 mb-0">Notifikasi</p>
+                  <a href="/admin/notifikasi_admin" class="text-primary fs-4 fw-bold" id="view-all-notifications">Lihat semua</a>
+                </div>
+                <hr>
+                <!-- Notify Start -->
+                  <div id="notification-list" class="notification-container">
+                    <p id="no-notifications" class="text-muted text-center" style="display: none;">Tidak ada notifikasi baru</p>
+                    <!-- Notifikasi Dummy -->
+                    <div id="notify-items" class="dclose notification-item highlight">
+                      <p>Notifikasi 1: Pesan Baru.</p>
+                    </div>
+                    <div id="notify-items" class="dclose notification-item highlight">
+                      <p>Notifikasi 2: Pesan Baru Baru.</p>
+                    </div>
+                    <div id="notify-items" class="dclose notification-item highlight">
+                      <p>Notifikasi 3: Pesan tidak baru.</p>
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="d-flex justify-content-center align-items-center">
+                    <button class="btn btn-outline-secondary dclose" id="mark-read">Tandai semua telah dibaca</button>
+                  </div>
+                <!-- Notify End -->
+                </div>
+              </li>
+            </ul>
+          </div>
+          <!-- Dropdown Notify Section End -->
           </ul>
           <div class="navbar-collapse justify-content-end px-0" id="navbarNav">
             <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
@@ -174,3 +225,26 @@
         </nav>
       </header>
       <!--  Header End -->
+
+      <script>
+        // Fungsi baca pesan
+        document.querySelectorAll('.notification-item').forEach(item => {
+          item.addEventListener('click', () => {
+            item.classList.remove('highlight');
+          });
+        });
+
+         // Fungsi baca semua
+        document.getElementById('mark-read').addEventListener('click', () => {
+          document.querySelectorAll('.notification-item').forEach(item => {
+            item.classList.remove('highlight');
+          });
+        });
+
+        // Fungsi biar ga nutup dropdown
+        document.querySelectorAll('.dclose').forEach(item => {
+          item.addEventListener('click', (event) => {
+            event.stopPropagation();
+          });
+        });
+      </script>

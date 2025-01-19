@@ -148,6 +148,12 @@ Route::get('/dashboards', function () {
     return view('admin.dashboard');
 });
 
+Route::get('/admin/notifikasi_admin', function () {
+    return view('/admin/notifikasi_admin');
+});
+
+
+
 // ================================ BE ROUTE =============================
 
 Route::middleware(['auth'])->group(function () {
