@@ -20,7 +20,7 @@
                             <span class="fs-2"><button type="button" class="btn btn-admin m-1">Settings</button></span>
                           </div>
                           <div>
-                            <span class="fs-2"><button type="button" class="btn btn-approver m-1">Logout</button></span>
+                            <span class="fs-2"><button type="button" class="btn btn-approver m-1" onclick="document.getElementById('logout-form').submit();">Logout</button></span>
                           </div>
                         </div>
                       </div>

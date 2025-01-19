@@ -9,7 +9,16 @@
 
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">{{ __('rbac::users.create_user') }}</h3>
+                        <h3 class="card-title">{{ __('Tambah User Baru') }}</h3>
+                        @if ($errors->any())
+                            <div class="alert alert-danger">
+                                <ul>
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
                     </div>
 
                     <div class="card-body">

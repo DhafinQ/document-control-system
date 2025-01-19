@@ -43,12 +43,21 @@
                 <span class="hide-menu">Dashboard</span>
               </a>
             </li>
+            @can('administrate')
             <li class="nav-small-cap">
               <i class="ti ti-user nav-small-cap-icon fs-4"></i>
               <span class="hide-menu">USER</span>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="{{route('roles.index')}}" aria-expanded="false">
+                <a class="sidebar-link" href="{{ url('/rbac/users') }}" aria-expanded="false">
+                  <span>
+                    <i class="ti ti-users"></i>
+                  </span>
+                  <span class="hide-menu">Users</span>
+                </a>
+              </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="{{ url('/rbac/roles') }}" aria-expanded="false">
                 <span>
                   <i class="ti ti-user"></i>
                 </span>
@@ -56,17 +65,19 @@
               </a>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="{{route('users.index')}}" aria-expanded="false">
-                <span>
-                  <i class="ti ti-users"></i>
-                </span>
-                <span class="hide-menu">Users</span>
-              </a>
-            </li>
+                <a class="sidebar-link" href="{{ url('/rbac/permissions') }}" aria-expanded="false">
+                  <span>
+                    <i class="ti ti-user"></i>
+                  </span>
+                  <span class="hide-menu">Permission</span>
+                </a>
+              </li>
+            @endcan
             <li class="nav-small-cap">
               <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
               <span class="hide-menu">Dokumen</span>
             </li>
+            @can('manage-categories')
             <li class="sidebar-item">
               <a class="sidebar-link" href="{{route('categories.index')}}" aria-expanded="false">
                 <span>
@@ -75,6 +86,8 @@
                 <span class="hide-menu">Kategori Dokumen</span>
               </a>
             </li>
+            @endcan
+            @can('active-document')
             <li class="sidebar-item">
               <a class="sidebar-link" href="{{route('document.active')}}" aria-expanded="false">
                 <span>
@@ -83,6 +96,8 @@
                 <span class="hide-menu">Dokumen Aktif</span>
               </a>
             </li>
+            @endcan
+            @can('view-revisions')
             <li class="sidebar-item">
               <a class="sidebar-link" href="{{route('document_revision.index')}}" aria-expanded="false">
                 <span>
@@ -91,6 +106,8 @@
                 <span class="hide-menu">Revisi Dokumen</span>
               </a>
             </li>
+            @endcan
+            @can('view-approval')
             <li class="sidebar-item">
               <a class="sidebar-link" href="{{route('document_approval.index')}}" aria-expanded="false">
                 <span>
@@ -99,6 +116,8 @@
                 <span class="hide-menu">Pengesahan Dokumen</span>
               </a>
             </li>
+            @endcan
+            @can('view-histories')
             <li class="sidebar-item">
               <a class="sidebar-link" href="{{route('document_histories.index')}}" aria-expanded="false">
                 <span>
@@ -107,17 +126,21 @@
                 <span class="hide-menu">Riwayat Dokumen</span>
               </a>
             </li>
+            @endcan
             <li class="nav-small-cap">
               <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
               <span class="hide-menu">AUTH</span>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="/template/login" aria-expanded="false">
+              <a class="sidebar-link" href="javascript:void(0);" aria-expanded="false" onclick="document.getElementById('logout-form').submit();">
                 <span>
                   <i class="ti ti-login"></i>
                 </span>
                 <span class="hide-menu">Log Out</span>
               </a>
+              <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                @csrf
+              </form>
             </li>
           </ul>
         </nav>
@@ -165,7 +188,7 @@
                       <i class="ti ti-list-check fs-6"></i>
                       <p class="mb-0 fs-3">My Task</p>
                     </a>
-                    <a href="/template/login" class="btn btn-outline-primary mx-3 mt-2 d-block">Logout</a>
+                    <a href="javascript:void()" class="btn btn-outline-primary mx-3 mt-2 d-block" onclick="document.getElementById('logout-form').submit();">Logout</a>
                   </div>
                 </div>
               </li>

@@ -4,7 +4,7 @@
 
     <section class="content container-fluid">
 
-        <p><a class="btn btn-success" href="{{ route('create_user') }}">{!! __('rbac::roles.create_user') !!}</a></p>
+        <p><a class="btn btn-success" href="{{ route('create_users') }}">Create User</a></p>
 
         @if ($errors->has('items'))
             <div class="row">

@@ -9,7 +9,15 @@
           <div class="card">
             <div class="card-body">
               <h5 class="card-title fw-semibold mb-4">Edit Kategori Dokumen</h5>
-
+              @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+              @endif
               <form action="{{ route('categories.update', $category) }}" method="POST">
                 @csrf
                 @method('PUT')

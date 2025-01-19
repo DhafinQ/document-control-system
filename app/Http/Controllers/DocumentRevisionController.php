@@ -7,27 +7,11 @@ use App\Models\Document;
 use App\Models\DocumentRevision;
 use App\Models\DocumentHistory;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class DocumentRevisionController extends Controller
 {
-    public function showFile($filename)
-    {
-        if (Storage::disk('dokumen')->exists($filename)) {
-            $filePath = Storage::disk('dokumen')->path($filename);
-            
-            $mimeType = mime_content_type($filePath);
-
-            return Response::file($filePath, [
-                'Content-Type' => $mimeType
-            ]);
-        }
-
-        abort(404, 'File not found');
-    }
-
 
     public function index()
     {
@@ -87,7 +71,9 @@ class DocumentRevisionController extends Controller
                 'file_path' => $fileName,
                 'revised_by' => Auth::id(),
                 'revision_number' => $currentRevision->revision_number+1,
-                'description' => $validated['description'],
+                // Here
+                // 'description' => $validated['description'],
+                'description' => $currentRevision->description,
             ]);
 
             DocumentHistory::create([

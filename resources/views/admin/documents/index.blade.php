@@ -4,7 +4,9 @@
     <div class="card">
         <div class="card-body">
             <h5 class="card-title fw-semibold mb-4">Daftar Dokumen</h5>
+            @can('create-documents')
             <a href="{{ route('documents.create') }}" class="btn btn-primary mb-3">Tambah Dokumen</a>
+            @endcan
             <table class="table table-bordered">
                 <thead class="table-light">
                     <tr>
@@ -33,12 +35,16 @@
                         </td>
 
                         <td>
+                            @can('edit-documents')
                             <a href="{{ route('documents.edit', $document->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                            @endcan
+                            @can('delete-documents')
                             <form action="{{ route('documents.destroy', $document->id) }}" method="POST" style="display: inline;">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
                             </form>
+                            @endcan
                         </td>
                     </tr>
                     @empty
