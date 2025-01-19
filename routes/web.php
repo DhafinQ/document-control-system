@@ -216,6 +216,6 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/documents/{document}', [DocumentController::class, 'update'])->name('documents.update')->middleware('can:edit-documents');
     Route::delete('/documents/{document}', [DocumentController::class, 'destroy'])->name('documents.destroy')->middleware('can:delete-documents');
     Route::get('/documents/download/{filename}', [DocumentController::class, 'downloadDocument'])->name('file.dokumen')->middleware('can:view-documents');
-    Route::get('/file/dokumen/{filename}', [DocumentController::class, 'showFile'])->name('document_revision.show-file')->middleware('can:view-revisions');
+    Route::get('/file/dokumen/{filename}', [DocumentController::class, 'showFile'])->name('document_revision.show-file')->middleware('can:view-documents');
 
 });

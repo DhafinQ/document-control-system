@@ -34,7 +34,9 @@
                                     <td>{{$rev->revision_number}}</td>
                                     <td>{{$rev->status}}</td>
                                     <td><a href="{{route('document_revision.show-file',['filename' => $rev->file_path])}}" target="_blank">Lihat File</a></td>
-                                    <td><a href="{{route('document_approval.edit',['documentRevision' => $rev->id])}}" class="btn btn-sm btn-primary">Ubah Status</a></td>
+                                    @can('edit-approval')
+                                        <td><a href="{{route('document_approval.edit',['documentRevision' => $rev->id])}}" class="btn btn-sm btn-primary">Ubah Status</a></td>
+                                    @endcan
                                 </tr>
                                 @endforeach
                             </tbody>

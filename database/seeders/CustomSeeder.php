@@ -75,6 +75,7 @@ class CustomSeeder extends Seeder
                 'name' => 'Staff',
                 'permissions' => [
                     'view-documents',
+                    'active-document',
                     'create-documents',
                 ],
             ],

@@ -4,7 +4,9 @@
 
     <section class="content container-fluid">
 
+        @can('create-users')
         <p><a class="btn btn-success" href="{{ route('create_users') }}">Create User</a></p>
+        @endcan
 
         @if ($errors->has('items'))
             <div class="row">
