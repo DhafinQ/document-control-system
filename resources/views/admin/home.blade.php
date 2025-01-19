@@ -13,7 +13,7 @@
                     <h5 class="card-title mb-9 fw-semibold">Selamat Datang Kembali !</h5>
                     <div class="row align-items-center">
                       <div class="col-8">
-                        <h4 class="fw-semibold mb-3">Admin</h4>
+                        <h4 class="fw-semibold mb-3">{{auth()->user()->name}}</h4>
 
                         <div class="d-flex align-items-center">
                           <div class="me-4">
