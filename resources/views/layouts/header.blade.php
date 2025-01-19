@@ -96,7 +96,7 @@
             </li>
             @can('manage-categories')
             <li class="sidebar-item">
-              <a class="sidebar-link" href="/admin/kategori_dokumen" aria-expanded="false">
+              <a class="sidebar-link" href="{{route('categories.index')}}" aria-expanded="false">
                 <span>
                   <i class="ti ti-folder"></i>
                 </span>
@@ -106,7 +106,7 @@
             @endcan
             @can('active-document')
             <li class="sidebar-item">
-              <a class="sidebar-link" href="/admin/dokumen_aktif" aria-expanded="false">
+              <a class="sidebar-link" href="{{route('document.active')}}" aria-expanded="false">
                 <span>
                   <i class="ti ti-file"></i>
                 </span>
@@ -116,7 +116,7 @@
             @endcan
             @can('view-revisions')
             <li class="sidebar-item">
-              <a class="sidebar-link" href="/admin/revisi_dokumen" aria-expanded="false">
+              <a class="sidebar-link" href="{{route('document_revision.index')}}" aria-expanded="false">
                 <span>
                   <i class="ti ti-pencil"></i>
                 </span>
@@ -126,7 +126,7 @@
             @endcan
             @can('view-approval')
             <li class="sidebar-item">
-              <a class="sidebar-link" href="/admin/pengesahan_dokumen" aria-expanded="false">
+              <a class="sidebar-link" href="{{route('document_approval.index')}}" aria-expanded="false">
                 <span>
                   <i class="ti ti-checks"></i>
                 </span>
@@ -136,7 +136,7 @@
             @endcan
             @can('view-histories')
             <li class="sidebar-item">
-              <a class="sidebar-link" href="/admin/histori_dokumen" aria-expanded="false">
+              <a class="sidebar-link" href="{{route('document_histories.index')}}" aria-expanded="false">
                 <span>
                   <i class="ti ti-history"></i>
                 </span>
