@@ -7,6 +7,7 @@ use App\Models\DocumentRevision;
 use App\Models\DocumentHistory;
 use App\Models\Category;
 use App\Models\User;
+use App\Notifications\DocumentApprovalNotification;
 use Illuminate\Http\Request;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Auth;
@@ -178,5 +179,16 @@ class DocumentController extends Controller
         $document->delete();
 
         return redirect()->route('documents.index')->with('success', 'Document deleted successfully.');
+    }
+
+    //Notification
+    public function notifyDocumentPending()
+    {
+        $documentCount = 5; //ngasal dulu rek
+
+        $admin = User::role('admin')->first();
+        $admin->notify(new DocumentApprovalNotification($documentCount));
+
+        return response()->json(['message' => 'Notifikasi berhasil dikirim']);
     }
 }
