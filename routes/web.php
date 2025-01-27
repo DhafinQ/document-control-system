@@ -170,7 +170,7 @@ Route::middleware(['auth'])->group(function () {
     // });
 
     Route::get('/dashboards', function () {
-        return view('admin.dashboard');
+            return view('admin.dashboard');
     });
 
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
