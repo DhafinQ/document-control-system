@@ -197,20 +197,22 @@
                   <div id="notification-list" class="notification-container">
                     <p id="no-notifications" class="text-muted text-center" style="display: none;">Tidak ada notifikasi baru</p>
                     <!-- Notifikasi Dummy -->
-                    <div id="notify-items" class="dclose notification-item highlight">
-                      <p>Notifikasi 1: Pesan Baru.</p>
+                    @if (count(auth()->user()->unreadNotifications) > 0)
+                      @foreach (auth()->user()->unreadNotifications as $notification)
+                        <div id="notify-items" class="dclose notification-item highlight">
+                          <a href="{{$notification->data['link']}}" class="text-dark">{{$notification->data['message']}}</a>
+                        </div>
+                      @endforeach
                     </div>
-                    <div id="notify-items" class="dclose notification-item highlight">
-                      <p>Notifikasi 2: Pesan Baru Baru.</p>
+                    <hr>
+                    <div class="d-flex justify-content-center align-items-center">
+                      <button class="btn btn-outline-secondary dclose" id="mark-read">Tandai semua telah dibaca</button>
                     </div>
-                    <div id="notify-items" class="dclose notification-item highlight">
-                      <p>Notifikasi 3: Pesan tidak baru.</p>
-                    </div>
+                  @else
+                  <div id="notify-items" class="dclose notification-item align-items-center">
+                    <p>Tidak Ada Notifikasi Baru.</p>
                   </div>
-                  <hr>
-                  <div class="d-flex justify-content-center align-items-center">
-                    <button class="btn btn-outline-secondary dclose" id="mark-read">Tandai semua telah dibaca</button>
-                  </div>
+                  @endif
                 <!-- Notify End -->
                 </div>
               </li>

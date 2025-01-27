@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NewCreatedUser;
+use App\Listeners\SendNewUserNotification;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Itstructure\LaRbac\Models\Role;
@@ -37,6 +39,9 @@ class UserController extends Controller
 
         // Menambahkan role ke user
         $user->roles()->attach($request->role);
+
+        // Menambah Notifikasi ubah password pada new user
+        event(new NewCreatedUser($user));
 
         return redirect()->route('list_users')->with('success', __('User created successfully.'));
     }
