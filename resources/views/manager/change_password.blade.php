@@ -1,4 +1,4 @@
-@extends("layouts.layout")
+@extends("layouts.layout_manager  ")
 
 @section("title", "Document")
 
@@ -33,11 +33,11 @@
           </div>
 
             <div class="flex justify-center">
+            <button type="submit" class="btn btn-primary m-1">
+                Rubah Password
+            </button>
             <button type="submit" class="btn btn-approver m-1">
                 Kembali
-            </button>
-            <button type="submit" class="btn btn-admin m-1">
-                Rubah Password
             </button>
           </div>
         </form>

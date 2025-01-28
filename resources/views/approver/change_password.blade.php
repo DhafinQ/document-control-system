@@ -33,11 +33,11 @@
           </div>
 
             <div class="flex justify-center">
-            <button type="submit" class="btn btn-approver m-1">
-                Kembali
-            </button>
             <button type="submit" class="btn btn-admin m-1">
                 Rubah Password
+            </button>
+            <button type="submit" class="btn btn-approver m-1">
+                Kembali
             </button>
           </div>
         </form>

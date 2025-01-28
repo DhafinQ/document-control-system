@@ -17,7 +17,7 @@
 
                         <div class="d-flex align-items-center">
                           <div class="me-4">
-                            <span class="fs-2"><button type="button" class="btn btn-admin m-1">Settings</button></span>
+                            <span class="fs-2"><button type="button" class="btn btn-user m-1">Settings</button></span>
                           </div>
                           <div>
                             <span class="fs-2"><button type="button" class="btn btn-approver m-1">Logout</button></span>
