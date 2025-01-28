@@ -2,8 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 
+// -- LOGIN PAGE --
+
 Route::get('/', function () {
-    return view('/welcome');
+    return view('/login');
 });
 
 // -- TEMPLATE ROUTES --
@@ -142,7 +144,14 @@ Route::get('/admin/settings/change_password', function () {
     return view('/admin/change_password');
 });
 
+Route::get('/admin/detail_dokumen', function () {
+    return view('/admin/detail_dokumen');
+});
 // -- APPROVER ROLES --
+
+Route::get('/approver', function () {
+    return view('/approver/home');
+});
 
 Route::get('/approver/settings', function () {
     return view('/approver/settings');
@@ -154,6 +163,10 @@ Route::get('/approver/settings/change_password', function () {
 
 // -- MANAGER ROLES --
 
+Route::get('/manager', function () {
+    return view('/manager/home');
+});
+
 Route::get('/manager/settings', function () {
     return view('/manager/settings');
 });
@@ -163,6 +176,10 @@ Route::get('/manager/settings/change_password', function () {
 });
 
 // -- USER ROLES --
+
+Route::get('/user', function () {
+    return view('/user/home');
+});
 
 Route::get('/user/settings', function () {
     return view('/user/settings');

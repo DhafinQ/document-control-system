@@ -1,4 +1,4 @@
-@extends("layouts.layout")
+@extends("layouts.layout_admin")
 
 @section("title", "Revisi Document")
 
@@ -33,7 +33,7 @@
                                     <td>1</td>
                                     <td>Draft</td>
                                     <td><a href="/dokumen/DOC-001.pdf" target="_blank">Download</a></td>
-                                    <td><a href="/admin/approval_dokumen/form" class="btn btn-sm btn-primary">Ubah Status</a></td>
+                                    <td><a href="/admin/approval_dokumen/form" class="btn btn-sm btn-admin">Ubah Pengesahan</a></td>
                                 </tr>
                                 <tr>
                                     <td>2</td>
@@ -42,7 +42,7 @@
                                     <td>3</td>
                                     <td>Approved</td>
                                     <td><a href="/dokumen/DOC-002.pdf" target="_blank">Download</a></td>
-                                    <td><a href="/admin/approval_dokumen/form" class="btn btn-sm btn-primary">Ubah Status</a></td>
+                                    <td><a href="/admin/approval_dokumen/form" class="btn btn-sm btn-admin">Ubah Pengesahan</a></td>
                                 </tr>
                                 <tr>
                                     <td>3</td>
@@ -51,7 +51,7 @@
                                     <td>2</td>
                                     <td>Pending</td>
                                     <td><a href="/dokumen/DOC-003.pdf" target="_blank">Download</a></td>
-                                    <td><a href="/admin/approval_dokumen/form" class="btn btn-sm btn-primary">Ubah Status</a></td>
+                                    <td><a href="/admin/approval_dokumen/form" class="btn btn-sm btn-admin">Ubah Pengesahan</a></td>
                                 </tr>
                             </tbody>
                         </table>

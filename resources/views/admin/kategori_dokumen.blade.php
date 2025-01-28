@@ -1,4 +1,4 @@
-@extends("layouts.layout")
+@extends("layouts.layout_admin")
 
 @section("title", "Revisi Document")
 
@@ -10,7 +10,7 @@
                 <div class="col-md-12">
                     <h5 class="card-title fw-semibold mb-4">Kategori Dokumen</h5>
                     <div class="d-flex justify-content-end mb-1">
-                        <a href="/admin/kategori_dokumen/add" class="btn btn-primary d-flex align-items-center">
+                        <a href="/admin/kategori_dokumen/add" class="btn btn-admin d-flex align-items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-file-code-2">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                 <path d="M10 12h-1v5h1" />
@@ -36,21 +36,21 @@
                                     <td>1</td>
                                     <td>SOP</td>
                                     <td>
-                                        <a href="/admin/kategori_dokumen/edit" class="btn btn-sm btn-primary">Edit</a>
+                                        <a href="/admin/kategori_dokumen/edit" class="btn btn-sm btn-admin">Edit</a>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>2</td>
                                     <td>Proposal</td>
                                     <td>
-                                        <a href="/admin/kategori_dokumen/edit" class="btn btn-sm btn-primary">Edit</a>
+                                        <a href="/admin/kategori_dokumen/edit" class="btn btn-sm btn-admin">Edit</a>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>3</td>
                                     <td>Laporan</td>
                                     <td>
-                                        <a href="/admin/kategori_dokumen/edit" class="btn btn-sm btn-primary">Edit</a>
+                                        <a href="/admin/kategori_dokumen/edit" class="btn btn-sm btn-admin">Edit</a>
                                     </td>
                                 </tr>
                             </tbody>

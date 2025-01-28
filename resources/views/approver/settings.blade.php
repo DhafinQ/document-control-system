@@ -1,4 +1,4 @@
-@extends("layouts.layout")
+@extends("layouts.layout_approver")
 
 @section("title", "Document")
 
@@ -27,20 +27,10 @@
             <input type="text" class="form-control" id="title" placeholder="Judul Dokumen" required />
           </div>
 
-            <!-- Password -->
-          <div class="mb-6">
-            <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
-            <input type="password" class="form-control" id="password" placeholder="Password" required />
-          </div>
             <!-- Role -->
           <div class="mb-6 mt-3">
             <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Role Anda Saat Ini</label>
             <input type="text" class="form-control" id="password" placeholder="Role Anda Saat Ini" required />
-          </div>
-            <div class="flex justify-center">
-            <button type="submit" class="btn btn-admin m-1">
-                Rubah Password
-            </button>
           </div>
         </form>
       </div>

@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>@yield("title")</title>
-  <link rel="shortcut icon" type="image/png" href="{{ asset('assets/images/logos/favicon.png') }}" />
+  <link rel="shortcut icon" type="image/png" href="{{ asset('assets/images/logos/logoupt.png') }}" />
   <link rel="stylesheet" href="{{ asset('assets/css/styles.min.css') }}" />
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/dataTables.bootstrap5.min.css">
   <link rel="stylesheet"  href="{{ asset('assets/css/searchableOptionList.css') }}">
@@ -22,7 +22,7 @@
       <div>
         <div class="brand-logo d-flex align-items-center justify-content-between">
           <a href="/" class="text-nowrap logo-img">
-            <img src="{{ asset('assets/images/logos/dark-logo.svg') }}" width="180" alt="" />
+            <img src="{{ asset('assets/images/logos/sidebar.png') }}" width="215" alt="" />
           </a>
           <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
             <i class="ti ti-x fs-8"></i>
@@ -36,7 +36,7 @@
               <span class="hide-menu">Home</span>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="/admin" aria-expanded="false">
+              <a class="sidebar-link" href="/manager" aria-expanded="false">
                 <span>
                   <i class="ti ti-layout-dashboard"></i>
                 </span>
@@ -44,31 +44,11 @@
               </a>
             </li>
             <li class="nav-small-cap">
-              <i class="ti ti-user nav-small-cap-icon fs-4"></i>
-              <span class="hide-menu">USER</span>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="/admin/roles" aria-expanded="false">
-                <span>
-                  <i class="ti ti-user"></i>
-                </span>
-                <span class="hide-menu">Roles</span>
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="/admin/users" aria-expanded="false">
-                <span>
-                  <i class="ti ti-users"></i>
-                </span>
-                <span class="hide-menu">Users</span>
-              </a>
-            </li>
-            <li class="nav-small-cap">
               <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
               <span class="hide-menu">Dokumen</span>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="/admin/kategori_dokumen" aria-expanded="false">
+              <a class="sidebar-link" href="/manager/kategori_dokumen" aria-expanded="false">
                 <span>
                   <i class="ti ti-folder"></i>
                 </span>
@@ -76,7 +56,7 @@
               </a>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="/admin/dokumen_aktif" aria-expanded="false">
+              <a class="sidebar-link" href="/manager/dokumen_aktif" aria-expanded="false">
                 <span>
                   <i class="ti ti-file"></i>
                 </span>
@@ -84,7 +64,7 @@
               </a>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="/admin/revisi_dokumen" aria-expanded="false">
+              <a class="sidebar-link" href="/manager/revisi_dokumen" aria-expanded="false">
                 <span>
                   <i class="ti ti-pencil"></i>
                 </span>
@@ -92,7 +72,7 @@
               </a>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="/admin/pengesahan_dokumen" aria-expanded="false">
+              <a class="sidebar-link" href="/manager/pengesahan_dokumen" aria-expanded="false">
                 <span>
                   <i class="ti ti-checks"></i>
                 </span>
@@ -100,7 +80,7 @@
               </a>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="/admin/histori_dokumen" aria-expanded="false">
+              <a class="sidebar-link" href="/manager/histori_dokumen" aria-expanded="false">
                 <span>
                   <i class="ti ti-history"></i>
                 </span>
@@ -108,15 +88,31 @@
               </a>
             </li>
             <li class="nav-small-cap">
-              <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-              <span class="hide-menu">AUTH</span>
+              <i class="ti ti-user nav-small-cap-icon fs-4"></i>
+              <span class="hide-menu">USER</span>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="/template/login" aria-expanded="false">
+              <a class="sidebar-link" href="/manager/roles" aria-expanded="false">
                 <span>
-                  <i class="ti ti-login"></i>
+                  <i class="ti ti-user"></i>
                 </span>
-                <span class="hide-menu">Log Out</span>
+                <span class="hide-menu">Roles</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="/manager/users" aria-expanded="false">
+                <span>
+                  <i class="ti ti-users"></i>
+                </span>
+                <span class="hide-menu">Users</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="/manager/permission" aria-expanded="false">
+                <span>
+                  <i class="ti ti-key"></i>
+                </span>
+                <span class="hide-menu">Permission</span>
               </a>
             </li>
           </ul>
@@ -153,11 +149,15 @@
                 </a>
                 <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop2">
                   <div class="message-body">
-                    <a href="/admin/settings" class="d-flex align-items-center gap-2 dropdown-item">
+                    <a href="/manager/settings" class="d-flex align-items-center gap-2 dropdown-item">
                       <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-settings"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z" /><path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" /></svg>
                       <p class="mb-0 fs-3">Settings</p>
                     </a>
-                    <a href="/template/login" class="btn btn-outline-primary mx-3 mt-2 d-block">Logout</a>
+                    <a href="/manager/settings/change_password" class="d-flex align-items-center gap-2 dropdown-item">
+                      <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-lock"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 13a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-6z" /><path d="M11 16a1 1 0 1 0 2 0a1 1 0 0 0 -2 0" /><path d="M8 11v-4a4 4 0 1 1 8 0v4" /></svg>
+                      <p class="mb-0 fs-3">Change Password</p>
+                    </a>
+                    <a href="/" class="btn btn-outline-out mx-3 mt-2 d-block">Logout</a>
                   </div>
                 </div>
               </li>
