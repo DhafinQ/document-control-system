@@ -8,6 +8,7 @@ use App\Models\DocumentHistory;
 use App\Models\Category;
 use App\Models\User;
 use App\Notifications\DocumentApprovalNotification;
+use App\Notifications\DocumentCreatedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Response;
@@ -193,14 +194,27 @@ class DocumentController extends Controller
         return redirect()->route('documents.index')->with('success', 'Document deleted successfully.');
     }
 
-    //Notification
-    public function notifyDocumentPending()
+    //Approved Notify
+    public function approveDocument(Request $request, $id)
     {
-        $documentCount = 5; //ngasal dulu rek
+        $document = Document::findOrFail($id);
+        $document->status = 'Approved';
+        $document->save();
 
-        $admin = User::role('admin')->first();
-        $admin->notify(new DocumentApprovalNotification($documentCount));
+        event(new DocumentApprovalNotification($document));
 
-        return response()->json(['message' => 'Notifikasi berhasil dikirim']);
+        return response()->json(['message' => 'Document approved successfully']);
+    }
+
+    //Approved Notify
+    public function createdDocument(Request $request, $id)
+    {
+        $document = Document::findOrFail($id);
+        $document->status = 'Created';
+        $document->save();
+
+        event(new DocumentCreatedNotification($document));
+
+        return response()->json(['message' => 'Document created successfully']);
     }
 }

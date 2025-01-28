@@ -7,18 +7,17 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class DocumentApprovalNotification extends Notification
+class DocumentCreatedNotification extends Notification
 {
     use Queueable;
-    private $docApproval;
+    private $docCreated;
 
     /**
      * Create a new notification instance.
-     * @return void
      */
-    public function __construct($docApproval)
+    public function __construct($docCreated)
     {
-        $this->docApproval = $docApproval;
+        $this->docCreated = $docCreated;
     }
 
     /**
@@ -39,9 +38,9 @@ class DocumentApprovalNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'name' => $this->docApproval->document,
-            'message' => 'Dokumen '.$this->docApproval->name.'Menunggu Persetujuan',
-            'link' => 'javascript:void()'
+            'name' => $this->docCreated->name,
+            'message' => 'Dokumen baru telah dibuat oleh '.$this->docCreated->name.'!',
+            'link' => 'javascript:void()' 
         ];
     }
 }
