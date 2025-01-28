@@ -18,7 +18,7 @@
                                         <th>No</th>
                                         <th>ID</th>
                                         <th>Nama</th>
-                                        <th>Nomor Revisi</th>
+                                        <th>Menggantikan Dokumen</th>
                                         <th>Status</th>
                                         <th>Berkas</th>
                                         <th>Aksi</th>
@@ -30,7 +30,18 @@
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $rev->document->code }}</td>
                                             <td>{{ $rev->document->title }}</td>
-                                            <td>{{ $rev->revision_number }}</td>
+                                            <td>
+                                                <ul class="list-group">
+                                                    @foreach ($rev->revisedDocument() as $doc)
+                                                        <li class="list-group-item">
+                                                            <a href="{{route('document_revision.show-file', ['filename' => $doc->currentRevision->file_path])}}" target="blank">{{$doc->title}}</a>
+                                                        </li>
+                                                    @endforeach
+                                                    @if (count($rev->revisedDocument()) == 0)
+                                                        <li class="list-group-item">-</li>
+                                                    @endif
+                                                </ul>
+                                            </td>
                                             <td>{{ $rev->status }}</td>
                                             <td><a href="{{ route('document_revision.show-file', ['filename' => $rev->file_path]) }}"
                                                     target="_blank">Lihat File</a></td>
@@ -65,11 +76,7 @@
                                             <form id="formTolak" method="POST">
                                                 @csrf
                                                 @method('PUT')
-                                                @if (auth()->user()->isRole('Kepala-Puskesmas'))
-                                                    <input type="hidden" name="status" value="Ditolak">
-                                                @else
-                                                    <input type="hidden" name="status" value="Pengajuan Revisi">
-                                                @endif
+                                                <input type="hidden" name="status" value="Pengajuan Revisi">
                                                 <div class="row mb-3 align-items-center">
                                                     <div class="col-md-6">
                                                         <label for="exampleInputEmail1" class="form-label">Judul</label>
@@ -187,6 +194,12 @@
                                                 </div>
                                                 <div class="row mb-3 align-items-center">
                                                     <div class="col-md-12">
+                                                        <label for="exampleInputEmail1" class="form-label">Alasan Revisi</label>
+                                                        <textarea id="acc_reason" class="form-control" disabled></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-3 align-items-center">
+                                                    <div class="col-md-12">
                                                         <label for="exampleInputEmail1" class="form-label">Status
                                                             @if (auth()->user()->isRole('administrator'))
                                                                 <span class="text-danger">*</span>
@@ -204,7 +217,7 @@
                                                             <input class="form-check-input" type="checkbox"
                                                                 value="1" id="acc_status2_doc" name="acc_content"
                                                                 {{ auth()->user()->isRole('administrator') ? '' : 'disabled' }}
-                                                                checked>
+                                                                >
                                                             <label class="form-check-label" for="flexCheckChecked">
                                                                 Telah diverifikasi bagian mutu
                                                             </label>
@@ -265,6 +278,7 @@
             $('#acc_url_doc').attr('href', data.url);
             $('#acc_status1_doc').prop('checked', data.acc_format);
             $('#acc_status2_doc').prop('checked', data.acc_content);
+            $('#acc_reason').val(data.reason);
 
             $('#rev_judul_doc').val(data.judul);
             $('#rev_code_doc').val(data.code);

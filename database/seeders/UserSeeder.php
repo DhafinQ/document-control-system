@@ -40,6 +40,12 @@ class UserSeeder extends Seeder
                 "role" => "Kepala Puskesmas"
             ],
             [
+                "name" => "PJ Program",
+                "email" => "pjprogram@gmail.com",
+                "password" => bcrypt("password"),
+                "role" => "PJ Program"
+            ],
+            [
                 "name" => "Staff",
                 "email" => "staff@gmail.com",
                 "password" => bcrypt("password"),

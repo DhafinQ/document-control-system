@@ -66,10 +66,9 @@ class CustomSeeder extends Seeder
                 'permissions' => [
                     'view-documents',
                     'active-document',
-                    'view-revisions',
-                    'edit-revisions',
                     'view-approval',
                     'edit-approval',
+                    'view-histories'
                 ],
             ],
             'Bagian Mutu' => [
@@ -77,10 +76,9 @@ class CustomSeeder extends Seeder
                 'permissions' => [
                     'view-documents',
                     'active-document',
-                    'view-revisions',
-                    'edit-revisions',
                     'view-approval',
                     'edit-approval',
+                    'view-histories'
                 ],
             ],
             'Kepala Puskesmas' => [
@@ -90,6 +88,17 @@ class CustomSeeder extends Seeder
                     'active-document',
                     'view-approval',
                     'edit-approval',
+                    'view-histories'
+                ],
+            ],
+            'PJ Program' => [
+                'name' => 'PJ Program',
+                'permissions' => [
+                    'view-documents',
+                    'active-document',
+                    'view-revisions',
+                    'create-revisions',
+                    'edit-revisions',
                     'view-histories'
                 ],
             ],
