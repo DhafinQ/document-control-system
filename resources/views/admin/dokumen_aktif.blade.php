@@ -1,4 +1,4 @@
-@extends("layouts.layout")
+@extends("layouts.layout_admin")
 
 @section("title", "Document")
 
@@ -56,7 +56,7 @@
                             <td class="px-6 py-4 text-center">Admin</td>
                             <td class="px-6 py-4 text-center">Dokumen 1.pdf</td>
                             <td class="px-6 py-4 text-center">
-                                <button class="btn btn-admin">Lihat File</button>
+                                <button class="btn btn-admin">Lihat Detail</button>
                             </td>
                         </tr>
                         <tr>
@@ -67,7 +67,7 @@
                             <td class="px-6 py-4 text-center">User </td>
                             <td class="px-6 py-4 text-center">Dokumen 2.pdf</td>
                             <td class="px-6 py-4 text-center">
-                                <button class="btn btn-admin">Lihat File</button>
+                                <button class="btn btn-admin">Lihat Detail</button>
                             </td>
                         </tr>
                         <tr>
@@ -78,7 +78,7 @@
                             <td class="px-6 py-4 text-center">Admin</td>
                             <td class="px-6 py-4 text-center">Dokumen 3.pdf</td>
                             <td class="px-6 py-4 text-center">
-                                <button class="btn btn-admin">Lihat File</button>
+                                <button class="btn btn-admin">Lihat Detail</button>
                             </td>
                         </tr>
                         <tr>
@@ -89,7 +89,7 @@
                             <td class="px-6 py-4 text-center">User  </td>
                             <td class="px-6 py-4 text-center">Dokumen 4.pdf</td>
                             <td class="px-6 py-4 text-center">
-                                <button class="btn btn-admin">Lihat File</button>
+                                <button class="btn btn-admin">Lihat Detail</button>
                             </td>
                         </tr>
                         <!-- Tambahkan baris lainnya di sini -->

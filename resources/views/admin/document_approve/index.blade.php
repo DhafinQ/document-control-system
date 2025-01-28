@@ -1,4 +1,4 @@
-@extends("layouts.layout")
+@extends("layouts.layout_admin")
 
 @section("title", "Revisi Document")
 
@@ -35,7 +35,7 @@
                                     <td>{{$rev->status}}</td>
                                     <td><a href="{{route('document_revision.show-file',['filename' => $rev->file_path])}}" target="_blank">Lihat File</a></td>
                                     @can('edit-approval')
-                                        <td><a href="{{route('document_approval.edit',['documentRevision' => $rev->id])}}" class="btn btn-sm btn-primary">Ubah Status</a></td>
+                                        <td><a href="{{route('document_approval.edit',['documentRevision' => $rev->id])}}" class="btn btn-sm btn-admin">Ubah Status</a></td>
                                     @endcan
                                 </tr>
                                 @endforeach
