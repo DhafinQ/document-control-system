@@ -148,6 +148,48 @@ Route::get('/admin/notifikasi_admin', function () {
     return view('/admin/notifikasi_admin');
 });
 
+// -- APPROVER ROLES --
+
+Route::get('/approver', function () {
+    return view('/approver/home');
+});
+
+Route::get('/approver/settings', function () {
+    return view('/approver/settings');
+});
+
+Route::get('/approver/settings/change_password', function () {
+    return view('/approver/change_password');
+});
+
+// -- MANAGER ROLES --
+
+Route::get('/manager', function () {
+    return view('/manager/home');
+});
+
+Route::get('/manager/settings', function () {
+    return view('/manager/settings');
+});
+
+Route::get('/manager/settings/change_password', function () {
+    return view('/manager/change_password');
+});
+
+// -- USER ROLES --
+
+Route::get('/user', function () {
+    return view('/user/home');
+});
+
+Route::get('/user/settings', function () {
+    return view('/user/settings');
+});
+
+Route::get('/user/settings/change_password', function () {
+    return view('/user/change_password');
+});
+
 
 
 // ================================ BE ROUTE =============================

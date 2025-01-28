@@ -1,4 +1,4 @@
-@extends("layouts.layout")
+@extends("layouts.layout_admin")
 
 @section("title", "Document")
 
@@ -8,7 +8,7 @@
         <div class="container-fluid">
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title fw-semibold mb-4">Dokumen Approval</h5>
+              <h5 class="card-title fw-semibold mb-4">Revisi Dokumen</h5>
 
                   <form>
                   <div class="row mb-3 align-items-center">
@@ -47,9 +47,6 @@
                     <div class="col-md-6">
                       <label for="exampleInputEmail1" class="form-label">Status</label>
                       <div class="dropdown">
-                        <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                          Ubah Status
-                        </a>
                         <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
                           Ubah Status
                         </a>
