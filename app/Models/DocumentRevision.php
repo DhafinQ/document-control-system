@@ -15,6 +15,8 @@ class DocumentRevision extends Model
         'revision_number',
         'status',
         'description',
+        'acc_format',
+        'acc_content'
     ];
 
     public function document() : BelongsTo{

@@ -21,8 +21,40 @@ class DocumentRevisionController extends Controller
 
     public function indexApproval()
     {
-        $revisions = DocumentRevision::where('status','=','Draft')->with(['document', 'reviser'])->get();
-        return view('admin.document_approve.index', compact('revisions'));
+        $revisionsQuery = DocumentRevision::where('status', 'Draft')->with(['document', 'reviser']);
+
+        if (auth()->user()->isRole('Kepala-Puskesmas')) {
+            $revisionsQuery->where('acc_content', true)->where('acc_format', true);
+        } elseif (auth()->user()->isRole('Bagian-Mutu')) {
+            $revisionsQuery->where('acc_content', false)->where('acc_format', true);
+        } else {
+            $revisionsQuery->where('acc_content', false)->where('acc_format', false);
+        }
+
+        $revisions = $revisionsQuery->get();
+
+        $categories = Category::all();
+        return view('admin.document_approve.index', compact('revisions','categories'));
+    }
+
+    public function getDoc(Request $req){
+        $documentRevision = DocumentRevision::findOrFail($req->id);
+        if (!$documentRevision) {
+            return response()->json(['message' => 'Document not found'], 404);
+        }
+        
+        $data = [
+            'id' => $documentRevision->id,
+            'judul' => $documentRevision->document->title,
+            'code' => $documentRevision->document->code,
+            'category' => $documentRevision->document->category->name,
+            'uploader' => $documentRevision->document->uploader->name,
+            'url' => route('document_revision.show-file', ['filename' => $documentRevision->file_path]),
+            'acc_format' => $documentRevision->acc_format,
+            'acc_content' => $documentRevision->acc_content,
+        ];
+
+        return response()->json(['data' => $data], 200);
     }
 
     public function create(){
@@ -172,20 +204,37 @@ class DocumentRevisionController extends Controller
 
     public function updateApproval(Request $request, DocumentRevision $documentRevision)
     {
-        $validated = $request->validate([
-            'status' => 'required|in:Disetujui,Ditolak',
-            'reason' => 'required|string|max:255',
-        ]);
-        $documentRevision->update($validated);
+        $rules = [
+            'status' => 'required|in:Disetujui,Pengajuan Revisi,Ditolak,Draft',
+            'reason' => 'required_if:status,Pengajuan Revisi|required_if:status,Ditolak|string|max:255',
+        ];
 
-        if($validated['status'] === 'Disetujui'){
-            $act = 'Approved';
+        if (auth()->user()->isRole('Administrator')) {
+            $rules['acc_format'] = 'required|boolean';
+            $rules['acc_content'] = 'required|boolean';
+        }
+
+        $validated = $request->validate($rules);
+        
+        $data = [
+            'status' => $validated['status'],
+            'acc_format' => ($validated['status'] == "Ditolak" || $validated['status'] == 'Pengajuan Revisi') ? false : (auth()->user()->isRole('Pengendali-Dokumen') ? true : $validated['acc_format'] ?? $documentRevision->acc_format),
+            'acc_content' => ($validated['status'] == "Ditolak" || $validated['status'] == 'Pengajuan Revisi') ? false : (auth()->user()->isRole('Bagian-Mutu') ? true : $validated['acc_content'] ?? $documentRevision->acc_content),
+        ];
+        
+        $documentRevision->update($data);
+
+        $act = match($validated['status']) {
+            'Disetujui' => 'Approved',
+            'Draft' => 'Approved',
+            default => 'Rejected',
+        };
+        
+        if ($validated['status'] === 'Disetujui') {
             $documentRevision->document->update([
                 'is_active' => true,
-                'current_revision_id' => $documentRevision->id
+                'current_revision_id' => $documentRevision->id,
             ]);
-        }else{
-            $act = 'Rejected';
         }
 
         DocumentHistory::create([
@@ -193,8 +242,9 @@ class DocumentRevisionController extends Controller
             'revision_id' => $documentRevision->id,
             'action' => $act,
             'performed_by' => Auth::id(),
-            'reason' => $validated['reason'],
+            'reason' => $validated['reason'] ?? null,
         ]);
+        
 
         return redirect()->route('document_approval.index')->with('success', 'Document updated successfully.');
     }

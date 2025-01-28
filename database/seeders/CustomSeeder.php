@@ -61,14 +61,36 @@ class CustomSeeder extends Seeder
                     'edit-approval',
                 ],
             ],
-            'Reviewer' => [
-                'name' => 'Reviewer',
+            'Pengendali Dokumen' => [
+                'name' => 'Pengendali Dokumen',
                 'permissions' => [
                     'view-documents',
+                    'active-document',
                     'view-revisions',
                     'edit-revisions',
                     'view-approval',
                     'edit-approval',
+                ],
+            ],
+            'Bagian Mutu' => [
+                'name' => 'Bagian Mutu',
+                'permissions' => [
+                    'view-documents',
+                    'active-document',
+                    'view-revisions',
+                    'edit-revisions',
+                    'view-approval',
+                    'edit-approval',
+                ],
+            ],
+            'Kepala Puskesmas' => [
+                'name' => 'Kepala Puskesmas',
+                'permissions' => [
+                    'view-documents',
+                    'active-document',
+                    'view-approval',
+                    'edit-approval',
+                    'view-histories'
                 ],
             ],
             'Staff' => [
@@ -76,7 +98,6 @@ class CustomSeeder extends Seeder
                 'permissions' => [
                     'view-documents',
                     'active-document',
-                    'create-documents',
                 ],
             ],
         ];

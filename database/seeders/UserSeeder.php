@@ -22,10 +22,22 @@ class UserSeeder extends Seeder
                 "role" => "Administrator"
             ],
             [
-                "name" => "Reviewer",
-                "email" => "reviewer@gmail.com",
+                "name" => "Pengendali Dokumen",
+                "email" => "pengendalidokumen@gmail.com",
                 "password" => bcrypt("password"),
-                "role" => "Reviewer"
+                "role" => "Pengendali Dokumen"
+            ],
+            [
+                "name" => "Bagian Mutu",
+                "email" => "bagianmutu@gmail.com",
+                "password" => bcrypt("password"),
+                "role" => "Bagian Mutu"
+            ],
+            [
+                "name" => "Kepala Puskesmas",
+                "email" => "kepalapuskesmas@gmail.com",
+                "password" => bcrypt("password"),
+                "role" => "Kepala Puskesmas"
             ],
             [
                 "name" => "Staff",

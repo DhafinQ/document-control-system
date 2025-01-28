@@ -51,6 +51,8 @@
                                             bg-light text-dark
                                         @elseif ($revision->status === 'Disetujui')
                                             bg-success
+                                        @elseif ($revision->status === 'Pengajuan Revisi')
+                                            bg-warning
                                         @elseif ($revision->status === 'Ditolak')
                                             bg-danger
                                         @endif
