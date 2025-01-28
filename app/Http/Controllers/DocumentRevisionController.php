@@ -210,8 +210,8 @@ class DocumentRevisionController extends Controller
         ];
 
         if (auth()->user()->isRole('Administrator')) {
-            $rules['acc_format'] = 'required|boolean';
-            $rules['acc_content'] = 'required|boolean';
+            $rules['acc_format'] = 'required_if:acc_content,false|boolean';
+            $rules['acc_content'] = 'required_if:acc_format,false|boolean';
         }
 
         $validated = $request->validate($rules);

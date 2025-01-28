@@ -1,4 +1,4 @@
-@extends("layouts.layout_admin")
+@extends('layouts.layout_admin')
 
 @section('title', 'Revisi Document')
 
@@ -9,7 +9,6 @@
                 <div class="row">
                     <div class="col-md-12">
                         <h5 class="card-title fw-semibold mb-4">Pengesahan Dokumen</h5>
-
 
                         <div class="table-responsive mt-4">
 
@@ -188,19 +187,24 @@
                                                 </div>
                                                 <div class="row mb-3 align-items-center">
                                                     <div class="col-md-12">
-                                                        <label for="exampleInputEmail1" class="form-label">Status @if (auth()->user()->isRole('administrator'))
-                                                            <span class="text-danger">*</span>
-                                                        @endif</label>
+                                                        <label for="exampleInputEmail1" class="form-label">Status
+                                                            @if (auth()->user()->isRole('administrator'))
+                                                                <span class="text-danger">*</span>
+                                                            @endif
+                                                        </label>
                                                         <div class="form-check">
                                                             <input class="form-check-input" type="checkbox"
-                                                                value="1" id="acc_status1_doc" name="acc_format" {{auth()->user()->isRole('administrator') ? '' : 'disabled'}}>
+                                                                value="1" id="acc_status1_doc" name="acc_format"
+                                                                {{ auth()->user()->isRole('administrator') ? '' : 'disabled' }}>
                                                             <label class="form-check-label" for="flexCheckDefault">
                                                                 Telah diverivikasi Pengendali dokumen
                                                             </label>
                                                         </div>
                                                         <div class="form-check">
                                                             <input class="form-check-input" type="checkbox"
-                                                                value="1" id="acc_status2_doc" name="acc_content" {{auth()->user()->isRole('administrator') ? '' : 'disabled'}} checked>
+                                                                value="1" id="acc_status2_doc" name="acc_content"
+                                                                {{ auth()->user()->isRole('administrator') ? '' : 'disabled' }}
+                                                                checked>
                                                             <label class="form-check-label" for="flexCheckChecked">
                                                                 Telah diverifikasi bagian mutu
                                                             </label>

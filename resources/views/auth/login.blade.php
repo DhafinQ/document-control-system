@@ -47,11 +47,18 @@
                   @method('POST')
                   <div class="mb-3">
                     <label for="exampleInputEmail1" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" name="email">
+                    <input type="email" value="{{old('email')}}" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" name="email">
+                    @error('email')
+                      <span class="text-danger">{{$message}}</span>
+                    @enderror
                   </div>
+                 
                   <div class="mb-4">
                     <label for="exampleInputPassword1" class="form-label">Password</label>
                     <input type="password" class="form-control" id="exampleInputPassword1" name="password">
+                    @error('password')
+                      <span class="text-danger">{{$message}}</span>
+                    @enderror
                   </div>
                   <div class="d-flex align-items-center justify-content-between mb-4">
                     <div class="form-check">
