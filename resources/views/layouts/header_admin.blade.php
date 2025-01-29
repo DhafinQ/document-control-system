@@ -29,7 +29,13 @@
           </div>
         </div>
         <!-- Sidebar navigation-->
+        @if (auth()->user()->isRole('kepala-puskesmas') || auth()->user()->isRole('administrator'))
         <nav class="sidebar-nav-admin scroll-sidebar" data-simplebar="">
+        @elseif (auth()->user()->isRole('pj-program') || auth()->user()->isRole('staff'))
+        <nav class="sidebar-nav-user scroll-sidebar" data-simplebar="">
+        @else
+        <nav class="sidebar-nav-approver scroll-sidebar" data-simplebar="">
+        @endif
           <ul id="sidebarnav">
             <li class="nav-small-cap">
               <i class="ti ti-dots nav-small-cap-icon fs-4"></i>

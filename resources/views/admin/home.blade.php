@@ -1,16 +1,4 @@
-@php
-    $layout = 'layouts.layout_approver'; // Default layout
-
-    if (auth()->user()->isRole('kepala-puskesmas') || auth()->user()->isRole('administrator')) {
-        $layout = 'layouts.layout_admin';
-    } elseif (auth()->user()->isRole('pj-program')) {
-        $layout = 'layouts.layout_user';
-    } elseif (auth()->user()->isRole('staff')) {
-        $layout = 'layouts.layout_user';
-    }
-@endphp
-
-@extends($layout)
+@extends("layouts.layout_admin")
 
 @section("title", "Document")
 
