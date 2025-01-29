@@ -56,7 +56,7 @@
                                 <label for="exampleInputEmail1" class="form-label">Pembaruan Dokumen</label>
                                 <select id="my-select" name="rev[]" multiple="multiple" class="form-control">
                                     @foreach ($approvedDocs as $doc)
-                                      <option value="{{$doc->id}}" {{ old('rev', $documentRevision->document_id) == $doc->id? 'selected' : '' }}>{{$doc->title}}</option>
+                                      <option value="{{$doc->id}}" {{ in_array($doc->id, old('rev', $documentRevision->revised_doc) ?? []) ? 'selected' : '' }}>{{$doc->title}}</option>
                                     @endforeach
                                 </select>
                             </div>
