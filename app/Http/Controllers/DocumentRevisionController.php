@@ -47,7 +47,6 @@ class DocumentRevisionController extends Controller
         if (!$documentRevision) {
             return response()->json(['message' => 'Document not found'], 404);
         }
-        dd($documentRevision);
         $history = DocumentHistory::with('revision')
                     ->where('document_id',$documentRevision->document->id)
                     ->where('revision_id',$documentRevision->id)
@@ -55,8 +54,7 @@ class DocumentRevisionController extends Controller
                     ->where('action','Revised')
                     ->first();
         
-        $reason = $history['reason'];
-        dd($reason);
+        $reason = $history['reason'] ?? '';
 
         $data = [
             'id' => $documentRevision->id,
@@ -189,36 +187,36 @@ class DocumentRevisionController extends Controller
         $fileName = uniqid() . '_' . $file->getClientOriginalName();
         Storage::disk('dokumen')->put($fileName, file_get_contents($file));
 
-
-        $document = Document::findOrFail($documentRevision->document_id);
         $documentRevision->update([
             'status' => 'Proses Revisi'
         ]);
-        $newRev = DocumentRevision::create([
-            'document_id' => $document->id,
+
+        $currentRevDoc = $documentRevision->revised_doc;
+        if($currentRevDoc){
+            $currentRevDoc = array_merge($currentRevDoc,$validated['rev'] ?? []);
+        }
+        
+        DocumentRevision::create([
+            'document_id' => $documentRevision->document_id,
             'file_path' => $fileName,
             'revised_by' => Auth::id(),
             'revision_number' => $documentRevision->revision_number+1,
             'description' => $validated['description'],
-            'revised_doc' => $validated['rev'] ?? null
+            'revised_doc' => $currentRevDoc ?? $validated['rev']
         ]);
 
-        $document->update([
+        $documentRevision->document->update([
             'title' => $validated['title'],
             'code' => $validated['code'],
             'category_id' => $validated['category_id'],
         ]);
 
-        // foreach ($validated['rev'] ?? [] as $rev) {
-        //     $currentRevision = DocumentRevision::findOrFail($rev);
-        //     DocumentRevision::create([
-        //         'document_id' => $currentRevision->document->id,
-        //         'file_path' => $fileName,
-        //         'revised_by' => Auth::id(),
-        //         'revision_number' => $currentRevision->revision_number+1,
-        //         'description' => $validated['description'],
-        //     ]);
-        // }
+        foreach ($validated['rev'] ?? [] as $rev) {
+            $doc = Document::findOrFail($rev);
+            $doc->currentRevision->update([
+                'status' => 'Proses Revisi'
+            ]);
+        }
 
         // Log to DocumentHistory
         DocumentHistory::create([
@@ -260,7 +258,7 @@ class DocumentRevisionController extends Controller
             default => 'Rejected',
         };
         
-        if ($validated['status'] === 'Disetujui') {
+        if ($validated['status'] === 'Disetujui' && auth()->user()->isRole('Kepala-Puskesmas')) {
             $documentRevision->document->update([
                 'is_active' => true,
                 'current_revision_id' => $documentRevision->id,
@@ -274,6 +272,14 @@ class DocumentRevisionController extends Controller
                 $doc->update([
                     'is_active' => false,
                     'current_revision_id' => $documentRevision->id
+                ]);
+            }
+
+            for($i=1;$i<$documentRevision->revision_number;$i++){
+                $rev = DocumentRevision::with('document')->where('document_id',$documentRevision->document_id)
+                                ->where('revision_number',$i)->first();
+                $rev->update([
+                    'status' => 'Expired'
                 ]);
             }
         }

@@ -97,6 +97,8 @@ class CustomSeeder extends Seeder
                     'view-documents',
                     'active-document',
                     'view-revisions',
+                    'create-documents',
+                    'edit-documents',
                     'create-revisions',
                     'edit-revisions',
                     'view-histories'

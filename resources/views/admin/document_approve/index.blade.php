@@ -192,7 +192,7 @@
                                                             target="_blank">Download</a>
                                                     </div>
                                                 </div>
-                                                <div class="row mb-3 align-items-center">
+                                                <div id="reason_container" class="row mb-3 align-items-center" style="display: none;">
                                                     <div class="col-md-12">
                                                         <label for="exampleInputEmail1" class="form-label">Alasan Revisi</label>
                                                         <textarea id="acc_reason" class="form-control" disabled></textarea>
@@ -271,6 +271,7 @@
         }
 
         function populateModal(data) {
+            $('#reason_container').css('display','none');
             $('#acc_judul_doc').val(data.judul);
             $('#acc_code_doc').val(data.code);
             $('#acc_category_doc').val(data.category);
@@ -278,7 +279,11 @@
             $('#acc_url_doc').attr('href', data.url);
             $('#acc_status1_doc').prop('checked', data.acc_format);
             $('#acc_status2_doc').prop('checked', data.acc_content);
-            $('#acc_reason').val(data.reason);
+
+            if(data.reason != ''){
+                $('#reason_container').css('display','block');
+                $('#acc_reason').val(data.reason);
+            }
 
             $('#rev_judul_doc').val(data.judul);
             $('#rev_code_doc').val(data.code);
