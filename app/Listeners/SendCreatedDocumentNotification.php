@@ -7,6 +7,7 @@ use App\Notifications\DocumentCreatedNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Foundation\Auth\User;
 
 class SendCreatedDocumentNotification
 {
@@ -23,6 +24,9 @@ class SendCreatedDocumentNotification
      */
     public function handle(object $event): void
     {
-        Notification::send($event->createdDocumen, new DocumentCreatedNotification($event->createdDocumen));
+        $user = User::whereHas('roles', function ($query) {
+            $query->where('id', 1);
+        })->get();
+        Notification::send($user, new DocumentCreatedNotification($event->createdDocumen));
     }
 }
