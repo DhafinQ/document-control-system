@@ -74,7 +74,11 @@ class DocumentRevisionController extends Controller
     public function create(){
         $categories = Category::all();
         $approvedDocs = Document::where('is_active','=' ,true)
-        ->with('currentRevision')->get();
+        ->whereHas('currentRevision', function ($query) {
+            $query->where('status', 'Disetujui');
+        })
+        ->with('currentRevision')
+        ->get();
         return view('admin.document-revisions.create',compact('categories','approvedDocs'));
     }
 
@@ -134,8 +138,13 @@ class DocumentRevisionController extends Controller
     {
         if($documentRevision->status === 'Disetujui' || $documentRevision->status === 'Pengajuan Revisi'){
             $reason = $documentRevision->status === 'Pengajuan Revisi' ? DocumentHistory::with('revision')->where('document_id',$documentRevision->document->id)->where('revision_id',$documentRevision->id)->where('action','Rejected')->first()->reason:'';
-            $approvedDocs = Document::where('is_active','=' ,true)
-            ->with('currentRevision')->where('id','!=',$documentRevision->document_id)->with('revisions')->get();
+            $approvedDocs = Document::where('is_active',true)
+            ->whereHas('currentRevision', function ($query) {
+                $query->where('status', 'Disetujui');
+            })
+            ->where('id', '!=', $documentRevision->document_id)
+            ->with('currentRevision')
+            ->get();
             $categories = Category::all();
             return view('admin.document-revisions.edit', compact('documentRevision', 'categories','approvedDocs','reason'));
         }else{
@@ -146,7 +155,12 @@ class DocumentRevisionController extends Controller
     public function editApproval(DocumentRevision $documentRevision)
     {
         $approvedDocs = Document::where('is_active','=' ,true)
-        ->with('currentRevision')->where('id','!=',$documentRevision->document_id)->with('revisions')->get();
+        ->whereHas('currentRevision', function ($query) {
+            $query->where('status', 'Disetujui');
+        })
+        ->where('id', '!=', $documentRevision->document_id)
+        ->with('currentRevision')
+        ->get();
         $categories = Category::all();
         return view('admin.document_approve.edit', compact('documentRevision', 'categories','approvedDocs'));
     }
@@ -177,8 +191,17 @@ class DocumentRevisionController extends Controller
         ]);
 
         $currentRevDoc = $documentRevision->revised_doc;
-        if($currentRevDoc){
-            $currentRevDoc = array_merge($currentRevDoc,$validated['rev'] ?? []);
+        if ($currentRevDoc) {
+            // Get the new values to add
+            $newValues = array_diff($validated['rev'] ?? [], $currentRevDoc);
+
+            if (!empty($newValues)) {
+                $currentRevDoc = array_merge($currentRevDoc, $newValues);
+            }
+        }
+        
+        if(empty($currentRevDoc)){
+            $currentRevDoc = null;
         }
         
         DocumentRevision::create([
