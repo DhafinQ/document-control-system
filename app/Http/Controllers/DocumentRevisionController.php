@@ -27,8 +27,13 @@ class DocumentRevisionController extends Controller
             $revisionsQuery->where('acc_content', true)->where('acc_format', true);
         } elseif (auth()->user()->isRole('Bagian-Mutu')) {
             $revisionsQuery->where('acc_content', false)->where('acc_format', true);
-        } else {
+        } elseif ((auth()->user()->isRole('Pengendali-Dokumen'))){
             $revisionsQuery->where('acc_content', false)->where('acc_format', false);
+        } elseif((auth()->user()->isRole('Administrator'))){
+            $revisionsQuery->where(function ($query) {
+                $query->where('acc_content', false)
+                      ->orWhere('acc_format', false);
+            });
         }
 
         $revisions = $revisionsQuery->get();
@@ -38,11 +43,19 @@ class DocumentRevisionController extends Controller
     }
 
     public function getDoc(Request $req){
-        $documentRevision = DocumentRevision::findOrFail($req->id);
+        $documentRevision = DocumentRevision::with('document')->with('reviser')->findOrFail($req->id);
         if (!$documentRevision) {
             return response()->json(['message' => 'Document not found'], 404);
         }
+        $history = DocumentHistory::with('revision')
+                    ->where('document_id',$documentRevision->document->id)
+                    ->where('revision_id',$documentRevision->id)
+                    ->where('performed_by',$documentRevision->reviser->id)
+                    ->where('action','Revised')
+                    ->first();
         
+        $reason = $history['reason'] ?? '';
+
         $data = [
             'id' => $documentRevision->id,
             'judul' => $documentRevision->document->title,
@@ -52,6 +65,7 @@ class DocumentRevisionController extends Controller
             'url' => route('document_revision.show-file', ['filename' => $documentRevision->file_path]),
             'acc_format' => $documentRevision->acc_format,
             'acc_content' => $documentRevision->acc_content,
+            'reason' => $reason ?? ''
         ];
 
         return response()->json(['data' => $data], 200);
@@ -60,7 +74,11 @@ class DocumentRevisionController extends Controller
     public function create(){
         $categories = Category::all();
         $approvedDocs = Document::where('is_active','=' ,true)
-        ->with('currentRevision')->get();
+        ->whereHas('currentRevision', function ($query) {
+            $query->where('status', 'Disetujui');
+        })
+        ->with('currentRevision')
+        ->get();
         return view('admin.document-revisions.create',compact('categories','approvedDocs'));
     }
 
@@ -74,7 +92,6 @@ class DocumentRevisionController extends Controller
             'description' => 'required|string',
             'reason' => 'required|string|max:255',
         ]);
-
 
         $file = $request->file('file_path');
         $fileName = uniqid() . '_' . $file->getClientOriginalName();
@@ -94,26 +111,13 @@ class DocumentRevisionController extends Controller
             'revised_by' => Auth::id(),
             'revision_number' => 1,
             'description' => $validated['description'],
+            'revised_doc' => $validated['rev']
         ]);
 
         foreach ($validated['rev'] ?? [] as $rev) {
-            $currentRevision = DocumentRevision::findOrFail($rev);
-            $newRev = DocumentRevision::create([
-                'document_id' => $currentRevision->document_id,
-                'file_path' => $fileName,
-                'revised_by' => Auth::id(),
-                'revision_number' => $currentRevision->revision_number+1,
-                // Here
-                // 'description' => $validated['description'],
-                'description' => $currentRevision->description,
-            ]);
-
-            DocumentHistory::create([
-                'document_id' => $currentRevision->document_id,
-                'revision_id' => $currentRevision->id,
-                'action' => 'Revised',
-                'performed_by' => Auth::id(),
-                'reason' => $validated['reason'],
+            $doc = Document::findOrFail($rev);
+            $doc->currentRevision->update([
+                'status' => 'Proses Revisi'
             ]);
         }
 
@@ -132,61 +136,93 @@ class DocumentRevisionController extends Controller
 
     public function edit(DocumentRevision $documentRevision)
     {
-        $approvedDocs = Document::where('is_active','=' ,true)
-        ->with('currentRevision')->where('id','!=',$documentRevision->document_id)->with('revisions')->get();
-        $categories = Category::all();
-        return view('admin.document-revisions.edit', compact('documentRevision', 'categories','approvedDocs'));
+        if($documentRevision->status === 'Disetujui' || $documentRevision->status === 'Pengajuan Revisi'){
+            $reason = $documentRevision->status === 'Pengajuan Revisi' ? DocumentHistory::with('revision')->where('document_id',$documentRevision->document->id)->where('revision_id',$documentRevision->id)->where('action','Rejected')->first()->reason:'';
+            $approvedDocs = Document::where('is_active',true)
+            ->whereHas('currentRevision', function ($query) {
+                $query->where('status', 'Disetujui');
+            })
+            ->where('id', '!=', $documentRevision->document_id)
+            ->with('currentRevision')
+            ->get();
+            $categories = Category::all();
+            return view('admin.document-revisions.edit', compact('documentRevision', 'categories','approvedDocs','reason'));
+        }else{
+            return abort(404);
+        }
     }
 
     public function editApproval(DocumentRevision $documentRevision)
     {
         $approvedDocs = Document::where('is_active','=' ,true)
-        ->with('currentRevision')->where('id','!=',$documentRevision->document_id)->with('revisions')->get();
+        ->whereHas('currentRevision', function ($query) {
+            $query->where('status', 'Disetujui');
+        })
+        ->where('id', '!=', $documentRevision->document_id)
+        ->with('currentRevision')
+        ->get();
         $categories = Category::all();
         return view('admin.document_approve.edit', compact('documentRevision', 'categories','approvedDocs'));
     }
 
     public function update(Request $request, DocumentRevision $documentRevision)
     {
-        $validated = $request->validate([
+        $rules = [
             'title' => 'required|string|max:255',
             'category_id' => 'required',
             'rev' => 'nullable|array',
             'code' => 'required|string|max:30',
             'file_path' => 'required|file|mimes:pdf,doc,docx,ppt,pptx',
             'description' => 'required|string',
-            'reason' => 'required|string|max:255',
-        ]);
+        ];
 
+        if($documentRevision->status !== 'Pengajuan Revisi'){
+            $rules['reason'] = 'required|string|max:255';
+        }
+
+        $validated = $request->validate($rules);
 
         $file = $request->file('file_path');
         $fileName = uniqid() . '_' . $file->getClientOriginalName();
         Storage::disk('dokumen')->put($fileName, file_get_contents($file));
 
+        $documentRevision->update([
+            'status' => 'Proses Revisi'
+        ]);
 
-        $document = Document::findOrFail($documentRevision->document_id);
-        $newRev = DocumentRevision::create([
-            'document_id' => $document->id,
+        $currentRevDoc = $documentRevision->revised_doc;
+        if ($currentRevDoc) {
+            // Get the new values to add
+            $newValues = array_diff($validated['rev'] ?? [], $currentRevDoc);
+
+            if (!empty($newValues)) {
+                $currentRevDoc = array_merge($currentRevDoc, $newValues);
+            }
+        }
+        
+        if(empty($currentRevDoc)){
+            $currentRevDoc = null;
+        }
+        
+        DocumentRevision::create([
+            'document_id' => $documentRevision->document_id,
             'file_path' => $fileName,
             'revised_by' => Auth::id(),
             'revision_number' => $documentRevision->revision_number+1,
             'description' => $validated['description'],
+            'revised_doc' => $currentRevDoc ?? $validated['rev'] ?? null
         ]);
 
-        $document->update([
+        $documentRevision->document->update([
             'title' => $validated['title'],
             'code' => $validated['code'],
             'category_id' => $validated['category_id'],
         ]);
 
         foreach ($validated['rev'] ?? [] as $rev) {
-            $currentRevision = DocumentRevision::findOrFail($rev);
-            DocumentRevision::create([
-                'document_id' => $currentRevision->document->id,
-                'file_path' => $fileName,
-                'revised_by' => Auth::id(),
-                'revision_number' => $currentRevision->revision_number+1,
-                'description' => $validated['description'],
+            $doc = Document::findOrFail($rev);
+            $doc->currentRevision->update([
+                'status' => 'Proses Revisi'
             ]);
         }
 
@@ -196,7 +232,7 @@ class DocumentRevisionController extends Controller
             'revision_id' => $documentRevision->id,
             'action' => 'Revised',
             'performed_by' => Auth::id(),
-            'reason' => $validated['reason'],
+            'reason' => $validated['reason'] ?? null,
         ]);
 
         return redirect()->route('document_revision.index')->with('success', 'Revision updated successfully.');
@@ -205,8 +241,8 @@ class DocumentRevisionController extends Controller
     public function updateApproval(Request $request, DocumentRevision $documentRevision)
     {
         $rules = [
-            'status' => 'required|in:Disetujui,Pengajuan Revisi,Ditolak,Draft',
-            'reason' => 'required_if:status,Pengajuan Revisi|required_if:status,Ditolak|string|max:255',
+            'status' => 'required|in:Disetujui,Pengajuan Revisi,Draft',
+            'reason' => 'required_if:status,Pengajuan Revisi|string|max:255',
         ];
 
         if (auth()->user()->isRole('Administrator')) {
@@ -218,8 +254,8 @@ class DocumentRevisionController extends Controller
         
         $data = [
             'status' => $validated['status'],
-            'acc_format' => ($validated['status'] == "Ditolak" || $validated['status'] == 'Pengajuan Revisi') ? false : (auth()->user()->isRole('Pengendali-Dokumen') ? true : $validated['acc_format'] ?? $documentRevision->acc_format),
-            'acc_content' => ($validated['status'] == "Ditolak" || $validated['status'] == 'Pengajuan Revisi') ? false : (auth()->user()->isRole('Bagian-Mutu') ? true : $validated['acc_content'] ?? $documentRevision->acc_content),
+            'acc_format' => $validated['status'] == 'Pengajuan Revisi' ? false : (auth()->user()->isRole('Pengendali-Dokumen') ? true : $validated['acc_format'] ?? $documentRevision->acc_format),
+            'acc_content' => $validated['status'] == 'Pengajuan Revisi' ? false : (auth()->user()->isRole('Bagian-Mutu') ? true : $validated['acc_content'] ?? $documentRevision->acc_content),
         ];
         
         $documentRevision->update($data);
@@ -230,11 +266,30 @@ class DocumentRevisionController extends Controller
             default => 'Rejected',
         };
         
-        if ($validated['status'] === 'Disetujui') {
+        if ($validated['status'] === 'Disetujui' && auth()->user()->isRole('Kepala-Puskesmas')) {
             $documentRevision->document->update([
                 'is_active' => true,
                 'current_revision_id' => $documentRevision->id,
             ]);
+
+            // Change status to Expired
+            foreach($documentRevision->revisedDocument() as $doc){
+                $doc->currentRevision->update([
+                    'status' => 'Expired'
+                ]);
+                $doc->update([
+                    'is_active' => false,
+                    'current_revision_id' => $documentRevision->id
+                ]);
+            }
+
+            for($i=1;$i<$documentRevision->revision_number;$i++){
+                $rev = DocumentRevision::with('document')->where('document_id',$documentRevision->document_id)
+                                ->where('revision_number',$i)->first();
+                $rev->update([
+                    'status' => 'Expired'
+                ]);
+            }
         }
 
         DocumentHistory::create([

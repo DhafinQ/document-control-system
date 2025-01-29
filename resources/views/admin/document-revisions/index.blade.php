@@ -32,6 +32,7 @@
                                     <th>Id</th>
                                     <th>Judul</th>
                                     <th>Kategori</th>
+                                    <th>Rev.Number</th>
                                     <th>Status</th>
                                     <th>Uploader</th>
                                     <th>File Dokumen</th>
@@ -45,15 +46,16 @@
                                     <td>{{$revision->document->code}}</td>
                                     <td>{{$revision->document->title}}</td>
                                     <td>{{$revision->document->category->name}}</td>
+                                    <td>{{$revision->revision_number}}</td>
                                     <td>
                                         <span class="badge
                                         @if ($revision->status === 'Draft')
                                             bg-light text-dark
                                         @elseif ($revision->status === 'Disetujui')
                                             bg-success
-                                        @elseif ($revision->status === 'Pengajuan Revisi')
+                                        @elseif ($revision->status === 'Pengajuan Revisi' || $revision->status === 'Proses Revisi')
                                             bg-warning
-                                        @elseif ($revision->status === 'Ditolak')
+                                        @elseif ($revision->status === 'Expired')
                                             bg-danger
                                         @endif
                                         ">
@@ -64,7 +66,7 @@
                                     <td><a href="{{route('document_revision.show-file',['filename' => $revision->file_path])}}" target="_blank">Lihat File</a></td>
                                     <td>
                                         @canany(['edit-documents','edit-revisions'])
-                                            @if ($revision->status != 'Draft')
+                                            @if ($revision->status == 'Disetujui' || $revision->status == 'Pengajuan Revisi')
                                                 <a href="{{ route('document_revision.edit', $revision) }}" class="btn btn-sm btn-admin">Revisi</a>
                                             @else
                                                 -

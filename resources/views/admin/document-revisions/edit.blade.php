@@ -56,7 +56,7 @@
                                 <label for="exampleInputEmail1" class="form-label">Pembaruan Dokumen</label>
                                 <select id="my-select" name="rev[]" multiple="multiple" class="form-control">
                                     @foreach ($approvedDocs as $doc)
-                                      <option value="{{$doc->id}}" {{ old('rev', $documentRevision->document_id) == $doc->id? 'selected' : '' }}>{{$doc->title}}</option>
+                                      <option value="{{$doc->id}}" {{ in_array($doc->id, old('rev', $documentRevision->revised_doc) ?? []) ? 'selected' : '' }}>{{$doc->title}}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -67,8 +67,8 @@
                             <textarea class="form-control" name="description" id="exampleFormControlTextarea1" rows="2">{{old('description', $documentRevision->description)}}</textarea>
                         </div>
                         <div class="mb-3">
-                            <label for="exampleInputEmail1" class="form-label">Alasan<span class="text-danger">*</span></label>
-                            <textarea class="form-control" name="reason" value="{{old('reason') ?? ''}}" id="exampleFormControlTextarea1" rows="2"></textarea>
+                            <label for="exampleInputEmail1" class="form-label">Alasan Pengajuan Revisi<span class="text-danger">{{$documentRevision->status === 'Disetujui' ? '*' : ''}}</span></label>
+                            <textarea class="form-control" name="reason" id="exampleFormControlTextarea1" rows="2" {{$documentRevision->status === 'Pengajuan Revisi' ? 'disabled' : ''}}>{{old('reason',$reason)}}</textarea>
                         </div>
                         <div class="d-flex justify-content-center gap-2" style="width: 400px; margin: auto;">
                             <button type="button" class="btn btn-danger" onclick="history.back()">Kembali</button>
