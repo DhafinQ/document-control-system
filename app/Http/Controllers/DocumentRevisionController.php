@@ -89,7 +89,6 @@ class DocumentRevisionController extends Controller
             'reason' => 'required|string|max:255',
         ]);
 
-
         $file = $request->file('file_path');
         $fileName = uniqid() . '_' . $file->getClientOriginalName();
         Storage::disk('dokumen')->put($fileName, file_get_contents($file));
@@ -111,26 +110,12 @@ class DocumentRevisionController extends Controller
             'revised_doc' => $validated['rev']
         ]);
 
-        // foreach ($validated['rev'] ?? [] as $rev) {
-        //     $currentRevision = DocumentRevision::findOrFail($rev);
-        //     $newRev = DocumentRevision::create([
-        //         'document_id' => $currentRevision->document_id,
-        //         'file_path' => $fileName,
-        //         'revised_by' => Auth::id(),
-        //         'revision_number' => $currentRevision->revision_number+1,
-        //         // Here
-        //         // 'description' => $validated['description'],
-        //         'description' => $currentRevision->description,
-        //     ]);
-
-        //     DocumentHistory::create([
-        //         'document_id' => $currentRevision->document_id,
-        //         'revision_id' => $currentRevision->id,
-        //         'action' => 'Revised',
-        //         'performed_by' => Auth::id(),
-        //         'reason' => $validated['reason'],
-        //     ]);
-        // }
+        foreach ($validated['rev'] ?? [] as $rev) {
+            $doc = Document::findOrFail($rev);
+            $doc->currentRevision->update([
+                'status' => 'Proses Revisi'
+            ]);
+        }
 
         $document->update(['current_revision_id' => $revision->id]);
 
@@ -202,7 +187,7 @@ class DocumentRevisionController extends Controller
             'revised_by' => Auth::id(),
             'revision_number' => $documentRevision->revision_number+1,
             'description' => $validated['description'],
-            'revised_doc' => $currentRevDoc ?? $validated['rev']
+            'revised_doc' => $currentRevDoc ?? $validated['rev'] ?? null
         ]);
 
         $documentRevision->document->update([
