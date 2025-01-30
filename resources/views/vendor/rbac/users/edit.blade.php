@@ -1,4 +1,4 @@
-@extends('layouts.layout')
+@extends("layouts.layout_admin")
 @section('title', __('rbac::users.assign_roles'))
 @section('content')
 <div class="container-fluid">
@@ -10,7 +10,7 @@
             <form action="{{ route('update_user', ['id' => $user->memberKey]) }}" method="post">
                 @include('rbac::users._fields')
                 <input type="hidden" name="_token" value="{!! csrf_token() !!}">
-                <button type="submit" class="btn btn-primary mt-3">{!! __('rbac::main.edit') !!}</button>
+                <button type="submit" class="btn btn-admin mt-3">{!! __('rbac::main.edit') !!}</button>
             </form>
         </div>
     </div>

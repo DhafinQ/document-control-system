@@ -33,6 +33,12 @@ class DocumentRevision extends Model
         return Document::whereIn('id', $documentIds)->get();
     }
 
+    public function latestRevision($documentId){
+        return $this->where('document_id', $documentId)
+        ->orderBy('revision_number', 'desc')
+        ->first();
+    }
+
     public function reviser()
     {
         return $this->belongsTo(User::class, 'revised_by');

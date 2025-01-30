@@ -1,4 +1,4 @@
-@extends('layouts.layout')
+@extends("layouts.layout_admin")
 @section('title', __('rbac::users.create_user'))
 @section('content')
     <div class="container-fluid">
@@ -34,7 +34,7 @@
                             </select>
                         </div>
 
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="submit" class="btn btn-admin">Submit</button>
                     </form>
                 </div>
             </div>
