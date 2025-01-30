@@ -22,7 +22,7 @@
                         </a>
                         @endif
                         @endcanany
-                        <a href="{{route('document_revision.show-file',['filename' => $document->currentRevision->file_path])}}" class="btn btn-admin d-flex align-items-center ms-2" target="blank">
+                        <a href="{{route('document_revision.show-file',['filename' => $document->currentRevision->latestRevision($document->id)->file_path ])}}" class="btn btn-admin d-flex align-items-center ms-2" target="blank">
                             Download
                         </a>
                     </div>
