@@ -14,23 +14,29 @@
                     <h5 class="card-title fw-semibold mb-4">Detail Dokumen</h5>
                     
                     <div class="d-flex justify-content-end mb-1">
-                        @canany(['edit-documents','edit-revisions'])
                         @if ($is_active)
+                        @canany(['edit-documents','edit-revisions'])
                         <a href="{{ route('document_revision.edit', $document->currentRevision) }}" class="btn btn-approver d-flex align-items-center">
                             <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-file-code-2"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 12h-1v5h1" /><path d="M14 12h1v5h-1" /><path d="M14 3v4a1 1 0 0 0 1 1h4" /><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" /></svg>
                             Perbarui Dokumen 
                         </a>
-                        @endif
                         @endcanany
                         <a href="{{route('document_revision.show-file',['filename' => $document->currentRevision->latestRevision($document->id)->file_path ])}}" class="btn btn-admin d-flex align-items-center ms-2" target="blank">
                             Download
                         </a>
+                        @endif
                     </div>
                     @if (!$is_active)
+                        @if ($document->currentRevision->status === 'Proses Revisi')
+                        <div class="bg-warning-subtle p-2 rounded">
+                            <p class="me-2">Dokumen ini sedang dalam proses revisi.</p>
+                        </div>
+                        @else
                         <div class="bg-danger-subtle p-2 rounded d-flex">
                             <p class="me-2">Dokumen ini sudah tidak berlaku dan diganti dengan dokumen lain.</p>
                             <a href="{{route('documents.show',['document'=> $document->currentRevision->document->id])}}"><u>Lihat dokumen terbaru</u></a>
                         </div>
+                        @endif
                     @endif
                     <div class="table-responsive mt-4">
                         <table class="table table-borderless">
@@ -58,7 +64,7 @@
                                         bg-danger
                                     @endif
                                     ">
-                                        {{($document->currentRevision->status === 'Disetujui' && $document->is_active ? 'Disetujui' : 'Expired')}}
+                                        {{$document->currentRevision->status === 'Disetujui' && $document->is_active ? 'Disetujui'  : ($document->currentRevision->status == 'Proses Revisi' ? 'Proses Revisi' : 'Expired')}}
                                     </td>
                                 </tr>
                                 <tr>
