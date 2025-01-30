@@ -1,4 +1,4 @@
-@extends('layouts.layout')
+@extends("layouts.layout_admin")
 @section('title', __('rbac::users.users'))
 @section('content')
     <div class="container-fluid">

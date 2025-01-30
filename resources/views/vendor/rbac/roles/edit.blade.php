@@ -1,4 +1,4 @@
-@extends('layouts.layout')
+@extends("layouts.layout_admin")
 @section('title', __('rbac::roles.edit_role'))
 @section('content')
 
@@ -14,7 +14,7 @@
 
                     @include('rbac::roles._fields', ['edit' => true])
 
-                    <button class="btn btn-primary mt-3" type="submit">{!! __('rbac::main.edit') !!}</button>
+                    <button class="btn btn-admin mt-3" type="submit">{!! __('rbac::main.edit') !!}</button>
 
                     <input type="hidden" value="{!! csrf_token() !!}" name="_token">
 
