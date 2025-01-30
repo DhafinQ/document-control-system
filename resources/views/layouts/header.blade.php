@@ -11,6 +11,23 @@
   <link rel="stylesheet"  href="{{ asset('assets/css/searchableOptionList.css') }}">
 </head>
 
+<style>
+  .dropdown-width {
+    width: 400px;
+  }
+
+  .notification-item {
+    padding: 10px;
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+  }
+  .highlight {
+    background-color: #f0f8ff;
+  }
+</style>
+
+
+
 <body>
 
   <!--  Body Wrapper -->
@@ -132,12 +149,15 @@
               <span class="hide-menu">AUTH</span>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="/template/login" aria-expanded="false">
+              <a class="sidebar-link" href="javascript:void(0);" aria-expanded="false" onclick="document.getElementById('logout-form').submit();">
                 <span>
                   <i class="ti ti-login"></i>
                 </span>
                 <span class="hide-menu">Log Out</span>
               </a>
+              <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                @csrf
+              </form>
             </li>
           </ul>
         </nav>
@@ -157,12 +177,42 @@
                 <i class="ti ti-menu-2"></i>
               </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link nav-icon-hover" href="javascript:void(0)">
-                <i class="ti ti-bell-ringing"></i>
-                <div class="notification bg-primary rounded-circle"></div>
-              </a>
-            </li>
+            <!-- Dropdown Notify Section Start -->
+            <div class="navbar-collapse justify-content-end px-0" id="navbarNav">
+            <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
+              <li class="nav-item dropdown">
+                <a class="nav-link nav-icon-hover" href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown"
+                  aria-expanded="false">
+                  <i class="ti ti-bell-ringing"></i>
+                  <div class="notification bg-primary rounded-circle"></div>
+                </a>
+                <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up start-50 dropdown-width" aria-labelledby="drop2">
+                <div class="notification-body">
+                <div class="d-flex justify-content-between align-items-center p-2">
+                  <p class="text-dark fw-bold fs-5 mb-0">Notifikasi</p>
+                  <a href="/admin/notifikasi_admin" class="text-primary fs-4 fw-bold" id="view-all-notifications">Lihat semua</a>
+                </div>
+                <hr>
+                <!-- Notify Start -->
+                  <div id="notification-list" class="notification-container">
+                    <p id="no-notifications" class="text-muted text-center" style="display: none;">Tidak ada notifikasi baru</p>
+                    <!-- Notifikasi Dummy -->
+                    @foreach (auth()->user()->unreadNotifications as $notification)
+                      <div id="notify-items" class="dclose notification-item highlight">
+                        <a href="{{$notification->data['link']}}" class="text-dark">{{$notification->data['message']}}</a>
+                      </div>
+                    @endforeach
+                  </div>
+                  <hr>
+                  <div class="d-flex justify-content-center align-items-center">
+                    <button class="btn btn-outline-secondary dclose" id="mark-read">Tandai semua telah dibaca</button>
+                  </div>
+                <!-- Notify End -->
+                </div>
+              </li>
+            </ul>
+          </div>
+          <!-- Dropdown Notify Section End -->
           </ul>
           <div class="navbar-collapse justify-content-end px-0" id="navbarNav">
             <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
@@ -185,7 +235,7 @@
                       <i class="ti ti-list-check fs-6"></i>
                       <p class="mb-0 fs-3">My Task</p>
                     </a>
-                    <a href="/template/login" class="btn btn-outline-primary mx-3 mt-2 d-block">Logout</a>
+                    <a href="javascript:void()" class="btn btn-outline-primary mx-3 mt-2 d-block" onclick="document.getElementById('logout-form').submit();">Logout</a>
                   </div>
                 </div>
               </li>
@@ -194,3 +244,26 @@
         </nav>
       </header>
       <!--  Header End -->
+
+      <script>
+        // Fungsi baca pesan
+        document.querySelectorAll('.notification-item').forEach(item => {
+          item.addEventListener('click', () => {
+            item.classList.remove('highlight');
+          });
+        });
+
+         // Fungsi baca semua
+        document.getElementById('mark-read').addEventListener('click', () => {
+          document.querySelectorAll('.notification-item').forEach(item => {
+            item.classList.remove('highlight');
+          });
+        });
+
+        // Fungsi biar ga nutup dropdown
+        document.querySelectorAll('.dclose').forEach(item => {
+          item.addEventListener('click', (event) => {
+            event.stopPropagation();
+          });
+        });
+      </script>

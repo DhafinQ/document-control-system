@@ -1,4 +1,4 @@
-@extends('layouts.layout')
+@extends("layouts.layout_admin")
 
 @section("title", "Document")
 
@@ -44,7 +44,7 @@
                             <td>{{ \Carbon\Carbon::parse($history->created_at)->format('H:i:s-d/m/Y') }}</td>
                             <td>
                                 <a href="{{ route('document_histories.show', $history) }}"
-                                    class="btn btn-info btn-sm">View</a>
+                                    class="btn btn-sm btn-admin">View</a>
                             </td>
                         </tr>
                         @endforeach

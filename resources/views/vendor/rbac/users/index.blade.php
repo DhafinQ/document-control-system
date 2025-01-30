@@ -1,6 +1,5 @@
 @extends('layouts.layout')
 @section('title', __('rbac::users.users'))
-
 @section('content')
     <div class="container-fluid">
         <div class="card">

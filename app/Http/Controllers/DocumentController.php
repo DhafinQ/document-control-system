@@ -7,8 +7,10 @@ use App\Models\DocumentRevision;
 use App\Models\DocumentHistory;
 use App\Models\Category;
 use App\Models\User;
+use App\Notifications\DocumentApprovalNotification;
 use Illuminate\Http\Request;
 use Illuminate\Filesystem\FilesystemAdapter;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -25,6 +27,21 @@ class DocumentController extends Controller
 
         // Mengunduh file menggunakan Storage::download()
         return $filesystem->download($filename);
+    }
+
+    public function showFile($filename)
+    {
+        if (Storage::disk('dokumen')->exists($filename)) {
+            $filePath = Storage::disk('dokumen')->path($filename);
+            
+            $mimeType = mime_content_type($filePath);
+
+            return Response::file($filePath, [
+                'Content-Type' => $mimeType
+            ]);
+        }
+
+        abort(404, 'File not found');
     }
 
     public function dashboard(){
@@ -53,9 +70,7 @@ class DocumentController extends Controller
     public function create()
     {
         $categories = Category::pluck('name', 'id');
-        $users = User::pluck('name', 'id');
-        $documents = Document::pluck('title', 'id');
-        return view('admin.documents.create', compact('categories', 'users', 'documents'));
+        return view('admin.documents.create', compact('categories'));
     }
 
     public function store(Request $request)
@@ -64,31 +79,27 @@ class DocumentController extends Controller
             'title' => 'required|string|max:255',
             'code' => 'required|string|max:30',
             'category_id' => 'required|exists:categories,id',
-            'uploaded_by' => 'required|exists:users,id',
-            'file_path' => 'required|file|mimes:pdf,doc,docx,ppt,pptx',
+            'file_path' => 'required|file|mimes:pdf,doc,docx,ppt,pptx|max:5120',
             'description' => 'required|string',
-            'reason' => 'required|string',
-            'rev' => 'nullable|array',
-            'rev.*' => 'exists:documents,id',
         ]);
 
         // $path = $request->file('file_path')->store('', 'dokumen');
         $file = $request->file('file_path');
         $fileName = uniqid() . '_' . $file->getClientOriginalName();
-        $path = Storage::disk('dokumen')->put($fileName, file_get_contents($file));
+        Storage::disk('dokumen')->put($fileName, file_get_contents($file));
 
         $document = Document::create([
             'title' => $validated['title'],
             'code' => $validated['code'],
             'category_id' => $validated['category_id'],
-            'uploaded_by' => $validated['uploaded_by'],
+            'uploaded_by' => Auth::id(),
             'current_revision_id' => null,
         ]);
 
         $revision = DocumentRevision::create([
             'document_id' => $document->id,
             'file_path' => $fileName,
-            'revised_by' => $validated['uploaded_by'],
+            'revised_by' => Auth::id(),
             'revision_number' => 1,
             'description' => $validated['description'],
         ]);
@@ -111,11 +122,13 @@ class DocumentController extends Controller
             'document_id' => $document->id,
             'revision_id' => $revision->id,
             'action' => 'Created',
-            'performed_by' => $validated['uploaded_by'],
-            'reason' => $validated['reason'],
+            'performed_by' => Auth::id(),
+            'reason' => null,
         ]);
 
-        return redirect()->route('documents.index')->with('success', 'Document created successfully.');
+        // return redirect()->route('documents.index')->with('success', 'Document created successfully.');
+        return redirect()->route('document_revision.index')->with('success', 'Document Created successfully.');
+
     }
 
     public function edit(Document $document)
@@ -178,5 +191,16 @@ class DocumentController extends Controller
         $document->delete();
 
         return redirect()->route('documents.index')->with('success', 'Document deleted successfully.');
+    }
+
+    //Notification
+    public function notifyDocumentPending()
+    {
+        $documentCount = 5; //ngasal dulu rek
+
+        $admin = User::role('admin')->first();
+        $admin->notify(new DocumentApprovalNotification($documentCount));
+
+        return response()->json(['message' => 'Notifikasi berhasil dikirim']);
     }
 }

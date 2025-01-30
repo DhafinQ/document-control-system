@@ -64,10 +64,8 @@
                                         </a>
                                     </td>
                                     <td>
-
                                             <input type="checkbox" name="items[]" value="{{ $role->id }}"
                                                 class="form-check-input">
-
                                     </td>
                                 </tr>
                             @endforeach

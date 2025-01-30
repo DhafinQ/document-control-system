@@ -8,10 +8,6 @@ use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\DocumentHistoryController;
 use App\Http\Controllers\DocumentRevisionController;
 
-Route::get('/', function () {
-    return view('/welcome');
-});
-
 // -- TEMPLATE ROUTES --
 
 Route::get('/template', function () {
@@ -54,7 +50,7 @@ Route::get('/template/sample', function () {
     return view('/template/sample');
 });
 
-// -- ADMIN ROUTES --
+// -- ADMIN ROUTES -- 
 
 Route::get('/admin', function () {
     return view('/admin/home');
@@ -141,7 +137,57 @@ Route::get('/admin/dokumen_aktif/edit', function () {
 });
 
 Route::get('/', function () {
-    return view('auth.login');
+    return redirect('/login');
+});
+
+Route::get('/dashboards', function () {
+    return view('admin.dashboard');
+});
+
+Route::get('/admin/notifikasi_admin', function () {
+    return view('/admin/notifikasi_admin');
+});
+
+// -- APPROVER ROLES --
+
+Route::get('/approver', function () {
+    return view('/approver/home');
+});
+
+Route::get('/approver/settings', function () {
+    return view('/approver/settings');
+});
+
+Route::get('/approver/settings/change_password', function () {
+    return view('/approver/change_password');
+});
+
+// -- MANAGER ROLES --
+
+Route::get('/manager', function () {
+    return view('/manager/home');
+});
+
+Route::get('/manager/settings', function () {
+    return view('/manager/settings');
+});
+
+Route::get('/manager/settings/change_password', function () {
+    return view('/manager/change_password');
+});
+
+// -- USER ROLES --
+
+Route::get('/user', function () {
+    return view('/user/home');
+});
+
+Route::get('/user/settings', function () {
+    return view('/user/settings');
+});
+
+Route::get('/user/settings/change_password', function () {
+    return view('/user/change_password');
 });
 
 
@@ -150,8 +196,23 @@ Route::get('/', function () {
 
 Route::middleware(['auth'])->group(function () {
 
+    Route::get('/active_document',[DocumentController::class,'indexActive'])->name('document.active');
+    Route::get('/dashboard',[DocumentController::class,'dashboard'])->name('dashboard');
+
+    // Route::middleware(['role:Admin'])->group(function () {
+    //     Route::get('/users/create', [UserController::class, 'create'])->name('create_users');
+    //     Route::post('rbac/users/store', [UserController::class, 'store'])->name('store_user');
+    //     Route::get('/document_histories', [DocumentHistoryController::class, 'index'])->name('document_histories.index');
+    //     Route::get('/document_histories/{document_history}', [DocumentHistoryController::class, 'show'])->name('document_histories.show');
+    //     Route::resource('categories', CategoryController::class);
+    //     Route::resource('rbac/roles', \Itstructure\LaRbac\Http\Controllers\RoleController::class);
+    //     Route::resource('rbac/permissions', \Itstructure\LaRbac\Http\Controllers\RoleController::class);
+    //     Route::resource('rbac/users', \Itstructure\LaRbac\Http\Controllers\RoleController::class);
+
+    // });
+
     Route::get('/dashboards', function () {
-        return view('admin.dashboard');
+            return view('admin.dashboard');
     });
 
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
@@ -183,8 +244,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/document_revision/{documentRevision}/edit', [DocumentRevisionController::class, 'edit'])->name('document_revision.edit')->middleware('can:edit-revisions');
     Route::get('/document_approval/{documentRevision}/edit', [DocumentRevisionController::class, 'editApproval'])->name('document_approval.edit')->middleware('can:edit-approval');
     Route::put('/document_revision/{documentRevision}', [DocumentRevisionController::class, 'update'])->name('document_revision.update')->middleware('can:edit-revisions');
+    Route::get('/document_revision/data', [DocumentRevisionController::class, 'getDoc'])->name('documents.get.document')->middleware('can:edit-approval');
     Route::put('/document_approval/{documentRevision}', [DocumentRevisionController::class, 'updateApproval'])->name('document_approval.update')->middleware('can:edit-approval');
-    Route::get('/file/dokumen/{filename}', [DocumentRevisionController::class, 'showFile'])->name('document_revision.show-file')->middleware('can:view-revisions');
 
 
     Route::get('/document_revision/create', [DocumentRevisionController::class, 'create'])->name('document_revision.create')->middleware('can:create-revisions');
@@ -198,4 +259,6 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/documents/{document}', [DocumentController::class, 'update'])->name('documents.update')->middleware('can:edit-documents');
     Route::delete('/documents/{document}', [DocumentController::class, 'destroy'])->name('documents.destroy')->middleware('can:delete-documents');
     Route::get('/documents/download/{filename}', [DocumentController::class, 'downloadDocument'])->name('file.dokumen')->middleware('can:view-documents');
+    Route::get('/file/dokumen/{filename}', [DocumentController::class, 'showFile'])->name('document_revision.show-file')->middleware('can:view-documents');
+
 });
