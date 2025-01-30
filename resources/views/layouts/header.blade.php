@@ -53,7 +53,7 @@
               <span class="hide-menu">Home</span>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="{{route('dashboard')}}" aria-expanded="false">
+              <a class="sidebar-link @if(Str::contains(request()->url(), 'dashboard')) active  @endif" href="{{route('dashboard')}}" aria-expanded="false">
                 <span>
                   <i class="ti ti-layout-dashboard"></i>
                 </span>
@@ -66,7 +66,7 @@
               <span class="hide-menu">USER</span>
             </li>
             <li class="sidebar-item">
-                <a class="sidebar-link" href="{{ url('/rbac/users') }}" aria-expanded="false">
+                <a class="sidebar-link @if(Str::contains(request()->url(), 'users')) active  @endif" href="{{ url('/rbac/users') }}" aria-expanded="false">
                   <span>
                     <i class="ti ti-users"></i>
                   </span>
@@ -74,7 +74,7 @@
                 </a>
               </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="{{ url('/rbac/roles') }}" aria-expanded="false">
+              <a class="sidebar-link @if(Str::contains(request()->url(), 'roles')) active  @endif" href="{{ url('/rbac/roles') }}" aria-expanded="false">
                 <span>
                   <i class="ti ti-user"></i>
                 </span>
@@ -82,7 +82,7 @@
               </a>
             </li>
             <li class="sidebar-item">
-                <a class="sidebar-link" href="{{ url('/rbac/permissions') }}" aria-expanded="false">
+                <a class="sidebar-link @if(Str::contains(request()->url(), 'permissions')) active  @endif" href="{{ url('/rbac/permissions') }}" aria-expanded="false">
                   <span>
                     <i class="ti ti-user"></i>
                   </span>
@@ -96,7 +96,7 @@
             </li>
             @can('manage-categories')
             <li class="sidebar-item">
-              <a class="sidebar-link" href="{{route('categories.index')}}" aria-expanded="false">
+              <a class="sidebar-link @if(Str::contains(request()->url(), 'categories')) active  @endif" href="{{route('categories.index')}}" aria-expanded="false">
                 <span>
                   <i class="ti ti-folder"></i>
                 </span>
@@ -106,7 +106,7 @@
             @endcan
             @can('active-document')
             <li class="sidebar-item">
-              <a class="sidebar-link" href="{{route('document.active')}}" aria-expanded="false">
+              <a class="sidebar-link @if(Str::contains(request()->url(), 'active_document')) active  @endif" href="{{route('document.active')}}" aria-expanded="false">
                 <span>
                   <i class="ti ti-file"></i>
                 </span>
@@ -116,7 +116,7 @@
             @endcan
             @can('view-revisions')
             <li class="sidebar-item">
-              <a class="sidebar-link" href="{{route('document_revision.index')}}" aria-expanded="false">
+              <a class="sidebar-link @if(Str::contains(request()->url(), ['documents/create','document_revision'])) active  @endif" href="{{route('document_revision.index')}}" aria-expanded="false">
                 <span>
                   <i class="ti ti-pencil"></i>
                 </span>
@@ -126,7 +126,7 @@
             @endcan
             @can('view-approval')
             <li class="sidebar-item">
-              <a class="sidebar-link" href="{{route('document_approval.index')}}" aria-expanded="false">
+              <a class="sidebar-link @if(Str::contains(request()->url(), 'document_approval')) active  @endif" href="{{route('document_approval.index')}}" aria-expanded="false">
                 <span>
                   <i class="ti ti-checks"></i>
                 </span>
@@ -136,7 +136,7 @@
             @endcan
             @can('view-histories')
             <li class="sidebar-item">
-              <a class="sidebar-link" href="{{route('document_histories.index')}}" aria-expanded="false">
+              <a class="sidebar-link @if(Str::contains(request()->url(), 'document_histories')) active  @endif" href="{{route('document_histories.index')}}" aria-expanded="false">
                 <span>
                   <i class="ti ti-history"></i>
                 </span>
