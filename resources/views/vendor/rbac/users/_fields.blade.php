@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-12">
-        <label for="roles_form_group">{!! __('rbac::roles.roles') !!}</label>
+       <h5>{!! __('rbac::roles.roles') !!} :</h5>
         <div class="form-group" id="roles_form_group">
             @foreach($allRoles as $key => $role)
                 <div class="form-check">

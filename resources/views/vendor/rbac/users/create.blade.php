@@ -1,65 +1,43 @@
-@extends($rbacLayout)
-
+@extends('layouts.layout')
 @section('title', __('rbac::users.create_user'))
-
 @section('content')
-    <section class="content container-fluid">
-        <div class="row">
-            <div class="col-md-8 offset-md-2">
+    <div class="container-fluid">
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="fw-semibold mb-4">Create User</h2>
+                    <form action="{{ route('store_user') }}" method="POST">
+                        @csrf
+                        @method('POST')
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            <input type="text" name="name" id="name" class="form-control"
+                                placeholder="Enter name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" name="email" id="email" class="form-control"
+                                placeholder="Enter email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" name="password" id="password" class="form-control"
+                                placeholder="Enter password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="role" class="form-label">Role</label>
+                            <select name="role" id="role" class="form-select" required>
+                                <option value="" disabled selected>Select role</option>
+                                @foreach ($roles as $role)
+                                    <option value="{{ $role->id }}">{{ $role->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
 
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">{{ __('Tambah User Baru') }}</h3>
-                        @if ($errors->any())
-                            <div class="alert alert-danger">
-                                <ul>
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        @endif
-                    </div>
-
-                    <div class="card-body">
-                        <form action="{{ route('store_user') }}" method="POST">
-                            @csrf
-
-                            {{-- Name --}}
-                            <div class="form-group">
-                                <label for="name">{{ __('Name') }}</label>
-                                <input type="text" name="name" id="name" class="form-control" placeholder="{{ __('Enter name') }}" required>
-                            </div>
-
-                            {{-- Email --}}
-                            <div class="form-group">
-                                <label for="email">{{ __('Email') }}</label>
-                                <input type="email" name="email" id="email" class="form-control" placeholder="{{ __('Enter email') }}" required>
-                            </div>
-
-                            {{-- Password --}}
-                            <div class="form-group">
-                                <label for="password">{{ __('Password') }}</label>
-                                <input type="password" name="password" id="password" class="form-control" placeholder="{{ __('Enter password') }}" required>
-                            </div>
-
-                            {{-- Role --}}
-                            <div class="form-group">
-                                <label for="role">{{ __('Role') }}</label>
-                                <select name="role" id="role" class="form-control" required>
-                                    <option value="" disabled selected>{{ __('Select role') }}</option>
-                                    @foreach ($roles as $role)
-                                        <option value="{{ $role->id }}">{{ $role->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <button type="submit" class="btn btn-primary">{{ __('Create User') }}</button>
-                        </form>
-                    </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
                 </div>
-
             </div>
         </div>
-    </section>
+    </div>
 @endsection
