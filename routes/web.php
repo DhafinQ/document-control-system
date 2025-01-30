@@ -255,6 +255,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/documents', [DocumentController::class, 'index'])->name('documents.index')->middleware('can:view-documents');
     Route::get('/documents/create', [DocumentController::class, 'create'])->name('documents.create')->middleware('can:create-documents');
     Route::post('/documents', [DocumentController::class, 'store'])->name('documents.store')->middleware('can:create-documents');
+    Route::get('/documents/{document}/show', [DocumentController::class, 'show'])->name('documents.show')->middleware('can:view-documents');
     Route::get('/documents/{document}/edit', [DocumentController::class, 'edit'])->name('documents.edit')->middleware('can:edit-documents');
     Route::put('/documents/{document}', [DocumentController::class, 'update'])->name('documents.update')->middleware('can:edit-documents');
     Route::delete('/documents/{document}', [DocumentController::class, 'destroy'])->name('documents.destroy')->middleware('can:delete-documents');
