@@ -296,6 +296,10 @@ class DocumentRevisionController extends Controller
                     'status' => 'Expired'
                 ]);
             }
+            event(new NewApprovalDocument($documentRevision->document,[1,5],
+                    'Dokumen '. $documentRevision->document->title . ' Telah Disepakati.',
+                    route('documents.show',['document' => $documentRevision->document]))
+            );
         }
 
         DocumentHistory::create([
@@ -313,7 +317,7 @@ class DocumentRevisionController extends Controller
             event(new NewApprovalDocument($documentRevision->document,[1,3],$message,$link));
         }else if(!$documentRevision->acc_format && $documentRevision->acc_content){
             event(new NewApprovalDocument($documentRevision->document,[1,2],$message,$link));
-        }else if($documentRevision->acc_format && $documentRevision->acc_content){
+        }else if($documentRevision->acc_format && $documentRevision->acc_content && $validated['status'] !== 'Disetujui'){
             event(new NewApprovalDocument($documentRevision->document,[4],$message,$link));
         }else{
             $message = 'Dokumen ' . $documentRevision->document->title . ' Membutuhkan Revisi.';

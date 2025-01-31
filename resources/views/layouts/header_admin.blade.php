@@ -222,8 +222,8 @@
                                         <div class="notification-body">
                                             <div class="d-flex justify-content-between align-items-center p-2">
                                                 <p class="text-dark fw-bold fs-5 mb-0">Notifikasi</p>
-                                                <a href="{{route('notifications')}}" class="text-primary fs-4 fw-bold"
-                                                    id="view-all-notifications">Lihat semua</a>
+                                                <a href="javascript:void()" id="mark-read" class="text-primary fs-4 fw-bold"
+                                                    >Tandai Semua Dibaca</a>
                                             </div>
                                             <hr>
                                             <!-- Notify Start -->
@@ -244,12 +244,9 @@
                                                     @endforeach
                                             </div>
                                             <hr>
-                                            @if (count(auth()->user()->unreadNotifications) > 0)
-                                                <div class="d-flex justify-content-center align-items-center">
-                                                    <button class="btn btn-outline-secondary dclose mb-2" id="mark-read">Tandai
-                                                        semua telah dibaca</button>
-                                                </div>
-                                            @endif
+                                            <div class="d-flex justify-content-center align-items-center">
+                                                <a href="{{route('notifications')}}" class="btn btn-outline-secondary dclose mb-2" id="view-all-notifications">Lihat Semua</a>
+                                            </div>
                                         @else
                                             <div id="notify-items"
                                                 class="dclose notification-item d-flex justify-content-center">
