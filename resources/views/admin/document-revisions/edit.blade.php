@@ -5,80 +5,102 @@
 @section('content')
 
     <div class="container-fluid">
-        <div class="container-fluid">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title fw-semibold mb-4">Revisi Dokumen</h5>
-                    @if ($errors->any())
-                    <div class="alert alert-danger">
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                    @endif
-                    <form action="{{ route('document_revision.update', ['documentRevision' => $documentRevision->id]) }}" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        @method('PUT')
-                        <div class="row mb-3 align-items-center">
-                            <div class="col-md-6">
-                                <label for="exampleInputEmail1" class="form-label">Judul<span class="text-danger">*</span></label>
-                                <input type="text" name="title" value="{{old('title') ?? $documentRevision->document->title}}" class="form-control" id="exampleInputEmail1"
-                                    aria-describedby="emailHelp">
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="exampleInputEmail1" class="form-label">Kategori Dokumen<span class="text-danger">*</span></label>
-                                    <select class="form-control" id="exampleFormControlSelect1" name="category_id">
-                                        <option value="">-- Pilih --</option>
-                                        @foreach ($categories as $category)
-                                          <option value="{{$category->id}}" {{ old('category_id', $documentRevision->document->category_id) == $category->id ? 'selected' : '' }}>{{$category->name}}</option>
+        <div class="row">
+            <!-- Form Card Utama -->
+            <form action="{{ route('document_revision.update', ['documentRevision' => $documentRevision->id]) }}" method="POST" enctype="multipart/form-data" class="w-100">
+                @csrf
+                @method('PUT')
+                
+                <div class="row d-flex">
+                    <!-- Card Utama Kiri -->
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title fw-semibold mb-4">Revisi Dokumen</h5>
+                                @if ($errors->any())
+                                <div class="alert alert-danger">
+                                    <ul>
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
                                         @endforeach
-                                      </select>
+                                    </ul>
+                                </div>
+                                @endif
+                                <div class="row mb-3 align-items-center">
+                                    <div class="col-md-6">
+                                        <label for="exampleInputEmail1" class="form-label">Judul<span class="text-danger">*</span></label>
+                                        <input type="text" name="title" value="{{old('title') ?? $documentRevision->document->title}}" class="form-control" id="exampleInputEmail1"
+                                            aria-describedby="emailHelp">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1" class="form-label">Kategori Dokumen<span class="text-danger">*</span></label>
+                                            <select class="form-control" id="exampleFormControlSelect1" name="category_id">
+                                                <option value="">-- Pilih --</option>
+                                                @foreach ($categories as $category)
+                                                  <option value="{{$category->id}}" {{ old('category_id', $documentRevision->document->category_id) == $category->id ? 'selected' : '' }}>{{$category->name}}</option>
+                                                @endforeach
+                                              </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mb-3 align-items-center">
+                                    <div class="col-md-6">
+                                        <label for="exampleInputEmail1" class="form-label">ID Dokumen<span class="text-danger">*</span></label>
+                                        <input type="text" name="code" value="{{old('code') ?? $documentRevision->document->code}}" class="form-control" id="exampleInputEmail1"
+                                            aria-describedby="emailHelp">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="dokumen" class="form-label">Berkas Dokumen<span class="text-danger">*</span></label>
+                                        <input type="file" name="file_path" class="form-control" id="dokumen" aria-describedby="dokumenHelp"
+                                            accept=".pdf,.doc,.docx,.txt">
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="exampleInputEmail1" class="form-label">Deskripsi<span class="text-danger">*</span></label>
+                                    <textarea class="form-control" name="description" id="exampleFormControlTextarea1" rows="2">{{old('description', $documentRevision->description)}}</textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="exampleInputEmail1" class="form-label">Alasan Pengajuan Revisi<span class="text-danger">{{$documentRevision->status === 'Disetujui' ? '*' : ''}}</span></label>
+                                    <textarea class="form-control" name="reason" id="exampleFormControlTextarea1" rows="2" {{$documentRevision->status === 'Pengajuan Revisi' ? 'disabled' : ''}}>{{old('reason',$reason)}}</textarea>
+                                </div>
+
+                                <div class="d-flex justify-content-center gap-2" style="width: 400px; margin: auto;">
+                                    <button type="button" class="btn btn-danger" onclick="history.back()">Kembali</button>
+                                    <button type="submit" class="btn btn-admin">Submit</button>
                                 </div>
                             </div>
                         </div>
-                        <div class="row mb-3 align-items-center">
-                            <div class="col-md-6">
-                                <label for="exampleInputEmail1" class="form-label">ID Dokumen<span class="text-danger">*</span></label>
-                                <input type="text" name="code" value="{{old('code') ?? $documentRevision->document->code}}" class="form-control" id="exampleInputEmail1"
-                                    aria-describedby="emailHelp">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="dokumen" class="form-label">Berkas Dokumen<span class="text-danger">*</span></label>
-                                <input type="file" name="file_path" class="form-control" id="dokumen" aria-describedby="dokumenHelp"
-                                    accept=".pdf,.doc,.docx,.txt">
-                            </div>
-                        </div>
-                        <div class="row mb-3 align-items-center">
-                            <div class="col-md-6">
-                                <label for="exampleInputEmail1" class="form-label">Pembaruan Dokumen</label>
-                                <select id="my-select" name="rev[]" multiple="multiple" class="form-control">
-                                    @foreach ($approvedDocs as $doc)
-                                      <option value="{{$doc->id}}" {{ in_array($doc->id, old('rev', $documentRevision->revised_doc) ?? []) ? 'selected' : '' }}>{{$doc->title}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
+                    </div>
 
+                    <!-- Card Status Kecil Kanan -->
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title fw-semibold mb-4">Status Dokumen</h5>
+                                <div class="col-md-12">
+                                    <div class="container">
+                                        <div class="d-flex flex-column">
+                                            <div class=" p-2  fw-bolder" style=" background-color: #343a4012;padding: 15px;">
+                                                Mengubah:
+                                            </div>
+                                            <div class="p-2">
+                                                <select id="my-select" name="rev[]" multiple="multiple" class="form-control" form="document-revision-form">
+                                                    @foreach ($approvedDocs as $doc)
+                                                      <option value="{{$doc->id}}" {{ in_array($doc->id, old('rev', $documentRevision->revised_doc) ?? []) ? 'selected' : '' }}>{{$doc->title}}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="exampleInputEmail1" class="form-label">Deskripsi<span class="text-danger">*</span></label>
-                            <textarea class="form-control" name="description" id="exampleFormControlTextarea1" rows="2">{{old('description', $documentRevision->description)}}</textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="exampleInputEmail1" class="form-label">Alasan Pengajuan Revisi<span class="text-danger">{{$documentRevision->status === 'Disetujui' ? '*' : ''}}</span></label>
-                            <textarea class="form-control" name="reason" id="exampleFormControlTextarea1" rows="2" {{$documentRevision->status === 'Pengajuan Revisi' ? 'disabled' : ''}}>{{old('reason',$reason)}}</textarea>
-                        </div>
-                        <div class="d-flex justify-content-center gap-2" style="width: 400px; margin: auto;">
-                            <button type="button" class="btn btn-danger" onclick="history.back()">Kembali</button>
-                            <button type="submit" class="btn btn-admin">Submit</button>
-                        </div>
-                    </form>
-
+                    </div>
                 </div>
-            </div>
+
+            </form>
         </div>
     </div>
-    </div>
+
 @endsection
