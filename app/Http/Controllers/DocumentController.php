@@ -132,6 +132,10 @@ class DocumentController extends Controller
 
     }
 
+    public function show(Document $document){
+        return view('admin.documents.show',compact('document'));
+    }
+
     public function edit(Document $document)
     {
         $categories = Category::pluck('name', 'id');

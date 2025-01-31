@@ -1,4 +1,4 @@
-@extends("layouts.layout")
+@extends("layouts.layout_admin")
 
 @section("title", "Document")
 
@@ -58,7 +58,7 @@
                       <label for="exampleInputEmail1" class="form-label">Status<span class="text-danger">*</span></label>
                       <div class="dropdown">
                         <div id="additional-input-container"></div>
-                        <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="btn btn-admin dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
                           Ubah Status
                         </a>
                     
@@ -79,7 +79,7 @@
                     </div>
                     <div class="d-flex justify-content-center gap-2" style="width: 400px; margin: auto;">
                       <button type="button" class="btn btn-danger" onclick="history.back()">Kembali</button>
-                      <button type="submit" class="btn btn-primary">Submit</button>
+                      <button type="submit" class="btn btn-admin">Submit</button>
                   </div>
                   </form>
 

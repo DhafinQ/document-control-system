@@ -1,4 +1,4 @@
-@extends("layouts.layout")
+@extends("layouts.layout_admin")
 
 @section("title", "Document")
 
@@ -52,7 +52,7 @@
                       <label for="exampleInputEmail1" class="form-label">Pembaruan Dokumen<span class="text-danger">*</span></label>
                       <select id="my-select" name="rev[]" multiple="multiple" class="form-control">
                         @foreach ($approvedDocs as $doc)
-                          <option value="{{$doc->currentRevision->id}}" @if(in_array($doc->id, old('rev', []))) selected @endif>{{$doc->title}}</option>
+                          <option value="{{$doc->id}}" @if(in_array($doc->id, old('rev', []))) selected @endif>{{$doc->title}}</option>
                         @endforeach
                     </select>
                     </div>
@@ -68,7 +68,7 @@
                     </div>
                     <div class="d-flex justify-content-center gap-2" style="width: 400px; margin: auto;">
                       <button type="button" class="btn btn-danger" onclick="history.back()">Kembali</button>
-                      <button type="submit" class="btn btn-primary">Submit</button>
+                      <button type="submit" class="btn btn-admin">Submit</button>
                   </div>
                   
                   </form>

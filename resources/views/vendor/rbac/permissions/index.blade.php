@@ -1,91 +1,69 @@
-@extends($rbacLayout)
+@extends("layouts.layout_admin")
 @section('title', __('rbac::permissions.permissions'))
 @section('content')
-
-    <section class="content container-fluid">
-
-        <p><a class="btn btn-success" href="{{ route('create_permission') }}">{!! __('rbac::permissions.create_permission') !!}</a></p>
-
-        @if ($errors->has('items'))
-            <div class="row">
-                <div class="col-12 col-md-10 offset-md-1 col-lg-8 offset-lg-2 col-xl-6 offset-xl-3 text-center">
-                    <div class="alert alert-danger px-3 py-2" role="alert">
-                        <strong>{{ $errors->first('items') }}</strong>
-                    </div>
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-body">
+                <a class="btn btn-success mb-3" href="{{ route('create_permission') }}">{!! __('rbac::permissions.create_permission') !!}</a>
+                @if ($errors->has('items'))
+                <div class="alert alert-danger" role="alert">
+                    {{ $errors->first('items') }}
                 </div>
+            @endif
+            <form id="delete-form" action="{{ route('delete_permission') }}" method="POST">
+                @csrf
+                <div class="table-responsive">
+                    <h2 class="mb-3">Permissions</h2>
+                    <table id="myTable" class="table table-hover" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Slug</th>
+                                <th>Description</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                                <th>
+                                    <input type="checkbox" id="select-all"> Deletion
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($dataProvider->get() as $key => $permission)
+                                <tr>
+                                    <td>{{ $key + 1 }}</td>
+                                    <td>{{ $permission->id }}</td>
+                                    <td>
+                                        <a href="{{ route('show_permission', ['id' => $permission->id]) }}">
+                                            {{ $permission->name }}
+                                        </a>
+                                    </td>
+                                    <td>{{ $permission->slug }}</td>
+                                    <td>{{ $permission->description }}</td>
+                                    <td>{{ $permission->created_at }}</td>
+                                    <td>
+                                        <a href="{{ route('show_permission', ['id' => $permission->id]) }}"
+                                            class="btn btn-primary mt-2 mb-2">
+                                            <i class="ti ti-eye"></i>
+                                        </a>
+                                        <a href="{{ route('edit_permission', ['permission' => $permission->id]) }}"
+                                            class="btn btn-success mt-2 mb-2">
+                                            <i class="ti ti-edit"></i>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <input type="checkbox" name="items[]" value="{{ $permission->id }}"
+                                        class="form-check-input">
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                <button type="submit" class="btn btn-danger mt-3">Delete Selected</button>
+            </form>
             </div>
-        @endif
-
-        @php
-            $gridData = [
-                'dataProvider' => $dataProvider,
-                'paginatorOptions' => [
-                    'pageName' => 'p',
-                ],
-                'rowsPerPage' => $rbacRowsPerPage,
-                'title' => __('rbac::permissions.permissions'),
-                'rowsFormAction' => route('delete_permission'),
-                'columnFields' => [
-                    [
-                        'label' => 'ID',
-                        'attribute' => 'id',
-                        'htmlAttributes' => [
-                            'width' => '5%',
-                        ],
-                        'filter' => false
-                    ],
-                    [
-                        'label' => __('rbac::main.name'),
-                        'value' => function ($permission) {
-                            return '<a href="' . route('show_permission', ['id' => $permission->id]) . '">' . $permission->name .'</a>';
-                        },
-                        'filter' => [
-                            'class' => Itstructure\GridView\Filters\TextFilter::class,
-                            'name' => 'name'
-                        ],
-                        'sort' => 'name',
-                        'format' => 'html',
-                    ],
-                    [
-                        'label' => __('rbac::main.slug'),
-                        'attribute' => 'slug',
-                    ],
-                    [
-                        'label' => __('rbac::main.description'),
-                        'attribute' => 'description',
-                        'filter' => false,
-                        'sort' => false
-                    ],
-                    [
-                        'label' => __('rbac::main.created'),
-                        'attribute' => 'created_at',
-                        'filter' => false,
-                    ],
-                    [
-                        'class' => Itstructure\GridView\Columns\ActionColumn::class,
-                        'actionTypes' => [
-                            'view' => function ($permission) {
-                                return route('show_permission', ['id' => $permission->id]);
-                            },
-                            'edit' => function ($permission) {
-                                return route('edit_permission', ['permission' => $permission->id]);
-                            }
-                        ],
-                        'htmlAttributes' => [
-                            'width' => '130',
-                        ],
-                    ],
-                    [
-                        'class' => Itstructure\GridView\Columns\CheckboxColumn::class,
-                        'field' => 'items',
-                        'attribute' => 'id'
-                    ],
-                ],
-            ];
-        @endphp
-
-        @gridView($gridData)
-
-    </section>
-
+        </div>
+    </div>
 @endsection

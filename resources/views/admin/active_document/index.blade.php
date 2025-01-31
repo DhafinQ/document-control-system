@@ -1,4 +1,4 @@
-@extends("layouts.layout")
+@extends("layouts.layout_admin")
 
 @section("title", "Document")
 
@@ -26,6 +26,7 @@
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Deskripsi</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kategori</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pengunggah</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Berkas</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                         </tr>
                     </thead>
@@ -38,7 +39,10 @@
                             <td class="px-6 py-4 text-center">{{$document->category->name}}</td>
                             <td class="px-6 py-4 text-center">{{$document->uploader->name}}</td>
                             <td class="px-6 py-4 text-center">
-                                <a href="{{route('document_revision.show-file',['filename' => $document->currentRevision->file_path])}}" target="_blank">Lihat File</a>
+                                <a href="{{route('document_revision.show-file',['filename' => $document->currentRevision->file_path])}}" target="_blank">Download File</a>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <a href="{{route('documents.show',['document' => $document->id])}}" class="btn btn-admin">Detail</a>
                             </td>
                         </tr>
                         @endforeach

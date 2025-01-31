@@ -61,14 +61,47 @@ class CustomSeeder extends Seeder
                     'edit-approval',
                 ],
             ],
-            'Reviewer' => [
-                'name' => 'Reviewer',
+            'Pengendali Dokumen' => [
+                'name' => 'Pengendali Dokumen',
                 'permissions' => [
                     'view-documents',
-                    'view-revisions',
-                    'edit-revisions',
+                    'active-document',
                     'view-approval',
                     'edit-approval',
+                    'view-histories'
+                ],
+            ],
+            'Bagian Mutu' => [
+                'name' => 'Bagian Mutu',
+                'permissions' => [
+                    'view-documents',
+                    'active-document',
+                    'view-approval',
+                    'edit-approval',
+                    'view-histories'
+                ],
+            ],
+            'Kepala Puskesmas' => [
+                'name' => 'Kepala Puskesmas',
+                'permissions' => [
+                    'view-documents',
+                    'active-document',
+                    'view-approval',
+                    'edit-approval',
+                    'view-histories'
+                ],
+            ],
+            'PJ Program' => [
+                'name' => 'PJ Program',
+                'permissions' => [
+                    'view-documents',
+                    'active-document',
+                    'view-revisions',
+                    'create-documents',
+                    'edit-documents',
+                    'create-revisions',
+                    'edit-revisions',
+                    'view-histories'
                 ],
             ],
             'Staff' => [
@@ -76,7 +109,6 @@ class CustomSeeder extends Seeder
                 'permissions' => [
                     'view-documents',
                     'active-document',
-                    'create-documents',
                 ],
             ],
         ];

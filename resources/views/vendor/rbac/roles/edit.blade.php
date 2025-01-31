@@ -1,18 +1,20 @@
-@extends($rbacLayout)
+@extends("layouts.layout_admin")
 @section('title', __('rbac::roles.edit_role'))
 @section('content')
 
-    <section class="content container-fluid">
-        <div class="row">
-            <div class="col-12">
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-body">
 
-                <h2>{!! __('rbac::roles.edit_role') !!}: <a href="{{route('show_role', ['id' => $role->id])}}">{{ $role->name }}</a></h2>
+                <h2 mb-3>{!! __('rbac::roles.edit_role') !!}:
+                    <a href="{{route('show_role', ['id' => $role->id])}}">{{ $role->name }}</a>
+                </h2>
 
                 <form action="{{ route('update_role', ['role' => $role->id]) }}" method="post">
 
                     @include('rbac::roles._fields', ['edit' => true])
 
-                    <button class="btn btn-primary" type="submit">{!! __('rbac::main.edit') !!}</button>
+                    <button class="btn btn-admin mt-3" type="submit">{!! __('rbac::main.edit') !!}</button>
 
                     <input type="hidden" value="{!! csrf_token() !!}" name="_token">
 
@@ -20,6 +22,6 @@
 
             </div>
         </div>
-    </section>
+</div>
 
 @stop
