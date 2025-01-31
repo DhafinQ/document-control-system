@@ -17,10 +17,16 @@ class NewApprovalDocument
     /**
      * Create a new event instance.
      */
-    public $UserApprovalDoc;
-    public function __construct($UserApprovalDoc)
+    public $document;
+    public $roles;
+    public $message;
+    public $link;
+    public function __construct($document,$roles,$message,$link)
     {
-        $this->UserApprovalDoc = $UserApprovalDoc;
+        $this->document = $document;
+        $this->roles = $roles;
+        $this->message = $message;
+        $this->link = $link;
     }
 
     /**

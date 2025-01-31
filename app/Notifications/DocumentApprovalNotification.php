@@ -10,15 +10,19 @@ use Illuminate\Notifications\Notification;
 class DocumentApprovalNotification extends Notification
 {
     use Queueable;
-    private $user;
+    private $document;
+    private $message;
+    private $link;
 
     /**
      * Create a new notification instance.
      * @return void
      */
-    public function __construct($user)
+    public function __construct($document,$message,$link)
     {
-        $this->user = $user;
+        $this->document = $document;
+        $this->message = $message;
+        $this->link = $link;
     }
 
     /**
@@ -39,9 +43,8 @@ class DocumentApprovalNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'name' => $this->user->name,
-            'message' => 'Dokumen '.$this->user->name.'Menunggu Persetujuan',
-            'link' => 'javascript:void()'
+            'message' => $this->message,
+            'link' => $this->link
         ];
     }
 }

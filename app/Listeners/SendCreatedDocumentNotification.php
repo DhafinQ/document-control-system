@@ -2,12 +2,12 @@
 
 namespace App\Listeners;
 
-use App\Events\DocumentCreated;
+use App\Events\NewCreatedDocument;
+use App\Models\User;
 use App\Notifications\DocumentCreatedNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Foundation\Auth\User;
 
 class SendCreatedDocumentNotification
 {
@@ -22,11 +22,13 @@ class SendCreatedDocumentNotification
     /**
      * Handle the event.
      */
-    public function handle(object $event): void
+    public function handle(NewCreatedDocument $event): void
     {
-        $user = User::whereHas('roles', function ($query) {
-            $query->where('id', 1);
+        $users = User::whereHas('roles', function ($query) {
+            $query->whereIn('id', [1,2]);
         })->get();
-        Notification::send($user, new DocumentCreatedNotification($event->createdDocumen));
+        foreach($users as $user){
+            Notification::send($user, new DocumentCreatedNotification($event->document,$event->message));
+        }
     }
 }

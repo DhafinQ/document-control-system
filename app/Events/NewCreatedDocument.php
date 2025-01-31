@@ -17,10 +17,12 @@ class NewCreatedDocument
     /**
      * Create a new event instance.
      */
-    public $createdDocument;
-    public function __construct($createdDocument)
+    public $document;
+    public $message;
+    public function __construct($document,$message)
     {
-        $this->createdDocument = $createdDocument;
+        $this->document = $document;
+        $this->message = $message;
     }
 
     /**

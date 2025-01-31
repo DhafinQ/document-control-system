@@ -3,11 +3,11 @@
 namespace App\Listeners;
 
 use App\Events\NewApprovalDocument;
+use App\Models\User;
 use App\Notifications\DocumentApprovalNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Foundation\Auth\User;
 
 class SendApprovalDocumentNotification
 {
@@ -24,10 +24,10 @@ class SendApprovalDocumentNotification
      */
     public function handle(NewApprovalDocument $event): void
     {
-        $user = User::whereHas('roles', function ($query) {
-            $query->where('id', 1);
+        $user = User::whereHas('roles', function ($query) use ($event) {
+            $query->whereIn('id', $event->roles);
         })->get();
 
-        Notification::send($user, new DocumentApprovalNotification($event->UserApprovalDoc));
+        Notification::send($user, new DocumentApprovalNotification($event->document,$event->message,$event->link));
     }
 }

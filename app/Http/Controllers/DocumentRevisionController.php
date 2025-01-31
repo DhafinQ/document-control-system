@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NewApprovalDocument;
+use App\Events\NewCreatedDocument;
 use App\Models\Category;
 use App\Models\Document;
 use App\Models\DocumentRevision;
@@ -131,6 +133,8 @@ class DocumentRevisionController extends Controller
             'reason' => $validated['reason'],
         ]);
 
+        event(new NewCreatedDocument($document,'Dokumen ' . $document->title . ' telah dibuat oleh ' . $document->uploader->name . '.'));
+
         return redirect()->route('document_revision.index')->with('success', 'Document Updated successfully.');
     }
 
@@ -235,6 +239,8 @@ class DocumentRevisionController extends Controller
             'reason' => $validated['reason'] ?? null,
         ]);
 
+        event(new NewCreatedDocument($documentRevision->document,'Dokumen ' . $documentRevision->document->title . ' telah direvisi oleh ' . $documentRevision->document->uploader->name . '.'));
+
         return redirect()->route('document_revision.index')->with('success', 'Revision updated successfully.');
     }
 
@@ -299,6 +305,21 @@ class DocumentRevisionController extends Controller
             'performed_by' => Auth::id(),
             'reason' => $validated['reason'] ?? null,
         ]);
+
+        // For Notification
+        $message = 'Dokumen ' . $documentRevision->document->title . ' Menunggu Persetujuan.';
+        $link = route('document_approval.index');
+        if($documentRevision->acc_format && !$documentRevision->acc_content){
+            event(new NewApprovalDocument($documentRevision->document,[1,3],$message,$link));
+        }else if(!$documentRevision->acc_format && $documentRevision->acc_content){
+            event(new NewApprovalDocument($documentRevision->document,[1,2],$message,$link));
+        }else if($documentRevision->acc_format && $documentRevision->acc_content){
+            event(new NewApprovalDocument($documentRevision->document,[4],$message,$link));
+        }else{
+            $message = 'Dokumen ' . $documentRevision->document->title . ' Membutuhkan Revisi.';
+            $link = route('document_revision.edit',['documentRevision' => $documentRevision->id]);
+            event(new NewApprovalDocument($documentRevision->document,[1,5],$message,$link));
+        }
         
 
         return redirect()->route('document_approval.index')->with('success', 'Document updated successfully.');

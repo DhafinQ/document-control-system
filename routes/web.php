@@ -7,6 +7,8 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\DocumentHistoryController;
 use App\Http\Controllers\DocumentRevisionController;
+use App\Http\Controllers\NotificationController;
+use App\Notifications\NewUserPasswordChange;
 
 // -- TEMPLATE ROUTES --
 
@@ -144,10 +146,6 @@ Route::get('/dashboards', function () {
     return view('admin.dashboard');
 });
 
-Route::get('/admin/notifikasi_admin', function () {
-    return view('/admin/notifikasi_admin');
-});
-
 // -- APPROVER ROLES --
 
 Route::get('/approver', function () {
@@ -218,6 +216,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::post('/user/profile-information', [\Laravel\Fortify\Http\Controllers\ProfileInformationController::class, 'update']);
+    
+    Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllRead'])->name('notifications.markAllRead');
+    Route::post('/notifications/{notification}/mark-read', [NotificationController::class, 'markAsRead'])->name('notification.markRead');
+    Route::get('/notifications',[NotificationController::class,'index'])->name('notifications');
 
     Route::get('/active_document', [DocumentController::class, 'indexActive'])->name('document.active')->middleware('can:active-document');
     Route::get('/dashboard', [DocumentController::class, 'dashboard'])->name('dashboard');
