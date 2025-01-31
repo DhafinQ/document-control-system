@@ -96,6 +96,10 @@ Route::get('/admin/approval_dokumen', function () {
     return view('/admin/approval_dokumen');
 });
 
+Route::get('/approver/detail_dokumen', function () {
+    return view('/admin/detail_dokumen');
+});
+
 Route::get('/admin/approval_dokumen/form', function () {
     return view('/admin/approval_dokumen_forms');
 });
@@ -144,8 +148,8 @@ Route::get('/dashboards', function () {
     return view('admin.dashboard');
 });
 
-Route::get('/admin/notifikasi_admin', function () {
-    return view('/admin/notifikasi_admin');
+Route::get('/user/settings/change_password', function () {
+    return view('/user/change_password');
 });
 
 // -- APPROVER ROLES --
