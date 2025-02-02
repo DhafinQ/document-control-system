@@ -136,7 +136,7 @@ class DocumentController extends Controller
     }
 
     public function show(Document $document){
-        return view('admin.documents.show',compact('document'));
+        return view('admin.detail_dokumen',compact('document'));
     }
 
     public function edit(Document $document)

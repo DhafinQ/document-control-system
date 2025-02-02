@@ -52,7 +52,7 @@ Route::get('/template/sample', function () {
     return view('/template/sample');
 });
 
-// -- ADMIN ROUTES -- 
+// -- ADMIN ROUTES --
 
 Route::get('/admin', function () {
     return view('/admin/home');
@@ -96,6 +96,10 @@ Route::get('/admin/update_dokumen/forms', function () {
 
 Route::get('/admin/approval_dokumen', function () {
     return view('/admin/approval_dokumen');
+});
+
+Route::get('/approver/detail_dokumen', function () {
+    return view('/admin/detail_dokumen');
 });
 
 Route::get('/admin/approval_dokumen/form', function () {
@@ -144,6 +148,10 @@ Route::get('/', function () {
 
 Route::get('/dashboards', function () {
     return view('admin.dashboard');
+});
+
+Route::get('/user/settings/change_password', function () {
+    return view('/user/change_password');
 });
 
 // -- APPROVER ROLES --
@@ -215,7 +223,6 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::post('/user/profile-information', [\Laravel\Fortify\Http\Controllers\ProfileInformationController::class, 'update']);
     
     Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllRead'])->name('notifications.markAllRead');
     Route::post('/notifications/{notification}/mark-read', [NotificationController::class, 'markAsRead'])->name('notification.markRead');
@@ -229,6 +236,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/document_histories', [DocumentHistoryController::class, 'index'])->name('document_histories.index')->middleware('can:view-histories');
     Route::get('/document_histories/{document_history}', [DocumentHistoryController::class, 'show'])->name('document_histories.show')->middleware('can:view-histories');
+
+
 
 
     Route::middleware('can:manage-categories')->group(function () {
@@ -253,7 +262,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/document_revision/create', [DocumentRevisionController::class, 'create'])->name('document_revision.create')->middleware('can:create-revisions');
     Route::post('/document_revision/store', [DocumentRevisionController::class, 'store'])->name('document_revision.store')->middleware('can:create-revisions');
 
-    
+
     Route::get('/documents', [DocumentController::class, 'index'])->name('documents.index')->middleware('can:view-documents');
     Route::get('/documents/create', [DocumentController::class, 'create'])->name('documents.create')->middleware('can:create-documents');
     Route::post('/documents', [DocumentController::class, 'store'])->name('documents.store')->middleware('can:create-documents');
