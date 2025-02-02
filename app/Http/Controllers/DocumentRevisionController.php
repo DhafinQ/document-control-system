@@ -11,6 +11,7 @@ use App\Models\DocumentHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class DocumentRevisionController extends Controller
 {
@@ -19,7 +20,7 @@ class DocumentRevisionController extends Controller
     {
         $documents = Document::whereHas('uploader.roles', function ($query) {
             $query->whereIn('id', auth()->user()->roles->pluck('id'));
-        })->with('uploader')->get();
+        })->with(['uploader','latestHistory'])->get();
         return view('admin.my_document.index', compact('documents'));
     }
 
@@ -89,6 +90,9 @@ class DocumentRevisionController extends Controller
         ->whereHas('currentRevision', function ($query) {
             $query->where('status', 'Disetujui');
         })
+        ->whereHas('uploader.roles', function ($query) {
+            $query->whereIn('id', auth()->user()->roles->pluck('id'));
+        })
         ->with('currentRevision')
         ->get();
         return view('admin.my_document.create',compact('categories','approvedDocs'));
@@ -99,7 +103,7 @@ class DocumentRevisionController extends Controller
             'title' => 'required|string|max:255',
             'category_id' => 'required',
             'rev' => 'required|array',
-            'code' => 'required|string|max:30',
+            'code' => 'required|string|unique:documents,code|max:30',
             'file_path' => 'required|file|mimes:pdf,doc,docx,ppt,pptx',
             'description' => 'required|string',
             'reason' => 'required|string|max:255',
@@ -150,7 +154,11 @@ class DocumentRevisionController extends Controller
 
     public function edit(DocumentRevision $documentRevision)
     {
-        if($documentRevision->status === 'Disetujui' || $documentRevision->status === 'Pengajuan Revisi'){
+        $reviserRole = $documentRevision->reviser->roles->pluck('id');
+        $userRoles = auth()->user()->roles->pluck('id');
+
+        $rightRole = $reviserRole->intersect($userRoles)->isNotEmpty();
+        if(($documentRevision->status === 'Disetujui' || $documentRevision->status === 'Pengajuan Revisi') && $rightRole){
             $reason = $documentRevision->status === 'Pengajuan Revisi' ? DocumentHistory::with('revision')->where('document_id',$documentRevision->document->id)->where('revision_id',$documentRevision->id)->where('action','Rejected')->first()->reason:'';
             $approvedDocs = Document::where('is_active',true)
             ->whereHas('currentRevision', function ($query) {
@@ -185,7 +193,7 @@ class DocumentRevisionController extends Controller
             'title' => 'required|string|max:255',
             'category_id' => 'required',
             'rev' => 'nullable|array',
-            'code' => 'required|string|max:30',
+            'code' => 'required|string|unique:documents,code,'.$documentRevision->document->id.'|max:30',
             'file_path' => 'required|file|mimes:pdf,doc,docx,ppt,pptx',
             'description' => 'required|string',
         ];
@@ -262,11 +270,22 @@ class DocumentRevisionController extends Controller
         ];
 
         if (auth()->user()->isRole('Administrator')) {
-            $rules['acc_format'] = 'required_if:acc_content,false|boolean';
-            $rules['acc_content'] = 'required_if:acc_format,false|boolean';
+            $rules['acc_format'] = 'boolean';
+            $rules['acc_content'] = 'boolean';
         }
-
-        $validated = $request->validate($rules);
+        
+        $validator = Validator::make($request->all(), $rules);
+        
+        $validator->after(function ($validator) use ($request) {
+            if (auth()->user()->isRole('Administrator')) {
+                if ($request->input('acc_format') == false && $request->input('acc_content') == false && $request->input('reason') === '') {
+                    $validator->errors()->add('acc_format', 'Either acc_format or acc_content must be true.');
+                    $validator->errors()->add('acc_content', 'Either acc_format or acc_content must be true.');
+                }
+            }
+        });
+        
+        $validated = $validator->validate();
         
         $data = [
             'status' => $validated['status'],
@@ -284,6 +303,13 @@ class DocumentRevisionController extends Controller
         
         // Check role kepala puskesmas
         $disetujuiKepPus = $validated['status'] === 'Disetujui' && auth()->user()->isRole('Kepala-Puskesmas');
+
+        $revisorRoles = $documentRevision->reviser->roles->pluck('id')->toArray();
+        $roles = [1];
+        $roles = array_merge($roles, $revisorRoles);
+        
+        // Remove duplicates, if needed
+        $roles = array_unique($roles);
 
         if ($disetujuiKepPus) {
             $documentRevision->document->update([
@@ -309,7 +335,8 @@ class DocumentRevisionController extends Controller
                     'status' => 'Expired'
                 ]);
             }
-            event(new NewApprovalDocument($documentRevision->document,[1,5],
+
+            event(new NewApprovalDocument($documentRevision->document,$roles,
                     'Dokumen '. $documentRevision->document->title . ' Telah Disepakati.',
                     route('documents.show',['document' => $documentRevision->document]))
             );
@@ -335,7 +362,7 @@ class DocumentRevisionController extends Controller
         }else if(!$disetujuiKepPus){
             $message = 'Dokumen ' . $documentRevision->document->title . ' Membutuhkan Revisi.';
             $link = route('document_revision.edit',['documentRevision' => $documentRevision->id]);
-            event(new NewApprovalDocument($documentRevision->document,[1,5],$message,$link));
+            event(new NewApprovalDocument($documentRevision->document,$roles,$message,$link));
         }
         
 

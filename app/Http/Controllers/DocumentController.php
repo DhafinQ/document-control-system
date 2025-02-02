@@ -79,7 +79,7 @@ class DocumentController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'code' => 'required|string|max:30',
+            'code' => 'required|string|unique:documents,code|max:30',
             'category_id' => 'required|exists:categories,id',
             'file_path' => 'required|file|mimes:pdf,doc,docx,ppt,pptx|max:5120',
             'description' => 'required|string',

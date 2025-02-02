@@ -45,7 +45,7 @@
                                     <td>{{$document->category->name}}</td>
                                     <td>
                                         @php
-                                            $currentStatus = ($document->currentRevision->document_id === $document->id) ? $document->currentRevision->status : 'Expired'
+                                            $currentStatus = ($document->currentRevision->document_id === $document->id) ? $document->latestHistory->revision->status : 'Expired'
                                         @endphp
                                         <span class="badge
                                         @if ($currentStatus === 'Draft')
@@ -58,7 +58,7 @@
                                             bg-danger
                                         @endif
                                         ">
-                                            {{ $currentStatus }}
+                                            {{ $document->latestHistory->revision->status }}
                                         </span>
                                     </td>
                                     <td>{{$document->uploader->name}}</td>
@@ -67,8 +67,8 @@
                                         @canany(['edit-documents','edit-revisions'])
                                         <div class="d-flex">
                                             <a href="{{ route('document.active') }}" class="btn btn-sm btn-admin me-1">Detail</a>
-                                            @if ($document->currentRevision->document_id === $document->id && ($document->currentRevision->status == 'Disetujui' || $document->currentRevision->status == 'Pengajuan Revisi'))
-                                            <a href="{{ route('document_revision.edit', $document->currentRevision) }}" class="btn btn-sm btn-approver">Revisi</a>
+                                            @if ($document->currentRevision->document_id === $document->id && ($document->latestHistory->revision->status == 'Disetujui' || $document->latestHistory->revision->status == 'Pengajuan Revisi'))
+                                            <a href="{{ route('document_revision.edit', $document->latestHistory->revision->id) }}" class="btn btn-sm btn-approver">Revisi</a>
                                             @endif
                                         </div>
                                         @endcanany
