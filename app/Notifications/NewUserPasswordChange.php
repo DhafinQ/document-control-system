@@ -41,7 +41,7 @@ class NewUserPasswordChange extends Notification
         return [
             'name' => $this->user->name,
             'message' => 'Hallo '.$this->user->name.'!, Silahkan Ganti Password Demi Keamanan.',
-            'link' => 'javascript:void()' // Kalau sudah ada fitur update profile/password, ganti
+            'link' => route('profile.edit')
         ];
     }
 }
