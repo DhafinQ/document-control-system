@@ -34,7 +34,7 @@
     </div>
     <div class="card mt-4">
         <div class="card-header">
-            <h5>Change Password</h5>
+            <h5>Change Credentials</h5>
         </div>
         <div class="card">
             <div class="card-body">
