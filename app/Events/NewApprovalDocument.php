@@ -10,19 +10,23 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class NewCreatedUser
+class NewApprovalDocument
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
      * Create a new event instance.
      */
-
-    public $user;
-
-    public function __construct($user)
+    public $document;
+    public $roles;
+    public $message;
+    public $link;
+    public function __construct($document,$roles,$message,$link)
     {
-        $this->user = $user;
+        $this->document = $document;
+        $this->roles = $roles;
+        $this->message = $message;
+        $this->link = $link;
     }
 
     /**

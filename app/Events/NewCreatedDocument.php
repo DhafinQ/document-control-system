@@ -10,16 +10,19 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class DocumentCreated
+class NewCreatedDocument
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
      * Create a new event instance.
      */
-    public function __construct()
+    public $document;
+    public $message;
+    public function __construct($document,$message)
     {
-        //
+        $this->document = $document;
+        $this->message = $message;
     }
 
     /**

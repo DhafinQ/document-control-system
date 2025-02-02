@@ -7,22 +7,19 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class DocumentApprovalNotification extends Notification
+class DocumentCreatedNotification extends Notification
 {
     use Queueable;
     private $document;
     private $message;
-    private $link;
 
     /**
      * Create a new notification instance.
-     * @return void
      */
-    public function __construct($document,$message,$link)
+    public function __construct($document,$message)
     {
         $this->document = $document;
         $this->message = $message;
-        $this->link = $link;
     }
 
     /**
@@ -44,7 +41,7 @@ class DocumentApprovalNotification extends Notification
     {
         return [
             'message' => $this->message,
-            'link' => $this->link
+            'link' => route('document_approval.index') 
         ];
     }
 }

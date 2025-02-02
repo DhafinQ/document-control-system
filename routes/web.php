@@ -7,6 +7,8 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\DocumentHistoryController;
 use App\Http\Controllers\DocumentRevisionController;
+use App\Http\Controllers\NotificationController;
+use App\Notifications\NewUserPasswordChange;
 
 // -- TEMPLATE ROUTES --
 
@@ -221,6 +223,10 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    
+    Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllRead'])->name('notifications.markAllRead');
+    Route::post('/notifications/{notification}/mark-read', [NotificationController::class, 'markAsRead'])->name('notification.markRead');
+    Route::get('/notifications',[NotificationController::class,'index'])->name('notifications');
 
     Route::get('/active_document', [DocumentController::class, 'indexActive'])->name('document.active')->middleware('can:active-document');
     Route::get('/dashboard', [DocumentController::class, 'dashboard'])->name('dashboard');

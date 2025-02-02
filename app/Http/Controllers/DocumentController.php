@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NewCreatedDocument;
 use App\Models\Document;
 use App\Models\DocumentRevision;
 use App\Models\DocumentHistory;
 use App\Models\Category;
 use App\Models\User;
 use App\Notifications\DocumentApprovalNotification;
+use App\Notifications\DocumentCreatedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Response;
@@ -83,7 +85,7 @@ class DocumentController extends Controller
             'description' => 'required|string',
         ]);
 
-        // $path = $request->file('file_path')->store('', 'dokumen');
+        $path = $request->file('file_path')->store('', 'dokumen');
         $file = $request->file('file_path');
         $fileName = uniqid() . '_' . $file->getClientOriginalName();
         Storage::disk('dokumen')->put($fileName, file_get_contents($file));
@@ -104,17 +106,17 @@ class DocumentController extends Controller
             'description' => $validated['description'],
         ]);
 
-        // foreach ($validated['rev'] ?? [] as $rev) {
-        //     $currentRevision = DocumentRevision::findOrFail($rev);
+        foreach ($validated['rev'] ?? [] as $rev) {
+            $currentRevision = DocumentRevision::findOrFail($rev);
 
-        //     DocumentRevision::create([
-        //         'document_id' => $rev,
-        //         'file_path' => $path,
-        //         'revised_by' => $validated['uploaded_by'],
-        //         'revision_number' => $currentRevision->revision_number + 1,
-        //         'description' => $validated['description'],
-        //     ]);
-        // }
+            DocumentRevision::create([
+                'document_id' => $rev,
+                'file_path' => $path,
+                'revised_by' => $validated['uploaded_by'],
+                'revision_number' => $currentRevision->revision_number + 1,
+                'description' => $validated['description'],
+            ]);
+        }
 
         $document->update(['current_revision_id' => $revision->id]);
 
@@ -125,6 +127,8 @@ class DocumentController extends Controller
             'performed_by' => Auth::id(),
             'reason' => null,
         ]);
+
+        event(new NewCreatedDocument($document,'Dokumen ' . $document->title . ' telah dibuat oleh ' . $document->uploader->name . '.'));
 
         // return redirect()->route('documents.index')->with('success', 'Document created successfully.');
         return redirect()->route('document_revision.index')->with('success', 'Document Created successfully.');
@@ -197,14 +201,27 @@ class DocumentController extends Controller
         return redirect()->route('documents.index')->with('success', 'Document deleted successfully.');
     }
 
-    //Notification
-    public function notifyDocumentPending()
+    //Approved Notify
+    public function approveDocument(Request $request, $id)
     {
-        $documentCount = 5; //ngasal dulu rek
+        $document = Document::findOrFail($id);
+        $document->status = 'Approved';
+        $document->save();
 
-        $admin = User::role('admin')->first();
-        $admin->notify(new DocumentApprovalNotification($documentCount));
+        // event(new DocumentApprovalNotification($document));
 
-        return response()->json(['message' => 'Notifikasi berhasil dikirim']);
+        return response()->json(['message' => 'Document approved successfully']);
+    }
+
+    //Approved Notify
+    public function createdDocument(Request $request, $id)
+    {
+        $document = Document::findOrFail($id);
+        $document->status = 'Created';
+        $document->save();
+
+        event(new DocumentCreatedNotification($document));
+
+        return response()->json(['message' => 'Document created successfully']);
     }
 }

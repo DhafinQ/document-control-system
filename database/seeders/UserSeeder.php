@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Events\NewCreatedUser;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\User;
@@ -66,6 +67,8 @@ class UserSeeder extends Seeder
             if ($role) {
                 $user->roles()->sync([$role->id]);
             }
+
+            event(new NewCreatedUser($user));
         }
     }
 }

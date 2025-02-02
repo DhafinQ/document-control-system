@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Listeners\SendCreatedDocumentNotification;
 use App\Listeners\SendNewUserNotification;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
@@ -21,8 +22,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Event::listen(
-            SendNewUserNotification::class,
-        );
+        Event::listen(SendNewUserNotification::class);
+        Event::listen(SendCreatedDocumentNotification::class);
     }
 }

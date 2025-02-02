@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Events\NewCreatedUser;
-use App\Listeners\SendNewUserNotification;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Itstructure\LaRbac\Models\Role;

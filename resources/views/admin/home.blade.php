@@ -17,7 +17,7 @@
 
                         <div class="d-flex align-items-center">
                           <div class="me-4">
-                            <span class="fs-2"><button type="button" class="btn btn-admin m-1">Settings</button></span>
+                            <span class="fs-2"><a href="{{route('profile')}}" class="btn btn-admin m-1">Settings</a></span>
                           </div>
                           <div>
                             <span class="fs-2"><button type="button" class="btn btn-approver m-1" onclick="document.getElementById('logout-form').submit();">Logout</button></span>

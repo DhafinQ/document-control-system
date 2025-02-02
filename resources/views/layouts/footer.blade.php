@@ -37,6 +37,8 @@
         });
         </script>
     </body>
+
+    <script src="{{asset('assets/js/dropdownNotification.js')}}"></script>
     @yield('customJS')
 
 </html>
