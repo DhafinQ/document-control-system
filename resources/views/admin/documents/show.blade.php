@@ -76,6 +76,13 @@
 
 
                             @can('view-histories')
+                            @php
+                                $reviserRole = $document->uploader->roles->pluck('id');
+                                $userRoles = auth()->user()->roles->pluck('id');
+
+                                $rightRole = $reviserRole->intersect($userRoles)->isNotEmpty();
+                            @endphp 
+                            @if($rightRole)
                             <h5 class="card-title fw-semibold mt-5 mb-4">
                                 <i class="fa fa-history me-2"></i> Riwayat Revisi
                             </h5>
@@ -115,6 +122,7 @@
                                     </tbody>
                                 </table>
                             </div>
+                            @endif
                             @endcan
                             
                         </div>
