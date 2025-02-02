@@ -31,6 +31,11 @@
         </div>
     @endif
 
+    </div>
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5>Change Password</h5>
+        </div>
         <div class="card">
             <div class="card-body">
                 <form action="{{ route('user-profile-information.update') }}" method="POST">
@@ -55,8 +60,7 @@
                 </form>
             </div>
         </div>
-    </div>
-    <div class="card mt-4">
+        
         <div class="card-header">
             <h5>Change Password</h5>
         </div>
