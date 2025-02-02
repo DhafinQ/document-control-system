@@ -50,7 +50,7 @@ Route::get('/template/sample', function () {
     return view('/template/sample');
 });
 
-// -- ADMIN ROUTES -- 
+// -- ADMIN ROUTES --
 
 Route::get('/admin', function () {
     return view('/admin/home');
@@ -221,7 +221,6 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::post('/user/profile-information', [\Laravel\Fortify\Http\Controllers\ProfileInformationController::class, 'update']);
 
     Route::get('/active_document', [DocumentController::class, 'indexActive'])->name('document.active')->middleware('can:active-document');
     Route::get('/dashboard', [DocumentController::class, 'dashboard'])->name('dashboard');
@@ -231,6 +230,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/document_histories', [DocumentHistoryController::class, 'index'])->name('document_histories.index')->middleware('can:view-histories');
     Route::get('/document_histories/{document_history}', [DocumentHistoryController::class, 'show'])->name('document_histories.show')->middleware('can:view-histories');
+
+
 
 
     Route::middleware('can:manage-categories')->group(function () {
@@ -255,7 +256,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/document_revision/create', [DocumentRevisionController::class, 'create'])->name('document_revision.create')->middleware('can:create-revisions');
     Route::post('/document_revision/store', [DocumentRevisionController::class, 'store'])->name('document_revision.store')->middleware('can:create-revisions');
 
-    
+
     Route::get('/documents', [DocumentController::class, 'index'])->name('documents.index')->middleware('can:view-documents');
     Route::get('/documents/create', [DocumentController::class, 'create'])->name('documents.create')->middleware('can:create-documents');
     Route::post('/documents', [DocumentController::class, 'store'])->name('documents.store')->middleware('can:create-documents');
