@@ -1,7 +1,8 @@
-@extends('layout.master')
+@extends("layouts.layout_admin")
 
+@section("title", "Edit Profile")
 @section('content')
-    <div class="container">
+    <div class="container pt-4">
         <h4>Edit Profile</h4>
 
 
@@ -48,7 +49,7 @@
                             value="{{ auth()->user()->email }}" required>
                     </div>
 
-                    <button type="submit" class="btn btn-success">
+                    <button type="submit" class="btn btn-admin">
                         <i class="ti ti-save"></i> Save Changes
                     </button>
                 </form>
