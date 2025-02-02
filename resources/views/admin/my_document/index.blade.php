@@ -8,7 +8,7 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-md-12">
-                    <h5 class="card-title fw-semibold mb-4">Revisi Dokumen </h5>
+                    <h5 class="card-title fw-semibold mb-4">Dokumen Anda</h5>
                     @can('create-documents')
                     <div class="d-flex justify-content-end mb-1">
                         <a href="{{route('documents.create')}}" class="btn btn-admin d-flex align-items-center">
@@ -28,49 +28,49 @@
                         <table id="myTable" class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th>No</th>
                                     <th>Id</th>
                                     <th>Judul</th>
                                     <th>Kategori</th>
-                                    <th>Rev.Number</th>
                                     <th>Status</th>
                                     <th>Uploader</th>
-                                    <th>File Dokumen</th>
-                                    <th>Revisi</th>
+                                    <th>Created At</th>
+                                    <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($revisions as $key => $revision)
+                                @foreach ($documents as $document)
                                 <tr>
-                                    <td>{{$key+1}}</td>
-                                    <td>{{$revision->document->code}}</td>
-                                    <td>{{$revision->document->title}}</td>
-                                    <td>{{$revision->document->category->name}}</td>
-                                    <td>{{$revision->revision_number}}</td>
+                                    <td>{{$document->code}}</td>
+                                    <td>{{$document->title}}</td>
+                                    <td>{{$document->category->name}}</td>
                                     <td>
+                                        @php
+                                            $currentStatus = ($document->currentRevision->document_id === $document->id) ? $document->currentRevision->status : 'Expired'
+                                        @endphp
                                         <span class="badge
-                                        @if ($revision->status === 'Draft')
+                                        @if ($currentStatus === 'Draft')
                                             bg-light text-dark
-                                        @elseif ($revision->status === 'Disetujui')
+                                        @elseif ($currentStatus === 'Disetujui')
                                             bg-success
-                                        @elseif ($revision->status === 'Pengajuan Revisi' || $revision->status === 'Proses Revisi')
+                                        @elseif ($currentStatus === 'Pengajuan Revisi' || $currentStatus === 'Proses Revisi')
                                             bg-warning
-                                        @elseif ($revision->status === 'Expired')
+                                        @elseif ($currentStatus === 'Expired')
                                             bg-danger
                                         @endif
                                         ">
-                                            {{ $revision->status }}
+                                            {{ $currentStatus }}
                                         </span>
                                     </td>
-                                    <td>{{$revision->reviser->name}}</td>
-                                    <td><a href="{{route('document_revision.show-file',['filename' => $revision->file_path])}}" target="_blank">Lihat File</a></td>
+                                    <td>{{$document->uploader->name}}</td>
+                                    <td>{{ \Carbon\Carbon::parse($document->created_at)->format('H:i:s-d/m/Y') }}</td>
                                     <td>
                                         @canany(['edit-documents','edit-revisions'])
-                                            @if ($revision->status == 'Disetujui' || $revision->status == 'Pengajuan Revisi')
-                                                <a href="{{ route('document_revision.edit', $revision) }}" class="btn btn-sm btn-admin">Revisi</a>
-                                            @else
-                                                -
+                                        <div class="d-flex">
+                                            <a href="{{ route('document.active') }}" class="btn btn-sm btn-admin me-1">Detail</a>
+                                            @if ($document->currentRevision->document_id === $document->id && ($document->currentRevision->status == 'Disetujui' || $document->currentRevision->status == 'Pengajuan Revisi'))
+                                            <a href="{{ route('document_revision.edit', $document->currentRevision) }}" class="btn btn-sm btn-approver">Revisi</a>
                                             @endif
+                                        </div>
                                         @endcanany
                                     </td>
                                 </tr>

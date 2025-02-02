@@ -17,31 +17,36 @@ class DocumentRevisionController extends Controller
 
     public function index()
     {
-        $revisions = DocumentRevision::with(['document', 'reviser'])->get();
-        return view('admin.document-revisions.index', compact('revisions'));
+        $documents = Document::whereHas('uploader.roles', function ($query) {
+            $query->whereIn('id', auth()->user()->roles->pluck('id'));
+        })->with('uploader')->get();
+        return view('admin.my_document.index', compact('documents'));
     }
 
     public function indexApproval()
     {
-        $revisionsQuery = DocumentRevision::where('status', 'Draft')->with(['document', 'reviser']);
-
+        $revisionsQuery = DocumentRevision::whereIn('status', ['Draft','Disetujui'])->with(['document', 'reviser']);
         if (auth()->user()->isRole('Kepala-Puskesmas')) {
-            $revisionsQuery->where('acc_content', true)->where('acc_format', true);
+            $revisionsQuery->where(function($query) {
+                $query->where('acc_content', true)
+                      ->where('acc_format', true);
+            })->orWhere('status', 'Disetujui');
         } elseif (auth()->user()->isRole('Bagian-Mutu')) {
-            $revisionsQuery->where('acc_content', false)->where('acc_format', true);
+            $revisionsQuery->where(function($query) {
+                $query->where('acc_format', true);
+            })->orWhere('status', 'Disetujui');
         } elseif ((auth()->user()->isRole('Pengendali-Dokumen'))){
-            $revisionsQuery->where('acc_content', false)->where('acc_format', false);
-        } elseif((auth()->user()->isRole('Administrator'))){
-            $revisionsQuery->where(function ($query) {
-                $query->where('acc_content', false)
-                      ->orWhere('acc_format', false);
-            });
+            $revisionsQuery->where(function($query) {
+                $query->where('acc_content', false);
+            })->orWhere('status', 'Disetujui');
         }
 
+        
         $revisions = $revisionsQuery->get();
-
+        $roles = Auth::user()->roles->pluck('slug');
+        
         $categories = Category::all();
-        return view('admin.document_approve.index', compact('revisions','categories'));
+        return view('admin.document_approve.index', compact('revisions','categories','roles'));
     }
 
     public function getDoc(Request $req){
@@ -58,16 +63,21 @@ class DocumentRevisionController extends Controller
         
         $reason = $history['reason'] ?? '';
 
+        $userRoles = Auth::user()->roles->pluck('slug');
+        $roles = $userRoles->toArray();
+
         $data = [
             'id' => $documentRevision->id,
             'judul' => $documentRevision->document->title,
             'code' => $documentRevision->document->code,
             'category' => $documentRevision->document->category->name,
             'uploader' => $documentRevision->document->uploader->name,
+            'status' => $documentRevision->status,
             'url' => route('document_revision.show-file', ['filename' => $documentRevision->file_path]),
             'acc_format' => $documentRevision->acc_format,
             'acc_content' => $documentRevision->acc_content,
-            'reason' => $reason ?? ''
+            'reason' => $reason ?? '',
+            'roles' => $roles
         ];
 
         return response()->json(['data' => $data], 200);
@@ -81,7 +91,7 @@ class DocumentRevisionController extends Controller
         })
         ->with('currentRevision')
         ->get();
-        return view('admin.document-revisions.create',compact('categories','approvedDocs'));
+        return view('admin.my_document.create',compact('categories','approvedDocs'));
     }
 
     public function store(Request $request){
@@ -150,7 +160,7 @@ class DocumentRevisionController extends Controller
             ->with('currentRevision')
             ->get();
             $categories = Category::all();
-            return view('admin.document-revisions.edit', compact('documentRevision', 'categories','approvedDocs','reason'));
+            return view('admin.my_document.edit', compact('documentRevision', 'categories','approvedDocs','reason'));
         }else{
             return abort(404);
         }

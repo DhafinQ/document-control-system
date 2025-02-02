@@ -121,7 +121,7 @@
                             <a class="sidebar-link @if (Str::contains(request()->url(), 'categories')) active @endif"
                                 href="{{ route('categories.index') }}" aria-expanded="false">
                                 <span>
-                                    <i class="ti ti-folder"></i>
+                                    <i class="ti ti-tag"></i>
                                 </span>
                                 <span class="hide-menu">Kategori Dokumen</span>
                             </a>
@@ -134,7 +134,7 @@
                                 <span>
                                     <i class="ti ti-file"></i>
                                 </span>
-                                <span class="hide-menu">Dokumen Aktif</span>
+                                <span class="hide-menu">Dokumen</span>
                             </a>
                         </li>
                     @endcan
@@ -143,9 +143,9 @@
                             <a class="sidebar-link @if (Str::contains(request()->url(), ['documents/create', 'document_revision'])) active @endif"
                                 href="{{ route('document_revision.index') }}" aria-expanded="false">
                                 <span>
-                                    <i class="ti ti-pencil"></i>
+                                    <i class="ti ti-folder"></i>
                                 </span>
-                                <span class="hide-menu">Revisi Dokumen</span>
+                                <span class="hide-menu">Dokumen Anda</span>
                             </a>
                         </li>
                     @endcan
@@ -231,9 +231,9 @@
                                             <!-- Notify Start -->
                                             <div id="notification-list" class="notification-container">
                                                 <!-- Notifikasi Dummy -->
-                                                @if (count(auth()->user()->notifications) > 0)
-                                                    @foreach (auth()->user()->notifications->sortByDesc('created_at')->take(5) as $notification)
-                                                        <div id="notify-items" class="dclose notification-item {{ $notification->read_at ? '' : 'highlight' }}" data-notification-id="{{ $notification->id }}">
+                                                @if (count(auth()->user()->unreadNotifications) > 0)
+                                                    @foreach (auth()->user()->unreadNotifications->sortByDesc('created_at')->take(5) as $notification)
+                                                        <div id="notify-items" class="dclose notification-item highlight" data-notification-id="{{ $notification->id }}">
                                                             <a href="{{ $notification->data['link'] }}" class="text-dark">
                                                                 <span class="notification-time">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13a7 7 0 1 0 14 0a7 7 0 0 0 -14 0z" /><path d="M14.5 10.5l-2.5 2.5" /><path d="M17 8l1 -1" /><path d="M14 3h-4" /></svg>
@@ -245,17 +245,17 @@
                                                         </div>
                                                     @endforeach
                                             </div>
-                                            <hr>
-                                            <div class="d-flex justify-content-center align-items-center">
-                                                <a href="{{route('notifications')}}" class="btn btn-outline-secondary dclose mb-2" id="view-all-notifications">Lihat Semua</a>
-                                            </div>
                                         @else
                                             <div id="notify-items"
                                                 class="dclose notification-item d-flex justify-content-center">
                                                 <p>Tidak Ada Notifikasi Baru.</p>
                                             </div>
-                                            @endif
-                                            <!-- Notify End -->
+                                        @endif
+                                        <hr>
+                                        <div class="d-flex justify-content-center align-items-center">
+                                            <a href="{{route('notifications')}}" class="btn btn-outline-secondary dclose mb-2" id="view-all-notifications">Lihat Semua</a>
+                                        </div>
+                                        <!-- Notify End -->
                                         </div>
                                     </div>
                                 </li>

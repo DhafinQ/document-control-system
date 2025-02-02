@@ -18,7 +18,7 @@
 
             <!-- Tabel Dokumen -->
             <div class="table-responsive mt-4">
-                <table class="table table-striped" id="myTable"  >
+                <table class="table table-striped" id="myTable">
                     <thead class="bg-gray-50">
                         <tr>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nomor Dokumen</th>
@@ -40,7 +40,7 @@
                                 <a href="{{route('document_revision.show-file',['filename' => $document->currentRevision->file_path])}}" target="_blank">Download File</a>
                             </td>
                             <td class="px-6 py-4 text-center">
-                                <a href="{{route('documents.show',['document' => $document->id])}}" class="btn btn-admin">Detail</a>
+                                <a href="{{route('documents.show',['document' => $document->id])}}" class="btn btn-admin btn-sm">Detail</a>
                             </td>
                         </tr>
                         @endforeach
