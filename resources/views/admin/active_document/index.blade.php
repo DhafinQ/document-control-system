@@ -23,7 +23,6 @@
                         <tr>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nomor Dokumen</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Judul</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Deskripsi</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kategori</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pengunggah</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Berkas</th>
@@ -35,7 +34,6 @@
                         <tr>
                             <td class="px-6 py-4 text-center">{{$document->code}}</td>
                             <td class="px-6 py-4 text-center">{{$document->title}}</td>
-                            <td class="px-6 py-4 text-center">{{$document->currentRevision->description}}</td>
                             <td class="px-6 py-4 text-center">{{$document->category->name}}</td>
                             <td class="px-6 py-4 text-center">{{$document->uploader->name}}</td>
                             <td class="px-6 py-4 text-center">

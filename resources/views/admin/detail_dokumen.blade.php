@@ -155,29 +155,42 @@
                         <i class="fa fa-comment-dots me-2"></i> Status Dokumen
                     </h5>
 
-             
-                    <div class="container">
-                        <div class="d-flex flex-column">
-                 
-                            <div class=" p-2  mb-2 fw-bolder" style=" background-color: #343a4012;padding: 15px;">
-                                Diubah Dengan:
-                            </div>
-                        
-                            <div class="p-2">
-                                dokumen AMBARUSDI
+                    @if (!$is_active)
+                        <div class="container">
+                            <div class="d-flex flex-column">
+                    
+                                <div class=" p-2  mb-2 fw-bolder" style=" background-color: #343a4012;padding: 15px;">
+                                    Diubah Dengan:
+                                </div>
+                                <ul class="list-group">
+                                        <li class="list-group-item">
+                                            <a href="{{route('documents.show',['document'=> $document->currentRevision->document->id])}}">{{$document->currentRevision->document->title}}</a>
+                                        </li>
+                                </ul>
+                                <div class="p-2">
+                                
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    @endif
 
                     <div class="container mt-2">
                         <div class="d-flex flex-column">
-                       
                             <div class=" p-2  mb-2 fw-bolder" style=" background-color: #343a4012;padding: 15px;">
                                 Mengubah:
                             </div>
                        
                             <div class="p-2">
-                                dokumen AZRIL
+                                <ul class="list-group">
+                                    @foreach ($document->currentRevision->latestRevision($document->id)->revisedDocument() as $doc)
+                                        <li class="list-group-item">
+                                            <a href="{{route('documents.show', ['document' => $doc->id])}}">{{$doc->title}}</a>
+                                        </li>
+                                    @endforeach
+                                    @if (count($document->currentRevision->latestRevision($document->id)->revisedDocument()) == 0)
+                                        <li class="list-group-item">-</li>
+                                    @endif
+                                </ul>
                             </div>
                         </div>
                     </div>
