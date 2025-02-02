@@ -110,7 +110,7 @@ class DocumentRevisionController extends Controller
         ]);
 
         $file = $request->file('file_path');
-        $fileName = uniqid() . '_' . $file->getClientOriginalName();
+        $fileName = str_replace(['/', '\\'], '-', $validated['code']) . '_' . $validated['title'];
         Storage::disk('dokumen')->put($fileName, file_get_contents($file));
 
         $document = Document::create([
@@ -205,7 +205,7 @@ class DocumentRevisionController extends Controller
         $validated = $request->validate($rules);
 
         $file = $request->file('file_path');
-        $fileName = uniqid() . '_' . $file->getClientOriginalName();
+        $fileName = str_replace(['/', '\\'], '-', $validated['code']) . '_' . $validated['title'];
         Storage::disk('dokumen')->put($fileName, file_get_contents($file));
 
         $documentRevision->update([

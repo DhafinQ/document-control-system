@@ -84,10 +84,10 @@ class DocumentController extends Controller
             'file_path' => 'required|file|mimes:pdf,doc,docx,ppt,pptx|max:5120',
             'description' => 'required|string',
         ]);
-
+        
         $path = $request->file('file_path')->store('', 'dokumen');
         $file = $request->file('file_path');
-        $fileName = uniqid() . '_' . $file->getClientOriginalName();
+        $fileName = str_replace(['/', '\\'], '-', $validated['code']) . '_' . $validated['title'];
         Storage::disk('dokumen')->put($fileName, file_get_contents($file));
 
         $document = Document::create([

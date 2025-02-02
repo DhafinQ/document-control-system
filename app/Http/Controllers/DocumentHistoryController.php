@@ -40,8 +40,17 @@ class DocumentHistoryController extends Controller
      */
     public function show(DocumentHistory $documentHistory)
     {
-        $documentHistory->load(['document', 'revision.reviser', 'performer']);
+        $reviserRole = $documentHistory->revision->reviser->roles->pluck('id');
+        $userRoles = auth()->user()->roles->pluck('id');
 
-        return view('admin.document_histories.show', compact('documentHistory'));
+        $rightRole = $reviserRole->intersect($userRoles)->isNotEmpty();
+        if($rightRole){
+            $documentHistory->load(['document', 'revision.reviser', 'performer']);
+
+            return view('admin.document_histories.show', compact('documentHistory'));
+        }
+
+        return abort(404);
+        
     }
 }
