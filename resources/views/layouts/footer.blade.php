@@ -49,6 +49,7 @@
             "paging": true,
             "searching": true,
             "ordering": true,
+            "order": orderConfig 
         });
 
         // DataTable Approval
@@ -57,6 +58,7 @@
             "searching": true,
             "ordering": true,
             "dom": "<'d-flex justify-content-between'lf>rtip",
+            "order": orderConfig 
         });
 
         let searchBoxApproval = $('#tableApproval_wrapper .dataTables_filter');
@@ -75,16 +77,15 @@
         $('input[name="filterApproval"]').on('change', function () {
             let filterValue = $('input[name="filterApproval"]:checked').val();
             let labelText = "Menampilkan: Semua";
-
             //masukin fungsi untuk setiap radio disini
             if (filterValue === "all") {
                 tableApproval.column(3).search("").draw();
                 labelText = "Menampilkan: Semua";
             } else if (filterValue === "approved") {
-                tableApproval.column(3).search("approved", true, false).draw();
+                tableApproval.column(3).search("Disetujui", true, false).draw();
                 labelText = "Menampilkan: Disetujui";
             } else if (filterValue === "pending") {
-                tableApproval.column(3).search("pending", true, false).draw();
+                tableApproval.column(3).search("Draft", true, false).draw();
                 labelText = "Menampilkan: Pending";
             }
 
@@ -97,6 +98,7 @@
             "searching": true,
             "ordering": true,
             "dom": "<'d-flex justify-content-between'lf>rtip",
+            "order": orderConfig 
         });
 
         let searchBoxDocument = $('#tableDocument_wrapper .dataTables_filter');
