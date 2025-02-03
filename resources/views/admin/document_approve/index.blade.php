@@ -10,9 +10,10 @@
                     <div class="col-md-12">
                         <h5 class="card-title fw-semibold mb-4">Pengesahan Dokumen</h5>
 
+
                         <div class="table-responsive mt-4">
 
-                            <table id="myTable" class="table table-striped">
+                            <table id="tableApproval" class="table table-striped">
                                 <thead>
                                     <tr>
                                         <th>ID</th>

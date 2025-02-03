@@ -16,9 +16,10 @@
 
 
 
+
             <!-- Tabel Dokumen -->
             <div class="table-responsive mt-4">
-                <table class="table table-striped" id="myTable">
+                <table class="table table-striped" id="tableDocument">
                     <thead class="bg-gray-50">
                         <tr>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nomor Dokumen</th>
