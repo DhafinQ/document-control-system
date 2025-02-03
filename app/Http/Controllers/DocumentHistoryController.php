@@ -20,7 +20,7 @@ class DocumentHistoryController extends Controller
         ->orderBy('created_at', 'desc');
         
         $roles = Auth::user()->roles->pluck('slug');
-        if (!$roles->contains('administrator') && !$roles->contains('bagian-mutu') && !$roles->contains('pengendali-document') && !$roles->contains('kepala-puskesmas')) {
+        if (!$roles->contains('administrator') && !$roles->contains('bagian-mutu') && !$roles->contains('pengendali-dokumen') && !$roles->contains('kepala-puskesmas')) {
             $documentHistoriesQuery->whereHas('document', function($query) {
                 $query->whereHas('uploader',function ($que){
                     $que->whereHas('roles', function($q) {
