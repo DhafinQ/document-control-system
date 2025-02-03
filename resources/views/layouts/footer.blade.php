@@ -28,11 +28,24 @@
 
     <!-- Inisialisasi DataTable -->
     <script>
+
+    var url = window.location.pathname;
+    var orderConfig;
+
+    if (url === '/notifications') {
+        orderConfig = [[2, "desc"]];
+    } else if (url === '/categories') {
+        orderConfig = [[0, "asc"]];
+    } else {
+        orderConfig = [[5, "desc"]];
+    }
+
         $(document).ready(function () {
             $('#myTable').DataTable({
                 "paging": true,     
                 "searching": true,  
-                "ordering": true,   
+                "ordering": true,
+                "order": orderConfig  
             });
         });
         </script>

@@ -15,7 +15,6 @@
                             <table id="myTable" class="table table-striped">
                                 <thead>
                                     <tr>
-                                        <th>No</th>
                                         <th>ID</th>
                                         <th>Nama</th>
                                         <th>Menggantikan Dokumen</th>
@@ -27,7 +26,6 @@
                                 <tbody>
                                     @foreach ($revisions as $rev)
                                         <tr>
-                                            <td>{{ $loop->iteration }}</td>
                                             <td>{{ $rev->document->code }}</td>
                                             <td>{{ $rev->document->title }}</td>
                                             <td>
@@ -42,22 +40,42 @@
                                                     @endif
                                                 </ul>
                                             </td>
-                                            <td>{{ $rev->status }}</td>
+                                            <td>
+                                                <span class="badge
+                                                    @if ($rev->status === 'Disetujui')
+                                                        bg-admin 
+                                                    @else
+                                                        bg-light text-dark
+                                                    @endif
+                                                ">
+                                                    {{ $rev->status }}
+                                                </span>
+                                            </td>
                                             <td><a href="{{ route('document_revision.show-file', ['filename' => $rev->file_path]) }}"
                                                     target="_blank">Lihat File</a></td>
                                             @can('edit-approval')
+                                                @if (($roles->contains('administrator') && $rev->acc_format && $rev->acc_content) || ($roles->contains('bagian-mutu') && $rev->acc_content) || ($roles->contains('pengendali-dokumen') && $rev->acc_format) || $rev->status === 'Disetujui')
                                                 <td>
-                                                    <button type="button" id="btn-modalTerima" class="btn btn-primary btn-sm"
+                                                    <button type="button" id="btn-modalTerima" class="btn btn-secondary btn-sm"
+                                                        data-bs-toggle="modal" data-bs-target="#modalTerima"
+                                                        data-id="{{ $rev->id }}">
+                                                        Detail
+                                                    </button>
+                                                </td>
+                                                @else
+                                                <td>
+                                                    <button type="button" id="btn-modalTerima" class="btn btn-admin btn-sm"
                                                         data-bs-toggle="modal" data-bs-target="#modalTerima"
                                                         data-id="{{ $rev->id }}">
                                                         Terima
                                                     </button>
-                                                    <button type="button" id="btn-modalTolak" class="btn btn-danger btn-sm"
+                                                    <button type="button" id="btn-modalTolak" class="btn btn-approver btn-sm"
                                                         data-bs-toggle="modal" data-bs-target="#modalTolak"
                                                         data-id="{{ $rev->id }}">
                                                         Revisi
                                                     </button>
                                                 </td>
+                                                @endif
                                             @endcan
                                         </tr>
                                     @endforeach
@@ -228,7 +246,7 @@
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary"
                                                 data-bs-dismiss="modal">Batal</button>
-                                            <button type="submit" class="btn btn-success">Konfirmasi Pengesahan</button>
+                                            <button type="submit" class="btn btn-success" id="acc-btn">Konfirmasi Pengesahan</button>
                                         </div>
                                         </form>
                                     </div>
@@ -246,11 +264,13 @@
     <script>
         $(document).on('click', '#btn-modalTerima', function() {
             let id = $(this).data('id'); // get the data attribute value from the button
+            let status = $(this).data('status'); // get the data attribute value from the button
             fetchDocumentData(id); // fetch data based on the id
         });
 
         $(document).on('click', '#btn-modalTolak', function() {
             let id = $(this).data('id'); // get the data attribute value from the button
+            let status = $(this).data('status'); // get the data attribute value from the button
             fetchDocumentData(id); // fetch data based on the id
         });
 
@@ -290,6 +310,18 @@
             $('#rev_category_doc').val(data.category);
             $('#rev_uploader_doc').val(data.uploader);
             $('#rev_url_doc').attr('href', data.url);
+
+            if (data.status === 'Disetujui' || 
+                (data.roles.includes("administrator") && data.acc_format && data.acc_content) || 
+                (data.roles.includes("bagian-mutu") && data.acc_content) || 
+                (data.roles.includes("pengendali-dokumen") && data.acc_format)) {
+                
+                $('#acc-btn').css('display', 'none');
+                $('#acc_status1_doc').prop('disabled', true);
+                $('#acc_status2_doc').prop('disabled', true);
+            } else {
+                $('#acc-btn').css('display', 'block');
+            }   
 
             $('#formTolak').attr('action', '{{ url('/document_approval/') }}' + '/' + data.id);
             $('#formTerima').attr('action', '{{ url('/document_approval/') }}' + '/' + data.id);

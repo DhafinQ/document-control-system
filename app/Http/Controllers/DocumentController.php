@@ -79,15 +79,15 @@ class DocumentController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'code' => 'required|string|max:30',
+            'code' => 'required|string|unique:documents,code|max:30',
             'category_id' => 'required|exists:categories,id',
             'file_path' => 'required|file|mimes:pdf,doc,docx,ppt,pptx|max:5120',
             'description' => 'required|string',
         ]);
-
+        
         $path = $request->file('file_path')->store('', 'dokumen');
         $file = $request->file('file_path');
-        $fileName = uniqid() . '_' . $file->getClientOriginalName();
+        $fileName = str_replace(['/', '\\'], '-', $validated['code']) . '_' . $validated['title'];
         Storage::disk('dokumen')->put($fileName, file_get_contents($file));
 
         $document = Document::create([
@@ -136,7 +136,8 @@ class DocumentController extends Controller
     }
 
     public function show(Document $document){
-        return view('admin.detail_dokumen',compact('document'));
+        // dd(Auth::user()->can('view-histories'));
+        return view('admin.documents.show',compact('document'));
     }
 
     public function edit(Document $document)

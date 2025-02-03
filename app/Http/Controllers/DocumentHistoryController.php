@@ -7,6 +7,7 @@ use App\Models\Document;
 use App\Models\Revision;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DocumentHistoryController extends Controller
 {
@@ -15,9 +16,21 @@ class DocumentHistoryController extends Controller
      */
     public function index()
     {
-        $documentHistories = DocumentHistory::with(['document', 'revision.reviser', 'performer'])
-        ->orderBy('created_at', 'desc') 
-        ->get();
+        $documentHistoriesQuery = DocumentHistory::with(['revision.reviser', 'performer'])
+        ->orderBy('created_at', 'desc');
+        
+        $roles = Auth::user()->roles->pluck('slug');
+        if (!$roles->contains('administrator') && !$roles->contains('bagian-mutu') && !$roles->contains('pengendali-dokumen') && !$roles->contains('kepala-puskesmas')) {
+            $documentHistoriesQuery->whereHas('document', function($query) {
+                $query->whereHas('uploader',function ($que){
+                    $que->whereHas('roles', function($q) {
+                        $q->whereIn('id', Auth::user()->roles->pluck('id'));
+                    });
+                });
+            });
+        }
+        
+        $documentHistories = $documentHistoriesQuery->get();
 
         return view('admin.document_histories.index', compact('documentHistories'));
     }
@@ -27,8 +40,17 @@ class DocumentHistoryController extends Controller
      */
     public function show(DocumentHistory $documentHistory)
     {
-        $documentHistory->load(['document', 'revision.reviser', 'performer']);
+        $reviserRole = $documentHistory->revision->reviser->roles->pluck('id');
+        $userRoles = auth()->user()->roles->pluck('id');
 
-        return view('admin.document_histories.show', compact('documentHistory'));
+        $rightRole = $reviserRole->intersect($userRoles)->isNotEmpty();
+        if($rightRole){
+            $documentHistory->load(['document', 'revision.reviser', 'performer']);
+
+            return view('admin.document_histories.show', compact('documentHistory'));
+        }
+
+        return abort(404);
+        
     }
 }

@@ -11,37 +11,43 @@ use App\Models\DocumentHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class DocumentRevisionController extends Controller
 {
 
     public function index()
     {
-        $revisions = DocumentRevision::with(['document', 'reviser'])->get();
-        return view('admin.document-revisions.index', compact('revisions'));
+        $documents = Document::whereHas('uploader.roles', function ($query) {
+            $query->whereIn('id', auth()->user()->roles->pluck('id'));
+        })->with(['uploader','latestHistory'])->get();
+        return view('admin.my_document.index', compact('documents'));
     }
 
     public function indexApproval()
     {
-        $revisionsQuery = DocumentRevision::where('status', 'Draft')->with(['document', 'reviser']);
-
+        $revisionsQuery = DocumentRevision::whereIn('status', ['Draft','Disetujui'])->with(['document', 'reviser']);
         if (auth()->user()->isRole('Kepala-Puskesmas')) {
-            $revisionsQuery->where('acc_content', true)->where('acc_format', true);
+            $revisionsQuery->where(function($query) {
+                $query->where('acc_content', true)
+                      ->where('acc_format', true);
+            })->orWhere('status', 'Disetujui');
         } elseif (auth()->user()->isRole('Bagian-Mutu')) {
-            $revisionsQuery->where('acc_content', false)->where('acc_format', true);
+            $revisionsQuery->where(function($query) {
+                $query->where('acc_format', true);
+            })->orWhere('status', 'Disetujui');
         } elseif ((auth()->user()->isRole('Pengendali-Dokumen'))){
-            $revisionsQuery->where('acc_content', false)->where('acc_format', false);
-        } elseif((auth()->user()->isRole('Administrator'))){
-            $revisionsQuery->where(function ($query) {
-                $query->where('acc_content', false)
-                      ->orWhere('acc_format', false);
-            });
+            $revisionsQuery->where(function($query) {
+                $query->where('acc_content', false);
+            })->orWhere('status', 'Disetujui');
         }
 
+        
         $revisions = $revisionsQuery->get();
-
+        $roles = Auth::user()->roles->pluck('slug');
+        
         $categories = Category::all();
-        return view('admin.document_approve.index', compact('revisions','categories'));
+        return view('admin.document_approve.index', compact('revisions','categories','roles'));
     }
 
     public function getDoc(Request $req){
@@ -58,16 +64,21 @@ class DocumentRevisionController extends Controller
         
         $reason = $history['reason'] ?? '';
 
+        $userRoles = Auth::user()->roles->pluck('slug');
+        $roles = $userRoles->toArray();
+
         $data = [
             'id' => $documentRevision->id,
             'judul' => $documentRevision->document->title,
             'code' => $documentRevision->document->code,
             'category' => $documentRevision->document->category->name,
             'uploader' => $documentRevision->document->uploader->name,
+            'status' => $documentRevision->status,
             'url' => route('document_revision.show-file', ['filename' => $documentRevision->file_path]),
             'acc_format' => $documentRevision->acc_format,
             'acc_content' => $documentRevision->acc_content,
-            'reason' => $reason ?? ''
+            'reason' => $reason ?? '',
+            'roles' => $roles
         ];
 
         return response()->json(['data' => $data], 200);
@@ -79,9 +90,12 @@ class DocumentRevisionController extends Controller
         ->whereHas('currentRevision', function ($query) {
             $query->where('status', 'Disetujui');
         })
+        ->whereHas('uploader.roles', function ($query) {
+            $query->whereIn('id', auth()->user()->roles->pluck('id'));
+        })
         ->with('currentRevision')
         ->get();
-        return view('admin.document-revisions.create',compact('categories','approvedDocs'));
+        return view('admin.my_document.create',compact('categories','approvedDocs'));
     }
 
     public function store(Request $request){
@@ -89,14 +103,14 @@ class DocumentRevisionController extends Controller
             'title' => 'required|string|max:255',
             'category_id' => 'required',
             'rev' => 'required|array',
-            'code' => 'required|string|max:30',
+            'code' => 'required|string|unique:documents,code|max:30',
             'file_path' => 'required|file|mimes:pdf,doc,docx,ppt,pptx',
             'description' => 'required|string',
             'reason' => 'required|string|max:255',
         ]);
 
         $file = $request->file('file_path');
-        $fileName = uniqid() . '_' . $file->getClientOriginalName();
+        $fileName = str_replace(['/', '\\'], '-', $validated['code']) . '_' . $validated['title'];
         Storage::disk('dokumen')->put($fileName, file_get_contents($file));
 
         $document = Document::create([
@@ -140,7 +154,11 @@ class DocumentRevisionController extends Controller
 
     public function edit(DocumentRevision $documentRevision)
     {
-        if($documentRevision->status === 'Disetujui' || $documentRevision->status === 'Pengajuan Revisi'){
+        $reviserRole = $documentRevision->reviser->roles->pluck('id');
+        $userRoles = auth()->user()->roles->pluck('id');
+
+        $rightRole = $reviserRole->intersect($userRoles)->isNotEmpty();
+        if(($documentRevision->status === 'Disetujui' || $documentRevision->status === 'Pengajuan Revisi') && $rightRole){
             $reason = $documentRevision->status === 'Pengajuan Revisi' ? DocumentHistory::with('revision')->where('document_id',$documentRevision->document->id)->where('revision_id',$documentRevision->id)->where('action','Rejected')->first()->reason:'';
             $approvedDocs = Document::where('is_active',true)
             ->whereHas('currentRevision', function ($query) {
@@ -150,7 +168,7 @@ class DocumentRevisionController extends Controller
             ->with('currentRevision')
             ->get();
             $categories = Category::all();
-            return view('admin.document-revisions.edit', compact('documentRevision', 'categories','approvedDocs','reason'));
+            return view('admin.my_document.edit', compact('documentRevision', 'categories','approvedDocs','reason'));
         }else{
             return abort(404);
         }
@@ -175,7 +193,7 @@ class DocumentRevisionController extends Controller
             'title' => 'required|string|max:255',
             'category_id' => 'required',
             'rev' => 'nullable|array',
-            'code' => 'required|string|max:30',
+            'code' => 'required|string|unique:documents,code,'.$documentRevision->document->id.'|max:30',
             'file_path' => 'required|file|mimes:pdf,doc,docx,ppt,pptx',
             'description' => 'required|string',
         ];
@@ -187,7 +205,7 @@ class DocumentRevisionController extends Controller
         $validated = $request->validate($rules);
 
         $file = $request->file('file_path');
-        $fileName = uniqid() . '_' . $file->getClientOriginalName();
+        $fileName = str_replace(['/', '\\'], '-', $validated['code']) . '_' . $validated['title'];
         Storage::disk('dokumen')->put($fileName, file_get_contents($file));
 
         $documentRevision->update([
@@ -252,11 +270,22 @@ class DocumentRevisionController extends Controller
         ];
 
         if (auth()->user()->isRole('Administrator')) {
-            $rules['acc_format'] = 'required_if:acc_content,false|boolean';
-            $rules['acc_content'] = 'required_if:acc_format,false|boolean';
+            $rules['acc_format'] = 'boolean';
+            $rules['acc_content'] = 'boolean';
         }
-
-        $validated = $request->validate($rules);
+        
+        $validator = Validator::make($request->all(), $rules);
+        
+        $validator->after(function ($validator) use ($request) {
+            if (auth()->user()->isRole('Administrator')) {
+                if ($request->input('acc_format') == false && $request->input('acc_content') == false && $request->input('reason') === '') {
+                    $validator->errors()->add('acc_format', 'Either acc_format or acc_content must be true.');
+                    $validator->errors()->add('acc_content', 'Either acc_format or acc_content must be true.');
+                }
+            }
+        });
+        
+        $validated = $validator->validate();
         
         $data = [
             'status' => $validated['status'],
@@ -274,6 +303,13 @@ class DocumentRevisionController extends Controller
         
         // Check role kepala puskesmas
         $disetujuiKepPus = $validated['status'] === 'Disetujui' && auth()->user()->isRole('Kepala-Puskesmas');
+
+        $revisorRoles = $documentRevision->reviser->roles->pluck('id')->toArray();
+        $roles = [1];
+        $roles = array_merge($roles, $revisorRoles);
+        
+        // Remove duplicates, if needed
+        $roles = array_unique($roles);
 
         if ($disetujuiKepPus) {
             $documentRevision->document->update([
@@ -299,7 +335,8 @@ class DocumentRevisionController extends Controller
                     'status' => 'Expired'
                 ]);
             }
-            event(new NewApprovalDocument($documentRevision->document,[1,5],
+
+            event(new NewApprovalDocument($documentRevision->document,$roles,
                     'Dokumen '. $documentRevision->document->title . ' Telah Disepakati.',
                     route('documents.show',['document' => $documentRevision->document]))
             );
@@ -325,7 +362,7 @@ class DocumentRevisionController extends Controller
         }else if(!$disetujuiKepPus){
             $message = 'Dokumen ' . $documentRevision->document->title . ' Membutuhkan Revisi.';
             $link = route('document_revision.edit',['documentRevision' => $documentRevision->id]);
-            event(new NewApprovalDocument($documentRevision->document,[1,5],$message,$link));
+            event(new NewApprovalDocument($documentRevision->document,$roles,$message,$link));
         }
         
 
