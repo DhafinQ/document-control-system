@@ -1,15 +1,53 @@
 @extends("layouts.layout_admin")
 
 @section("title", "Detail Document")
-
+<link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
 @section("content")
 @php
     $is_active = $document->currentRevision->status === 'Disetujui' && $document->is_active;
+    $currentStatus = $document->currentRevision->status;
 @endphp
 <div class="container-fluid">
     <div class="row">
-        <!-- Card Utama -->
         <div class="col-md-8">
+        <!-- Tracking Card -->
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title fw-semibold mb-4 border-bottom">
+                    <i class="fa fa-file me-2"></i> Tracking Dokumen
+                </h5>
+                <div class="container">
+                        <ul class="stepper">
+                            <li class="@if(in_array($currentStatus, ['Draft', 'Pengecekan Format', 'Pengecekan Isi Konten', 'Disetujui'])) active @endif">
+                                <span class="icon"><i class="bi bi-archive"></i></i></span>
+                                <span class="fw-semibold">Draft</span>
+                                <small>10-02-2025</small>
+                            </li>
+                            <li class="@if(in_array($currentStatus, ['Pengecekan Format', 'Pengecekan Isi Konten', 'Disetujui'])) active @endif">
+                                <span class="icon"><i class="bi bi-clipboard-pulse"></i></i></span>
+                                <span class="fw-semibold">Pengecekan Format</span>
+                                <small>10-02-2025</small>
+                            </li>
+                            <li class="@if(in_array($currentStatus, ['Pengecekan Isi Konten', 'Disetujui'])) active @endif">
+                                <span class="icon"><i class="bi bi-file-earmark-break"></i></span>
+                                <span class="fw-semibold">Pengecekan Isi Konten</span>
+                                <small>10-02-2025</small>
+                            </li>
+                            <li class="@if($currentStatus === 'Disetujui') active @endif">
+                                <span class="icon"><i class="bi bi-file-earmark-check"></i></span>
+                                <span class="fw-semibold">Dokumen Disetujui</span>
+                                <small>10-02-2025</small>
+                            </li>
+                        </ul>
+                    </div>
+
+            </div>
+        </div>
+
+            <!-- Card Pertama -->
             <div class="card">
                 <div class="card-body">
                     <div class="row">
@@ -131,7 +169,7 @@
             </div>
         </div>
 
-       
+
         <div class="col-md-4">
              <!-- Card kedua -->
             <div class="card">
@@ -207,10 +245,80 @@
                     </div>
                 </div>
             </div>
-
-
-
         </div>
     </div>
 </div>
+
+<style>
+ li {
+    list-style: none;
+}
+
+.stepper {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+.stepper > li {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    text-align: center;
+    flex-direction: column;
+    position: relative;
+    color: #6b7280;
+}
+
+.stepper > li::after {
+    content: "";
+    background: #f3f4f6; 
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    right: -50%;
+    height: 4px;
+    display: block;
+    z-index: 1;
+    transition: background-color 0.3s ease;
+}
+
+.stepper > li.active::after {
+    background-color: #15d1c2;
+}
+.stepper > li:last-child::after {
+    display: none;
+}
+
+.stepper .icon {
+    width: 50px;
+    height: 50px;
+    background-color: #f3f4f6;
+    border-radius: 100%;
+    color: #6b7280;
+    margin: 0 auto 10px auto;
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    z-index: 2;
+}
+
+.stepper .icon i {
+    font-size: 1.5rem;
+}
+
+.stepper .active, .stepper .active .icon, .stepper .complete {
+    color: #04403b;
+}
+
+.stepper .active .icon, .stepper .complete .icon, .stepper .complete::after {
+    background-color: #15d1c2;
+}
+
+
+
+.stepper .complete .icon .bi::before{
+    content: "\f272";
+    color: #1c64f2;
+}
+</style> 
 @endsection
