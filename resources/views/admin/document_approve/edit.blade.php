@@ -1,119 +1,132 @@
 @extends("layouts.layout_admin")
 
-@section("title", "Document")
+@section("title", "Detail Document")
 
 @section("content")
-
-      <div class="container-fluid">
-        <div class="container-fluid">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title fw-semibold mb-4">Dokumen Approval</h5>
-              @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Card Utama -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h5 class="card-title fw-semibold mb-4">
+                                <i class="fa fa-file-signature me-2"></i> Tanda Tangan Dokumen
+                            </h5>
+                            <div class="table-responsive mt-4">
+                                <table class="table table-borderless">
+                                    <tbody>
+                                        <tr>
+                                            <th scope="row">Nomor Dokumen</th>
+                                            <td>{{$document->code}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Judul</th>
+                                            <td>{{$document->title}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Kategori</th>
+                                            <td>{{$document->category->name}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Status</th>
+                                            <td class="badge p-2 m-3">
+                                                {{$document->currentRevision->status}}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Pembuat</th>
+                                            <td>{{$document->uploader->name}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Deskripsi</th>
+                                            <td>{{$document->currentRevision->latestRevision($document->id)->description}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            @can('view-histories')
+                            <h5 class="card-title fw-semibold mt-5 mb-4">
+                                <i class="fa fa-history me-2"></i> Riwayat Revisi
+                            </h5>
+                            <div class="table-responsive">
+                                <table id="revisionTable" class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>No. Revisi</th>
+                                            <th>Pengunggah</th>
+                                            <th>Tanggal Revisi</th>
+                                            <th>Status</th>
+                                            <th>Berkas</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($document->revisions as $rev)
+                                        <tr>
+                                            <td>{{$rev->revision_number}}</td>
+                                            <td>{{$rev->reviser->name}}</td>
+                                            <td>{{\Carbon\Carbon::parse($rev->created_at)->format('H:i:s-d/m/Y')}}</td>
+                                            <td><span class="badge p-2
+                                                @if ($rev->status === 'Disetujui')
+                                                    bg-admin
+                                                @elseif($rev->status === 'Proses Revisi')
+                                                    bg-warning
+                                                @elseif ($rev->status === 'Expired')
+                                                    bg-danger
+                                                @else
+                                                    bg-light text-dark
+                                                @endif
+                                                ">{{$rev->status}}</span>
+                                            </td>
+                                            <td>
+                                                <a href="{{route('document_revision.show-file',['filename' => $rev->file_path])}}" target="blank">Download</a>
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                            @endcan
+                        </div>
+                    </div>
                 </div>
-              @endif
-                  <form action="{{ route('document_approval.update', ['documentRevision' => $documentRevision->id]) }}" method="POST">
-                    @csrf
-                    @method('PUT')
-                  <div class="row mb-3 align-items-center">
-                    <div class="col-md-6">
-                      <label for="exampleInputEmail1" class="form-label">Judul</label>
-                      <input type="text" name="title" readonly value="{{old('title') ?? $documentRevision->document->title}}" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label for="exampleInputEmail1" class="form-label">Kategori Dokumen</label>
-                        <select class="form-control" id="exampleFormControlSelect1" disabled name="category_id">
-                          <option value="">-- Pilih --</option>
-                          @foreach ($categories as $category)
-                            <option value="{{$category->id}}" {{ old('category_id', $documentRevision->document->category_id) == $category->id ? 'selected' : '' }}>{{$category->name}}</option>
-                          @endforeach
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row mb-3 align-items-center">
-                    <div class="col-md-6">
-                      <label for="exampleInputEmail1" class="form-label">ID Dokumen</label>
-                      <input type="text" name="code" value="{{old('code') ?? $documentRevision->document->code}}" readonly class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-                    </div>
-                    <div class="col-md-6">
-                      <label for="dokumen" class="form-label">Berkas Dokumen</label>
-                      <br>
-                      <a class="btn btn-light text-dark" href="{{route('document_revision.show-file',['filename' => $documentRevision->file_path])}}" target="_blank">Lihat Dokumen</a>
-                    </div>                    
-                  </div>
-                  <div class="row mb-3 align-items-center">
-                    <div class="col-md-6">
-                      <label for="exampleInputEmail1" class="form-label">Pengunggah</label>
-                      <input type="text" value="{{$documentRevision->reviser->name}}" readonly class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-                    </div>
-                    <div class="col-md-6">
-                      <label for="exampleInputEmail1" class="form-label">Status<span class="text-danger">*</span></label>
-                      <div class="dropdown">
-                        <div id="additional-input-container"></div>
-                        <a class="btn btn-admin dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                          Ubah Status
-                        </a>
-                    
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                          <li><a class="dropdown-item" href="#">Disetujui</a></li>
-                          <li><a class="dropdown-item" href="#">Ditolak</a></li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="mb-3">
-                      <label for="exampleInputEmail1" class="form-label">Deskripsi</label>
-                      <textarea class="form-control" name="description" readonly id="exampleFormControlTextarea1" rows="2">{{old('description', $documentRevision->description)}}</textarea>
-                    </div>
-                    <div class="mb-3">
-                      <label for="exampleInputEmail1" class="form-label">Alasan Approval<span class="text-danger">*</span></label>
-                      <textarea class="form-control" name="reason" id="exampleFormControlTextarea1" rows="2"></textarea>
-                    </div>
-                    <div class="d-flex justify-content-center gap-2" style="width: 400px; margin: auto;">
-                      <button type="button" class="btn btn-danger" onclick="history.back()">Kembali</button>
-                      <button type="submit" class="btn btn-admin">Submit</button>
-                  </div>
-                  </form>
-
             </div>
-          </div>
         </div>
-      </div>
-    </div>
-
-    @section('customJS')
-    <script>
-      // Menangani perubahan teks ketika dropdown item dipilih
-      $(document).ready(function() {
-          $('.dropdown-item').on('click', function() {
-              var selectedText = $(this).text(); // Ambil teks item yang dipilih
-              $('#dropdownMenuLink').text(selectedText); // Ubah teks link dropdown
-
-              $('#additional-input-container').empty();
-
-              if (selectedText === 'Disetujui') {
-                  $('#additional-input-container').append(`
+        <!-- Card Kedua -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title fw-semibold mb-4 border-bottom">
+                        <i class="fa fa-file me-2"></i> File Dokumen
+                    </h5>
+                    <div class="d-flex mb-1">
+                        <a href="{{route('document_revision.show-file',['filename' => $document->currentRevision->latestRevision($document->id)->file_path ])}}" class="btn btn-admin d-flex align-items-center ms-2" target="blank">
+                            <i class="fa fa-file-alt me-2"></i> Unduh
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- Card Ketiga -->
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title fw-semibold mb-4">
+                        <i class="fa fa-file-contract me-2"></i> Dokumen Bertanda Tangan
+                    </h5>
+                    <form action="{{route('document_approval.update',['documentRevision' => $documentRevision->id])}}" method="post" enctype="multipart/form-data">
+                      @csrf
+                      @method('PUT')
                       <input type="hidden" name="status" value="Disetujui">
-                  `);
-              } else if (selectedText === 'Ditolak') {
-                  $('#additional-input-container').append(`
-                      <input type="hidden" name="status" value="Ditolak">
-                  `);
-              }
-          });
-      });
-
-      
-
-  </script>
-    @endsection
-  
+                      <div class="mb-3">
+                          <input class="form-control" type="file" id="formFile" name="file" required accept=".pdf, .docx, .pptx">
+                      </div>
+                      <div class="d-flex justify-content-center">
+                        <input type="submit" class="btn btn-admin w-100" value="Kirim File & Approve"></input>
+                      </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
