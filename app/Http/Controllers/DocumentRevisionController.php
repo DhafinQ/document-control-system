@@ -153,6 +153,10 @@ class DocumentRevisionController extends Controller
         return redirect()->route('document_revision.index')->with('success', 'Document Updated successfully.');
     }
 
+    public function show(DocumentRevision $documentRevision){
+        return view('admin.my_document.show',compact('documentRevision'));
+    }
+
     public function edit(DocumentRevision $documentRevision)
     {
         $reviserRole = $documentRevision->reviser->roles->pluck('id');
@@ -205,10 +209,10 @@ class DocumentRevisionController extends Controller
         $file = $request->file('file_path');
         $fileExtension = $file->getClientOriginalExtension();
         $fileName = str_replace(['/', '\\'], '-', $validated['code']) . '_' . preg_replace('/[\/\\\?\%\*\:\|\\"\<\>\.\(\)]/', '_', $validated['title']) . '.' . $fileExtension;
-        Storage::disk('dokumen-revision')->put($fileName, file_get_contents($file));
         if (Storage::disk('dokumen-revision')->exists($documentRevision->file_path)){
             Storage::disk('dokumen-revision')->delete($documentRevision->file_path);
         }
+        Storage::disk('dokumen-revision')->put($fileName, file_get_contents($file));
         $documentRevision->update([
             'status' => 'Proses Revisi'
         ]);

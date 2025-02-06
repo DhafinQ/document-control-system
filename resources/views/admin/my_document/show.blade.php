@@ -92,25 +92,27 @@
                         </h5>
                         <div class="container">
                             <ul class="stepper">
-                                <li class="@if (in_array($documentRevision->status, ['Draft', 'Disetujui'])) active @endif">
+                                <li class="@if (in_array($documentRevision->latestRevision()->status, ['Draft', 'Disetujui', 'Expired'])) active @endif">
                                     <span class="icon"><i class="bi bi-archive"></i></i></span>
                                     <span class="fw-semibold">Dokumen Dibuat</span>
-                                    <small>{{$documentRevision->created_at->format('d-m-Y')}}</small>
+                                    <small>{{ $documentRevision->created_at->format('d-m-Y') }}</small>
                                 </li>
-                                <li class="@if ($documentRevision->acc_format) active @endif">
+                                <li class="@if ($documentRevision->latestRevision()->acc_format) active @endif">
                                     <span class="icon"><i class="bi bi-clipboard-pulse"></i></i></span>
                                     <span class="fw-semibold">Pengecekan Format</span>
-                                    <small>{{empty($documentRevision->accFormat()) ? '-' : $documentRevision->accFormat()->created_at->format('d-m-Y')}}</small>
+                                    <small>{{ empty($documentRevision->latestRevision()->accFormat()) ? '-' : $documentRevision->latestRevision()->accFormat()->created_at->format('d-m-Y') }}</small>
                                 </li>
-                                <li class="@if ($documentRevision->acc_format && $documentRevision->acc_content) active @endif">
+                                <li class="@if ($documentRevision->latestRevision()->acc_format && $documentRevision->latestRevision()->acc_content) active @endif">
                                     <span class="icon"><i class="bi bi-file-earmark-break"></i></span>
                                     <span class="fw-semibold">Pengecekan Isi Konten</span>
-                                    <small>{{empty($documentRevision->accContent()) ? '-' : $documentRevision->accContent()->created_at->format('d-m-Y')}}</small>
+                                    <small>{{ empty($documentRevision->latestRevision()->accContent()) ? '-' : $documentRevision->latestRevision()->accContent()->created_at->format('d-m-Y') }}</small>
                                 </li>
-                                <li class="@if (($documentRevision->status == 'Disetujui' && $documentRevision->document->is_active) || $documentRevision->status == 'Expired') active @endif">
+                                <li class="@if (
+                                    ($documentRevision->latestRevision()->status == 'Disetujui' && $documentRevision->latestRevision()->document->is_active) ||
+                                        $documentRevision->status == 'Expired') active @endif">
                                     <span class="icon"><i class="bi bi-file-earmark-check"></i></span>
                                     <span class="fw-semibold">Dokumen Disetujui</span>
-                                    <small>{{empty($documentRevision->accKepalaPuskesmas()) ? '-' : $documentRevision->accKepalaPuskesmas()->created_at->format('d-m-Y')}}</small>
+                                    <small>{{ empty($documentRevision->latestRevision()->accKepalaPuskesmas()) ? '-' : $documentRevision->latestRevision()->accKepalaPuskesmas()->created_at->format('d-m-Y') }}</small>
                                 </li>
                             </ul>
                         </div>
@@ -129,29 +131,40 @@
                                         <tbody>
                                             <tr>
                                                 <th scope="row">Nomor Dokumen</th>
-                                                <td>{{ $document->code }}</td>
+                                                <td>{{ $documentRevision->document->code }}</td>
                                             </tr>
                                             <tr>
                                                 <th scope="row">Judul</th>
-                                                <td>{{ $document->title }}</td>
+                                                <td>{{ $documentRevision->document->title }}</td>
                                             </tr>
                                             <tr>
                                                 <th scope="row">Kategori</th>
-                                                <td>{{ $document->category->name }}</td>
+                                                <td>{{ $documentRevision->document->category->name }}</td>
                                             </tr>
                                             <tr>
                                                 <th scope="row">Status</th>
-                                                <td class="badge bg-light text-dark p-2 m-3">
-                                                    {{ $document->currentRevision->latestRevision()->status }}
+                                                <td
+                                                    class="badge p-2 m-3
+                                                @if ($documentRevision->latestRevision()->status === 'Draft') bg-light text-dark
+                                                @elseif ($documentRevision->latestRevision()->status === 'Disetujui')
+                                                    bg-success
+                                                @elseif (
+                                                    $documentRevision->latestRevision()->status === 'Pengajuan Revisi' ||
+                                                        $documentRevision->latestRevision()->status === 'Proses Revisi')
+                                                    bg-warning
+                                                @elseif ($documentRevision->latestRevision()->status === 'Expired')
+                                                    bg-danger @endif
+                                                ">
+                                                    {{ $documentRevision->latestRevision()->status }}
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <th scope="row">Pembuat</th>
-                                                <td>{{ $document->uploader->name }}</td>
+                                                <td>{{ $documentRevision->document->uploader->name }}</td>
                                             </tr>
                                             <tr>
                                                 <th scope="row">Deskripsi</th>
-                                                <td>{{ $document->currentRevision->latestRevision()->description }}
+                                                <td>{{ $documentRevision->latestRevision()->description }}
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -172,7 +185,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach ($document->revisions->sortByDesc('created_at') as $rev)
+                                                @foreach ($documentRevision->document->revisions->sortByDesc('created_at') as $rev)
                                                     <tr>
                                                         <td>{{ $rev->revision_number }}</td>
                                                         <td>{{ $rev->reviser->name }}</td>
@@ -180,18 +193,16 @@
                                                         </td>
                                                         <td><span
                                                                 class="badge p-2
-                                                @if ($rev->status === 'Disetujui') 
-                                                    bg-admin
-                                                @elseif($rev->status === 'Proses Revisi')
-                                                    bg-warning
-                                                @elseif ($rev->status === 'Expired')
-                                                    bg-danger
-                                                @else
-                                                    bg-light text-dark @endif
-                                                ">{{ $rev->status }}</span>
+                                                                @if ($rev->status === 'Disetujui') bg-admin
+                                                                @elseif($rev->status === 'Proses Revisi')
+                                                                    bg-warning
+                                                                @elseif ($rev->status === 'Expired')
+                                                                    bg-danger
+                                                                @else
+                                                                    bg-light text-dark @endif
+                                                                ">{{ $rev->status }}</span>
                                                         </td>
-                                                    </tr>
-                                                @endforeach
+                                                    @endforeach
                                             </tbody>
                                         </table>
                                     </div>
@@ -209,7 +220,25 @@
                             <i class="fa fa-file me-2"></i> File Dokumen
                         </h5>
                         <div class="d-flex mb-1">
-                            <a href="{{ route('document_revision.show-file', ['filename' => $document->currentRevision->latestRevision()->file_path]) }}"
+                            @canany(['edit-documents', 'edit-revisions'])
+                                @if (in_array($documentRevision->status, ['Disetujui', 'Draft', 'Pengajuan Revisi']))
+                                    <a href="{{ route('document_revision.edit', $documentRevision->id) }}"
+                                        class="btn btn-approver d-flex align-items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="icon icon-tabler icons-tabler-outline icon-tabler-file-code-2">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path d="M10 12h-1v5h1" />
+                                            <path d="M14 12h1v5h-1" />
+                                            <path d="M14 3v4a1 1 0 0 0 1 1h4" />
+                                            <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" />
+                                        </svg>
+                                        Perbarui
+                                    </a>
+                                @endif
+                            @endcanany
+                            <a href="{{ route('document_revision.show-file', ['filename' => $documentRevision->latestRevision()->file_path]) }}"
                                 class="btn btn-admin d-flex align-items-center ms-2" target="blank">
                                 <i class="fa fa-file-alt me-2"></i> Unduh
                             </a>
