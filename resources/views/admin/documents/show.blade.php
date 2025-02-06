@@ -82,45 +82,49 @@
 </style>
 @section('content')
     @php
-        $is_active = $document->currentRevision->status === 'Disetujui' && $document->is_active;
-        $currentStatus = $document->currentRevision->status;
+        $is_active = ($document->currentRevision->latestRevision($document->id)->status === 'Disetujui') && $document->is_active;
+        $currentStatus = $document->currentRevision->latestRevision($document->id)->status;
     @endphp
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-8">
                 <!-- Tracking Card -->
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title fw-semibold mb-4 border-bottom">
-                            <i class="fa fa-file me-2"></i> Tracking Dokumen
-                        </h5>
-                        <div class="container">
-                            <ul class="stepper">
-                                <li class="@if (in_array($document->currentRevision->status, ['Draft', 'Disetujui'])) active @endif">
-                                    <span class="icon"><i class="bi bi-archive"></i></i></span>
-                                    <span class="fw-semibold">Dokumen Dibuat</span>
-                                    <small>{{$document->currentRevision->created_at->format('d-m-Y')}}</small>
-                                </li>
-                                <li class="@if ($document->currentRevision->acc_format) active @endif">
-                                    <span class="icon"><i class="bi bi-clipboard-pulse"></i></i></span>
-                                    <span class="fw-semibold">Pengecekan Format</span>
-                                    <small>{{empty($document->currentRevision->accFormat()) ? '-' : $document->currentRevision->created_at->format('d-m-Y')}}</small>
-                                </li>
-                                <li class="@if ($document->currentRevision->acc_format && $document->currentRevision->acc_content) active @endif">
-                                    <span class="icon"><i class="bi bi-file-earmark-break"></i></span>
-                                    <span class="fw-semibold">Pengecekan Isi Konten</span>
-                                    <small>{{empty($document->currentRevision->accContent()) ? '-' : $document->currentRevision->created_at->format('d-m-Y')}}</small>
-                                </li>
-                                <li class="@if ($document->currentRevision->status == 'Disetujui' && $document->currentRevision->document->is_active) active @endif">
-                                    <span class="icon"><i class="bi bi-file-earmark-check"></i></span>
-                                    <span class="fw-semibold">Dokumen Disetujui</span>
-                                    <small>{{empty($document->currentRevision->accKepalaPuskesmas()) ? '-' : $document->currentRevision->created_at->format('d-m-Y')}}</small>
-                                </li>
-                            </ul>
-                        </div>
+                @can('view-revisions')
+                @if ($document->currentRevision->checkUploaderRoles())
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title fw-semibold mb-4 border-bottom">
+                                <i class="fa fa-file me-2"></i> Tracking Dokumen
+                            </h5>
+                            <div class="container">
+                                <ul class="stepper">
+                                    <li class="@if (in_array($document->currentRevision->latestRevision($document->id)->status, ['Draft', 'Disetujui', 'Expired','Proses Revisi'])) active @endif">
+                                        <span class="icon"><i class="bi bi-archive"></i></i></span>
+                                        <span class="fw-semibold">Dokumen Dibuat</span>
+                                        <small>{{$document->currentRevision->created_at->format('d-m-Y')}}</small>
+                                    </li>
+                                    <li class="@if ($document->currentRevision->acc_format) active @endif">
+                                        <span class="icon"><i class="bi bi-clipboard-pulse"></i></i></span>
+                                        <span class="fw-semibold">Pengecekan Format</span>
+                                        <small>{{empty($document->currentRevision->accFormat()) ? '-' : $document->currentRevision->created_at->format('d-m-Y')}}</small>
+                                    </li>
+                                    <li class="@if ($document->currentRevision->acc_format && $document->currentRevision->acc_content) active @endif">
+                                        <span class="icon"><i class="bi bi-file-earmark-break"></i></span>
+                                        <span class="fw-semibold">Pengecekan Konten</span>
+                                        <small>{{empty($document->currentRevision->accContent()) ? '-' : $document->currentRevision->created_at->format('d-m-Y')}}</small>
+                                    </li>
+                                    <li class="@if ($document->is_active || $document->currentRevision->latestRevision($document->id)->status === 'Expired') active @endif">
+                                        <span class="icon"><i class="bi bi-file-earmark-check"></i></span>
+                                        <span class="fw-semibold">Dokumen Disetujui</span>
+                                        <small>{{empty($document->currentRevision->accKepalaPuskesmas()) ? '-' : $document->currentRevision->created_at->format('d-m-Y')}}</small>
+                                    </li>
+                                </ul>
+                            </div>
 
+                        </div>
                     </div>
-                </div>
+                @endif
+                @endcan
 
                 <!-- Card Pertama -->
                 <div class="card">
@@ -132,7 +136,7 @@
                                 </h5>
 
                                 @if (!$is_active)
-                                    @if ($document->currentRevision->status === 'Proses Revisi')
+                                    @if ($document->currentRevision->latestRevision($document->id)->status === 'Proses Revisi')
                                         <div class="bg-warning-subtle p-2 rounded">
                                             <p class="me-2">Dokumen ini sedang dalam proses revisi.</p>
                                         </div>
@@ -168,12 +172,12 @@
                                                 <td
                                                     class="badge p-2 m-3
                                             @if ($is_active) bg-admin
-                                            @elseif($document->currentRevision->status === 'Proses Revisi')
+                                            @elseif($document->currentRevision->latestRevision($document->id)->status === 'Proses Revisi')
                                                 bg-warning
                                             @else
                                                 bg-danger @endif
                                             ">
-                                                    {{ $document->currentRevision->status === 'Disetujui' && $document->is_active ? 'Disetujui' : ($document->currentRevision->status == 'Proses Revisi' ? 'Proses Revisi' : 'Expired') }}
+                                                    {{ $document->currentRevision->latestRevision($document->id)->status === 'Disetujui' && $document->is_active ? 'Disetujui' : ($document->currentRevision->latestRevision($document->id)->status == 'Proses Revisi' ? 'Proses Revisi' : 'Expired') }}
                                                 </td>
                                             </tr>
                                             <tr>
@@ -182,7 +186,7 @@
                                             </tr>
                                             <tr>
                                                 <th scope="row">Deskripsi</th>
-                                                <td>{{ $document->currentRevision->latestRevision()->description }}
+                                                <td>{{ $document->currentRevision->latestRevision($document->id)->description }}
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -255,22 +259,25 @@
                         <h4 class="fw-bold mb-3">{{ $document->title }}</h4>
                         <div class="d-flex mb-1">
                             @canany(['edit-documents', 'edit-revisions'])
-                                <a href="{{ route('document_revision.edit', $document->currentRevision) }}"
-                                    class="btn btn-approver d-flex align-items-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        class="icon icon-tabler icons-tabler-outline icon-tabler-file-code-2">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M10 12h-1v5h1" />
-                                        <path d="M14 12h1v5h-1" />
-                                        <path d="M14 3v4a1 1 0 0 0 1 1h4" />
-                                        <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" />
-                                    </svg>
-                                    Perbarui
-                                </a>
+                            @if (in_array($document->currentRevision->latestRevision($document->id)->status, ['Disetujui', 'Draft', 'Pengajuan Revisi']))
+                                
+                            <a href="{{ route('document_revision.edit', $document->currentRevision) }}"
+                                class="btn btn-approver d-flex align-items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-file-code-2">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M10 12h-1v5h1" />
+                                    <path d="M14 12h1v5h-1" />
+                                    <path d="M14 3v4a1 1 0 0 0 1 1h4" />
+                                    <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" />
+                                </svg>
+                                Perbarui
+                            </a>
+                            @endif
                             @endcanany
-                            <a href="{{ route('document_revision.show-file', ['filename' => $document->currentRevision->latestRevision()->file_path]) }}"
+                            <a href="{{ route('document_revision.show-file', ['filename' => $document->currentRevision->latestRevision($document->id)->file_path]) }}"
                                 class="btn {{ $is_active ? 'btn-admin' : 'btn-danger' }} d-flex align-items-center ms-2"
                                 target="blank">
                                 <i class="fa {{ $is_active ? 'fa-file-alt' : 'fa-triangle-exclamation' }} me-2"></i> Unduh
@@ -286,7 +293,7 @@
                             <i class="fa fa-comment-dots me-2"></i> Status Dokumen
                         </h5>
 
-                        @if (!$is_active)
+                        @if (!$is_active && $document->currentRevision->latestRevision($document->id)->status !== 'Proses Revisi')
                             <div class="container">
                                 <div class="d-flex flex-column">
 
@@ -314,13 +321,13 @@
 
                                 <div class="p-2">
                                     <ul class="list-group">
-                                        @foreach ($document->currentRevision->latestRevision()->revisedDocument() as $doc)
+                                        @foreach ($document->currentRevision->latestRevision($document->id)->revisedDocument() as $doc)
                                             <li class="list-group-item">
                                                 <a
                                                     href="{{ route('documents.show', ['document' => $doc->id]) }}">{{ $doc->title }}</a>
                                             </li>
                                         @endforeach
-                                        @if (count($document->currentRevision->latestRevision()->revisedDocument()) == 0)
+                                        @if (count($document->currentRevision->latestRevision($document->id)->revisedDocument()) == 0)
                                             <li class="list-group-item">-</li>
                                         @endif
                                     </ul>

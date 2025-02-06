@@ -81,6 +81,9 @@
     }
 </style>
 @section('content')
+@php
+    $is_active = ($documentRevision->status === 'Disetujui' && $documentRevision->document->is_active) || $documentRevision->status === 'Draft' || $documentRevision->status === 'Pengajuan Revisi';
+@endphp
     <div class="container-fluid">
         <div class="row">
             <!-- Card Utama -->
@@ -92,26 +95,25 @@
                         </h5>
                         <div class="container">
                             <ul class="stepper">
-                                <li class="@if (in_array($documentRevision->latestRevision()->status, ['Draft', 'Disetujui', 'Expired'])) active @endif">
+                                <li class="@if (in_array($documentRevision->latestRevision()->status, ['Draft', 'Disetujui', 'Expired','Proses Revisi'])) active @endif">
                                     <span class="icon"><i class="bi bi-archive"></i></i></span>
-                                    <span class="fw-semibold">Dokumen Dibuat</span>
-                                    <small>{{ $documentRevision->created_at->format('d-m-Y') }}</small>
+                                    <span class="fw-semibold text-sm">Dokumen Dibuat</span>
+                                    <small>{{ in_array($documentRevision->latestRevision()->status, ['Draft', 'Disetujui', 'Expired','Proses Revisi']) ? $documentRevision->created_at->format('d-m-Y') : '-' }}</small>
                                 </li>
                                 <li class="@if ($documentRevision->latestRevision()->acc_format) active @endif">
                                     <span class="icon"><i class="bi bi-clipboard-pulse"></i></i></span>
-                                    <span class="fw-semibold">Pengecekan Format</span>
-                                    <small>{{ empty($documentRevision->latestRevision()->accFormat()) ? '-' : $documentRevision->latestRevision()->accFormat()->created_at->format('d-m-Y') }}</small>
+                                    <span class="fw-semibold text-sm">Pengecekan Format</span>
+                                    <small>{{ empty($documentRevision->latestRevision()->accFormat()) || !$documentRevision->latestRevision()->acc_format ? '-' : $documentRevision->latestRevision()->accFormat()->created_at->format('d-m-Y') }}</small>
                                 </li>
                                 <li class="@if ($documentRevision->latestRevision()->acc_format && $documentRevision->latestRevision()->acc_content) active @endif">
                                     <span class="icon"><i class="bi bi-file-earmark-break"></i></span>
-                                    <span class="fw-semibold">Pengecekan Isi Konten</span>
-                                    <small>{{ empty($documentRevision->latestRevision()->accContent()) ? '-' : $documentRevision->latestRevision()->accContent()->created_at->format('d-m-Y') }}</small>
+                                    <span class="fw-semibold text-sm">Pengecekan Konten</span>
+                                    <small>{{ empty($documentRevision->latestRevision()->accContent()) || !$documentRevision->latestRevision()->acc_format && $documentRevision->latestRevision()->acc_content ? '-' : $documentRevision->latestRevision()->accContent()->created_at->format('d-m-Y') }}</small>
                                 </li>
                                 <li class="@if (
-                                    ($documentRevision->latestRevision()->status == 'Disetujui' && $documentRevision->latestRevision()->document->is_active) ||
-                                        $documentRevision->status == 'Expired') active @endif">
+                                    ($documentRevision->latestRevision()->document->is_active) || $documentRevision->status == 'Expired') active @endif">
                                     <span class="icon"><i class="bi bi-file-earmark-check"></i></span>
-                                    <span class="fw-semibold">Dokumen Disetujui</span>
+                                    <span class="fw-semibold text-sm">Dokumen Disetujui</span>
                                     <small>{{ empty($documentRevision->latestRevision()->accKepalaPuskesmas()) ? '-' : $documentRevision->latestRevision()->accKepalaPuskesmas()->created_at->format('d-m-Y') }}</small>
                                 </li>
                             </ul>
@@ -124,8 +126,24 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <h5 class="card-title fw-semibold mb-4">
-                                    <i class="fa fa-file-signature me-2"></i> Tanda Tangan Dokumen
+                                    Detail Dokumen
                                 </h5>
+                                @if (!$is_active)
+                                    @if ($documentRevision->status === 'Proses Revisi')
+                                        <div class="bg-warning-subtle p-2 rounded">
+                                            <p class="me-2">Dokumen ini sedang dalam proses revisi.</p>
+                                        </div>
+                                    @else
+                                        <div class="bg-danger-subtle p-2 rounded d-flex">
+                                            <p class="me-2">Dokumen ini sudah tidak berlaku dan diganti dengan dokumen
+                                                lain.</p>
+                                            <a
+                                                href="{{ route('document_revision.show', ['documentRevision' => $documentRevision->document->currentRevision->id]) }}">
+                                                <u>Lihat dokumen terbaru</u>
+                                            </a>
+                                        </div>
+                                    @endif
+                                @endif
                                 <div class="table-responsive mt-4">
                                     <table class="table table-borderless">
                                         <tbody>
@@ -194,7 +212,7 @@
                                                         <td><span
                                                                 class="badge p-2
                                                                 @if ($rev->status === 'Disetujui') bg-admin
-                                                                @elseif($rev->status === 'Proses Revisi')
+                                                                @elseif($rev->status === 'Proses Revisi' || $rev->status === 'Pengajuan Revisi')
                                                                     bg-warning
                                                                 @elseif ($rev->status === 'Expired')
                                                                     bg-danger
@@ -221,7 +239,7 @@
                         </h5>
                         <div class="d-flex mb-1">
                             @canany(['edit-documents', 'edit-revisions'])
-                                @if (in_array($documentRevision->status, ['Disetujui', 'Draft', 'Pengajuan Revisi']))
+                                @if (in_array($documentRevision->latestRevision()->status, ['Disetujui', 'Pengajuan Revisi']))
                                     <a href="{{ route('document_revision.edit', $documentRevision->id) }}"
                                         class="btn btn-approver d-flex align-items-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -239,32 +257,40 @@
                                 @endif
                             @endcanany
                             <a href="{{ route('document_revision.show-file', ['filename' => $documentRevision->latestRevision()->file_path]) }}"
-                                class="btn btn-admin d-flex align-items-center ms-2" target="blank">
-                                <i class="fa fa-file-alt me-2"></i> Unduh
+                                class="btn {{ in_array($documentRevision->latestRevision()->status,['Disetujui','Draft']) ? 'btn-admin' : 'btn-danger' }} d-flex align-items-center ms-2" target="blank">
+                                    <i class="fa {{ in_array($documentRevision->latestRevision()->status,['Disetujui','Draft']) ? 'fa-file-alt' : 'fa-triangle-exclamation' }} me-2"></i> Unduh
                             </a>
                         </div>
                     </div>
                 </div>
-                <!-- Card Ketiga -->
+                <!-- Card ketiga -->
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title fw-semibold mb-4">
-                            <i class="fa fa-file-contract me-2"></i> Dokumen Bertanda Tangan
+                            <i class="fa fa-comment-dots me-2"></i> Status Dokumen
                         </h5>
-                        <form
-                            action="{{ route('document_approval.update', ['documentRevision' => $documentRevision->id]) }}"
-                            method="post" enctype="multipart/form-data">
-                            @csrf
-                            @method('PUT')
-                            <input type="hidden" name="status" value="Disetujui">
-                            <div class="mb-3">
-                                <input class="form-control" type="file" id="formFile" name="file" required
-                                    accept=".pdf, .docx, .pptx">
+
+                        <div class="container mt-2">
+                            <div class="d-flex flex-column">
+                                <div class=" p-2  mb-2 fw-bolder" style=" background-color: #343a4012;padding: 15px;">
+                                    Mengubah:
+                                </div>
+
+                                <div class="p-2">
+                                    <ul class="list-group">
+                                        @foreach ($documentRevision->latestRevision()->revisedDocument() as $doc)
+                                            <li class="list-group-item">
+                                                <a
+                                                    href="{{ route('document_revision.show', ['documentRevision' => $doc->currentRevision->latestRevision($doc->id)->id]) }}">{{ $doc->title }}</a>
+                                            </li>
+                                        @endforeach
+                                        @if (count($documentRevision->latestRevision()->revisedDocument()) == 0)
+                                            <li class="list-group-item">-</li>
+                                        @endif
+                                    </ul>
+                                </div>
                             </div>
-                            <div class="d-flex justify-content-center">
-                                <input type="submit" class="btn btn-admin w-100" value="Kirim File & Approve"></input>
-                            </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>

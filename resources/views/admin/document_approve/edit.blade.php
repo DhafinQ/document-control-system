@@ -104,7 +104,7 @@
                                 </li>
                                 <li class="@if ($documentRevision->acc_format && $documentRevision->acc_content) active @endif">
                                     <span class="icon"><i class="bi bi-file-earmark-break"></i></span>
-                                    <span class="fw-semibold">Pengecekan Isi Konten</span>
+                                    <span class="fw-semibold">Pengecekan Konten</span>
                                     <small>{{empty($documentRevision->accContent()) ? '-' : $documentRevision->accContent()->created_at->format('d-m-Y')}}</small>
                                 </li>
                                 <li class="@if (($documentRevision->status == 'Disetujui' && $documentRevision->document->is_active) || $documentRevision->status == 'Expired') active @endif">

@@ -34,7 +34,12 @@ class DocumentRevision extends Model
         return Document::whereIn('id', $documentIds)->get();
     }
 
-    public function latestRevision(){
+    public function latestRevision($id = null){
+        if($id != null){
+            return $this->where('document_id', $id)
+                ->orderBy('revision_number', 'desc')
+                ->first();
+        }
         return $this->where('document_id', $this->document->id)
         ->orderBy('revision_number', 'desc')
         ->first();
@@ -65,5 +70,12 @@ class DocumentRevision extends Model
     public function reviser()
     {
         return $this->belongsTo(User::class, 'revised_by');
+    }
+
+    public function checkUploaderRoles(){
+        $reviserRole = $this->reviser->roles->pluck('id');
+        $userRoles = auth()->user()->roles->pluck('id');
+
+        return $reviserRole->intersect($userRoles)->isNotEmpty();
     }
 }

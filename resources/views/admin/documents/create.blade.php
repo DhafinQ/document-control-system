@@ -63,7 +63,7 @@
           <div class="mb-6">
             <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="file_input">Upload
               file<span class="text-danger">*</span></label>
-            <input class="form-control" id="file_input" type="file" name="file_path" required>
+            <input class="form-control" id="file_input" type="file" name="file_path" required accept=".pdf,.doc,.docx,.txt">
             <p class="text-xs text-gray-500 dark:text-gray-400">PDF, DOC, DOCX (MAX. 5MB)</p>
           </div>
 

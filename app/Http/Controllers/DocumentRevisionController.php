@@ -154,15 +154,16 @@ class DocumentRevisionController extends Controller
     }
 
     public function show(DocumentRevision $documentRevision){
-        return view('admin.my_document.show',compact('documentRevision'));
+        if($documentRevision->checkUploaderRoles()){
+            return view('admin.my_document.show',compact('documentRevision'));
+        }
+
+        abort(404);
     }
 
     public function edit(DocumentRevision $documentRevision)
     {
-        $reviserRole = $documentRevision->reviser->roles->pluck('id');
-        $userRoles = auth()->user()->roles->pluck('id');
-
-        $rightRole = $reviserRole->intersect($userRoles)->isNotEmpty();
+       $rightRole = $documentRevision->checkUploaderRoles();
         if(($documentRevision->status === 'Disetujui' || $documentRevision->status === 'Pengajuan Revisi') && $rightRole){
             $reason = $documentRevision->status === 'Pengajuan Revisi' ? DocumentHistory::with('revision')->where('document_id',$documentRevision->document->id)->where('revision_id',$documentRevision->id)->where('action','Rejected')->first()->reason:'';
             $approvedDocs = Document::where('is_active',true)
