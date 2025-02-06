@@ -65,11 +65,17 @@
                                                 </td>
                                                 @else
                                                 <td>
+                                                    @if(auth()->user()->isRole('kepala-puskesmas'))
+                                                        <a href="{{route('document_approval.edit',['documentRevision' => $rev->id])}}" class="btn btn-admin btn-sm">
+                                                            Terima
+                                                        </a>
+                                                    @else
                                                     <button type="button" id="btn-modalTerima" class="btn btn-admin btn-sm"
                                                         data-bs-toggle="modal" data-bs-target="#modalTerima"
                                                         data-id="{{ $rev->id }}">
                                                         Terima
                                                     </button>
+                                                    @endif
                                                     <button type="button" id="btn-modalTolak" class="btn btn-approver btn-sm"
                                                         data-bs-toggle="modal" data-bs-target="#modalTolak"
                                                         data-id="{{ $rev->id }}">

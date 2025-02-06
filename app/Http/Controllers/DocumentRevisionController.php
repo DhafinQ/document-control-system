@@ -110,8 +110,9 @@ class DocumentRevisionController extends Controller
         ]);
 
         $file = $request->file('file_path');
-        $fileName = str_replace(['/', '\\'], '-', $validated['code']) . '_' . $validated['title'];
-        Storage::disk('dokumen')->put($fileName, file_get_contents($file));
+        $fileExtension = $file->getClientOriginalExtension();
+        $fileName = str_replace(['/', '\\'], '-', $validated['code']) . '_' . preg_replace('/[\/\\\?\%\*\:\|\\"\<\>\.\(\)]/', '_', $validated['title']) . '.' . $fileExtension;
+        Storage::disk('dokumen-revision')->put($fileName, file_get_contents($file));
 
         $document = Document::create([
             'title' => $validated['title'],
@@ -176,15 +177,12 @@ class DocumentRevisionController extends Controller
 
     public function editApproval(DocumentRevision $documentRevision)
     {
-        $approvedDocs = Document::where('is_active','=' ,true)
-        ->whereHas('currentRevision', function ($query) {
-            $query->where('status', 'Disetujui');
-        })
-        ->where('id', '!=', $documentRevision->document_id)
-        ->with('currentRevision')
-        ->get();
-        $categories = Category::all();
-        return view('admin.document_approve.edit', compact('documentRevision', 'categories','approvedDocs'));
+        if($documentRevision->status === 'Draft' && $documentRevision->acc_format && $documentRevision->acc_content && auth()->user()->isRole('kepala-puskesmas')){
+            $document = $documentRevision->document;
+            return view('admin.document_approve.edit', compact('document','documentRevision'));
+        }
+
+        return abort(404);
     }
 
     public function update(Request $request, DocumentRevision $documentRevision)
@@ -205,9 +203,12 @@ class DocumentRevisionController extends Controller
         $validated = $request->validate($rules);
 
         $file = $request->file('file_path');
-        $fileName = str_replace(['/', '\\'], '-', $validated['code']) . '_' . $validated['title'];
-        Storage::disk('dokumen')->put($fileName, file_get_contents($file));
-
+        $fileExtension = $file->getClientOriginalExtension();
+        $fileName = str_replace(['/', '\\'], '-', $validated['code']) . '_' . preg_replace('/[\/\\\?\%\*\:\|\\"\<\>\.\(\)]/', '_', $validated['title']) . '.' . $fileExtension;
+        Storage::disk('dokumen-revision')->put($fileName, file_get_contents($file));
+        if (Storage::disk('dokumen-revision')->exists($documentRevision->file_path)){
+            Storage::disk('dokumen-revision')->delete($documentRevision->file_path);
+        }
         $documentRevision->update([
             'status' => 'Proses Revisi'
         ]);
@@ -267,6 +268,7 @@ class DocumentRevisionController extends Controller
         $rules = [
             'status' => 'required|in:Disetujui,Pengajuan Revisi,Draft',
             'reason' => 'required_if:status,Pengajuan Revisi|string|max:255',
+            'file' => 'required_if:status,Disetujui|file|mimes:pdf,doc,docx,ppt,pptx',
         ];
 
         if (auth()->user()->isRole('Administrator')) {
@@ -290,9 +292,9 @@ class DocumentRevisionController extends Controller
         $data = [
             'status' => $validated['status'],
             'acc_format' => $validated['status'] == 'Pengajuan Revisi' ? false : (auth()->user()->isRole('Pengendali-Dokumen') ? true : $validated['acc_format'] ?? $documentRevision->acc_format),
-            'acc_content' => $validated['status'] == 'Pengajuan Revisi' ? false : (auth()->user()->isRole('Bagian-Mutu') ? true : $validated['acc_content'] ?? $documentRevision->acc_content),
+            'acc_content' => $validated['status'] == 'engajuan Revisi' ? false : (auth()->user()->isRole('Bagian-Mutu') ? true : $validated['acc_content'] ?? $documentRevision->acc_content),
         ];
-        
+
         $documentRevision->update($data);
 
         $act = match($validated['status']) {
@@ -312,6 +314,19 @@ class DocumentRevisionController extends Controller
         $roles = array_unique($roles);
 
         if ($disetujuiKepPus) {
+            
+            $file = $request->file('file');
+            $fileExtension = $file->getClientOriginalExtension();
+            $fileName = str_replace(['/', '\\'], '-', $documentRevision->document->code) . '_' . preg_replace('/[\/\\\?\%\*\:\|\\"\<\>\.\(\)]/', '_', $documentRevision->document->title) . '_(Signed)' . '.' . $fileExtension;
+            Storage::disk('dokumen-approved')->put($fileName, file_get_contents($file));
+            if (Storage::disk('dokumen-revision')->exists($documentRevision->file_path)){
+                Storage::disk('dokumen-revision')->delete($documentRevision->file_path);
+            }
+
+            $documentRevision->update([
+                'file_path' => $fileName
+            ]);
+
             $documentRevision->document->update([
                 'is_active' => true,
                 'current_revision_id' => $documentRevision->id,

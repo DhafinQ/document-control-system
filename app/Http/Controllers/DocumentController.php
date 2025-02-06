@@ -33,8 +33,16 @@ class DocumentController extends Controller
 
     public function showFile($filename)
     {
-        if (Storage::disk('dokumen')->exists($filename)) {
-            $filePath = Storage::disk('dokumen')->path($filename);
+        if (str_ends_with($filename, '(Signed).pdf')) {
+            $filePath = Storage::disk('dokumen-approved')->path($filename);
+            
+            $mimeType = mime_content_type($filePath);
+
+            return Response::file($filePath, [
+                'Content-Type' => $mimeType
+            ]);
+        }else if(Storage::disk('dokumen-revision')->exists($filename)){
+            $filePath = Storage::disk('dokumen-revision')->path($filename);
             
             $mimeType = mime_content_type($filePath);
 
@@ -43,7 +51,7 @@ class DocumentController extends Controller
             ]);
         }
 
-        abort(404, 'File not found');
+        return abort(404);
     }
 
     public function dashboard(){
@@ -85,10 +93,10 @@ class DocumentController extends Controller
             'description' => 'required|string',
         ]);
         
-        $path = $request->file('file_path')->store('', 'dokumen');
         $file = $request->file('file_path');
-        $fileName = str_replace(['/', '\\'], '-', $validated['code']) . '_' . $validated['title'];
-        Storage::disk('dokumen')->put($fileName, file_get_contents($file));
+        $fileExtension = $file->getClientOriginalExtension();
+        $fileName = str_replace(['/', '\\'], '-', $validated['code']) . '_' . preg_replace('/[\/\\\?\%\*\:\|\\"\<\>\.\(\)]/', '_', $validated['title']) . '.' . $fileExtension;
+        Storage::disk('dokumen-revision')->put($fileName, file_get_contents($file));
 
         $document = Document::create([
             'title' => $validated['title'],
@@ -111,7 +119,7 @@ class DocumentController extends Controller
 
             DocumentRevision::create([
                 'document_id' => $rev,
-                'file_path' => $path,
+                'file_path' => $fileName,
                 'revised_by' => $validated['uploaded_by'],
                 'revision_number' => $currentRevision->revision_number + 1,
                 'description' => $validated['description'],
