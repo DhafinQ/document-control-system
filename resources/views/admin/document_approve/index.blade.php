@@ -30,7 +30,7 @@
                                         $latestDocRevision = $document->currentRevision->latestRevision($document->id);
                                     @endphp
                                         <tr>
-                                            <td>{{ $document->code }}</td>
+                                            <td>{{ $document->code . ' ' . ($roles->contains('bagian-mutu') && $latestDocRevision->acc_content || $roles->contains('bagian-mutu') && !$latestDocRevision->format)}}</td>
                                             <td>{{ $document->title }}</td>
                                             <td>
                                                 <ul class="list-group">
@@ -62,7 +62,7 @@
                                             <td><a href="{{ route('document_revision.show-file', ['filename' => $latestDocRevision->file_path]) }}"
                                                     target="_blank">Lihat File</a></td>
                                             @can('edit-approval')
-                                                @if (($roles->contains('administrator') && $latestDocRevision->acc_format && $latestDocRevision->acc_content) || ($roles->contains('bagian-mutu') && $latestDocRevision->acc_content || $roles->contains('bagian-mutu') && !$latestDocRevision->format) || ($roles->contains('pengendali-dokumen') && $latestDocRevision->acc_format) || $latestDocRevision->status !== 'Draft' || ($roles->contains('kepala-puskesmas') && !$latestDocRevision->acc_format && !$latestDocRevision->acc_content))
+                                                @if (($roles->contains('administrator') && $latestDocRevision->acc_format && $latestDocRevision->acc_content) || ($roles->contains('bagian-mutu') && $latestDocRevision->acc_content || $roles->contains('bagian-mutu') && !$latestDocRevision->acc_format) || ($roles->contains('pengendali-dokumen') && $latestDocRevision->acc_format) || $latestDocRevision->status !== 'Draft' || ($roles->contains('kepala-puskesmas') && (!$latestDocRevision->acc_format || !$latestDocRevision->acc_content)))
                                                 <td>
                                                     <button type="button" id="btn-modalTerima" class="btn btn-secondary btn-sm"
                                                         data-bs-toggle="modal" data-bs-target="#modalTerima"
@@ -326,17 +326,21 @@
             $('#rev_uploader_doc').val(data.uploader);
             $('#rev_url_doc').attr('href', data.url);
 
-            if (data.status === 'Disetujui' || 
+            if (data.status !== 'Draft' || 
                 (data.roles.includes("administrator") && data.acc_format && data.acc_content) || 
                 (data.roles.includes("bagian-mutu") && data.acc_content) || 
                 (data.roles.includes("pengendali-dokumen") && data.acc_format) ||
                 (data.roles.includes("bagian-mutu") && !data.acc_format) ||
-                (data.roles.includes("kepala-puskesmas") && !data.acc_format && !data.acc_content)) {
+                (data.roles.includes("kepala-puskesmas") && (!data.acc_format || !data.acc_content))) {
                 
                 $('#acc-btn').css('display', 'none');
                 $('#acc_status1_doc').prop('disabled', true);
                 $('#acc_status2_doc').prop('disabled', true);
             } else {
+                if(data.roles.includes("administrator")){
+                    $('#acc_status1_doc').prop('disabled', false);
+                    $('#acc_status2_doc').prop('disabled', false);
+                }
                 $('#acc-btn').css('display', 'block');
             }   
 

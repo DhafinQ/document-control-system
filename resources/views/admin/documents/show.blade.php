@@ -259,7 +259,7 @@
                         <h4 class="fw-bold mb-3">{{ $document->title }}</h4>
                         <div class="d-flex mb-1">
                             @canany(['edit-documents', 'edit-revisions'])
-                            @if (in_array($document->currentRevision->latestRevision($document->id)->status, ['Disetujui', 'Draft', 'Pengajuan Revisi']))
+                            @if (in_array($document->currentRevision->latestRevision($document->id)->status, ['Disetujui', 'Draft', 'Pengajuan Revisi']) && $document->currentRevision->checkUploaderRoles())
                                 
                             <a href="{{ route('document_revision.edit', $document->currentRevision) }}"
                                 class="btn btn-approver d-flex align-items-center">
