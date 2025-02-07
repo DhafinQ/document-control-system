@@ -25,60 +25,65 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($revisions as $rev)
+                                    @foreach ($documents as $document)
                                         <tr>
-                                            <td>{{ $rev->document->code }}</td>
-                                            <td>{{ $rev->document->title }}</td>
+                                            <td>{{ $document->code }}</td>
+                                            <td>{{ $document->title }}</td>
                                             <td>
                                                 <ul class="list-group">
-                                                    @foreach ($rev->revisedDocument() as $doc)
+                                                    @foreach ($document->currentRevision->latestRevision($document->id)->revisedDocument() as $doc)
                                                         <li class="list-group-item">
-                                                            <a href="{{route('document_revision.show-file', ['filename' => $doc->currentRevision->file_path])}}" target="blank">{{$doc->title}}</a>
+                                                            <a href="{{route('document_revision.show-file', ['filename' => $doc->currentRevision->latestRevision($doc->id)->file_path])}}" target="blank">{{$doc->title}}</a>
                                                         </li>
                                                     @endforeach
-                                                    @if (count($rev->revisedDocument()) == 0)
+                                                    @if (count($document->currentRevision->latestRevision($document->id)->revisedDocument()) == 0)
                                                         <li class="list-group-item">-</li>
                                                     @endif
                                                 </ul>
                                             </td>
                                             <td>
                                                 <span class="badge
-                                                    @if ($rev->status === 'Disetujui')
+                                                    @if ($document->currentRevision->latestRevision($document->id)->status === 'Disetujui' && $document->is_active)
                                                         bg-admin 
-                                                    @else
+                                                    @elseif($document->currentRevision->latestRevision($document->id)->status === 'Proses Revisi' || $document->currentRevision->latestRevision($document->id)->status === 'Pengajuan Revisi')
+                                                        bg-warning
+                                                    @elseif($document->currentRevision->latestRevision($document->id)->status === 'Draft')
                                                         bg-light text-dark
+                                                    @else
+                                                        bg-danger
                                                     @endif
                                                 ">
-                                                    {{ $rev->status }}
+                                                    {{ $document->currentRevision->latestRevision($document->id)->status }}
                                                 </span>
                                             </td>
-                                            <td><a href="{{ route('document_revision.show-file', ['filename' => $rev->file_path]) }}"
+                                            <td><a href="{{ route('document_revision.show-file', ['filename' => $document->currentRevision->latestRevision($document->id)->file_path]) }}"
                                                     target="_blank">Lihat File</a></td>
                                             @can('edit-approval')
-                                                @if (($roles->contains('administrator') && $rev->acc_format && $rev->acc_content) || ($roles->contains('bagian-mutu') && $rev->acc_content) || ($roles->contains('pengendali-dokumen') && $rev->acc_format) || $rev->status === 'Disetujui')
+                                                @if (($roles->contains('administrator') && $document->currentRevision->latestRevision($document->id)->acc_format && $document->currentRevision->latestRevision($document->id)->acc_content) || ($roles->contains('bagian-mutu') && $document->currentRevision->latestRevision($document->id)->acc_content) || ($roles->contains('pengendali-dokumen') && $document->currentRevision->latestRevision($document->id)->acc_format) || $document->currentRevision->latestRevision($document->id)->status !== 'Draft')
                                                 <td>
                                                     <button type="button" id="btn-modalTerima" class="btn btn-secondary btn-sm"
                                                         data-bs-toggle="modal" data-bs-target="#modalTerima"
-                                                        data-id="{{ $rev->id }}">
+                                                        data-id="{{ $document->currentRevision->latestRevision($document->id)->id }}">
                                                         Detail
                                                     </button>
                                                 </td>
                                                 @else
                                                 <td>
                                                     @if(auth()->user()->isRole('kepala-puskesmas'))
-                                                        <a href="{{route('document_approval.edit',['documentRevision' => $rev->id])}}" class="btn btn-admin btn-sm">
+                                                        <span style="display: none">z</span>
+                                                        <a href="{{route('document_approval.edit',['documentRevision' => $document->currentRevision->latestRevision($document->id)->id])}}" class="btn btn-admin btn-sm">
                                                             Terima
                                                         </a>
                                                     @else
                                                     <button type="button" id="btn-modalTerima" class="btn btn-admin btn-sm"
                                                         data-bs-toggle="modal" data-bs-target="#modalTerima"
-                                                        data-id="{{ $rev->id }}">
+                                                        data-id="{{ $document->currentRevision->latestRevision($document->id)->id }}">
                                                         Terima
                                                     </button>
                                                     @endif
                                                     <button type="button" id="btn-modalTolak" class="btn btn-approver btn-sm"
                                                         data-bs-toggle="modal" data-bs-target="#modalTolak"
-                                                        data-id="{{ $rev->id }}">
+                                                        data-id="{{ $document->currentRevision->latestRevision($document->id)->id }}">
                                                         Revisi
                                                     </button>
                                                 </td>

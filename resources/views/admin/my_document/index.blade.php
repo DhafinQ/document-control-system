@@ -62,7 +62,7 @@
                                         </span>
                                     </td>
                                     <td>{{$document->uploader->name}}</td>
-                                    <td>{{ \Carbon\Carbon::parse($document->created_at)->format('H:i:s-d/m/Y') }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($document->created_at)->format('d/m/Y-H:i:s') }}</td>
                                     <td>
                                         @canany(['edit-documents','edit-revisions'])
                                         <div class="d-flex">

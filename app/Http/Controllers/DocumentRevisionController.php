@@ -26,28 +26,13 @@ class DocumentRevisionController extends Controller
 
     public function indexApproval()
     {
-        $revisionsQuery = DocumentRevision::whereIn('status', ['Draft','Disetujui'])->with(['document', 'reviser']);
-        if (auth()->user()->isRole('Kepala-Puskesmas')) {
-            $revisionsQuery->where(function($query) {
-                $query->where('acc_content', true)
-                      ->where('acc_format', true);
-            })->orWhere('status', 'Disetujui');
-        } elseif (auth()->user()->isRole('Bagian-Mutu')) {
-            $revisionsQuery->where(function($query) {
-                $query->where('acc_format', true);
-            })->orWhere('status', 'Disetujui');
-        } elseif ((auth()->user()->isRole('Pengendali-Dokumen'))){
-            $revisionsQuery->where(function($query) {
-                $query->where('acc_content', false);
-            })->orWhere('status', 'Disetujui');
-        }
+        $documents = Document::with('currentRevision','uploader','latestHistory')
+                        ->get();
 
-        
-        $revisions = $revisionsQuery->get();
         $roles = Auth::user()->roles->pluck('slug');
         
         $categories = Category::all();
-        return view('admin.document_approve.index', compact('revisions','categories','roles'));
+        return view('admin.document_approve.index', compact('documents','categories','roles'));
     }
 
     public function getDoc(Request $req){
@@ -297,7 +282,7 @@ class DocumentRevisionController extends Controller
         $data = [
             'status' => $validated['status'],
             'acc_format' => $validated['status'] == 'Pengajuan Revisi' ? false : (auth()->user()->isRole('Pengendali-Dokumen') ? true : $validated['acc_format'] ?? $documentRevision->acc_format),
-            'acc_content' => $validated['status'] == 'engajuan Revisi' ? false : (auth()->user()->isRole('Bagian-Mutu') ? true : $validated['acc_content'] ?? $documentRevision->acc_content),
+            'acc_content' => $validated['status'] == 'Pengajuan Revisi' ? false : (auth()->user()->isRole('Bagian-Mutu') ? true : $validated['acc_content'] ?? $documentRevision->acc_content),
         ];
 
         $documentRevision->update($data);
