@@ -40,7 +40,7 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
+            'url' => env('APP_URL') . '/storage',
             'visibility' => 'public',
             'throw' => false,
         ],
@@ -54,6 +54,22 @@ return [
             'url' => env('AWS_URL'),
             'endpoint' => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
+            'throw' => false,
+        ],
+
+        'dokumen-revision' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/dokumen_revision'),
+            'url' => env('APP_URL') . '/storage/dokumen_revision',
+            'visibility' => 'public',
+            'throw' => false,
+        ],
+
+        'dokumen-approved' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/dokumen_approved'),
+            'url' => env('APP_URL') . '/storage/dokumen_approved',
+            'visibility' => 'public',
             'throw' => false,
         ],
 
