@@ -109,6 +109,7 @@
                 <label class="me-1"><input type="radio" name="filterDocument" value="all" checked> Semua</label>
                 <label class="me-1"><input type="radio" name="filterDocument" value="aktif"> Aktif</label>
                 <label class="me-1"><input type="radio" name="filterDocument" value="kadaluarsa"> Kadaluarsa</label>
+                <label class="me-1"><input type="radio" name="filterDocument" value="prosesrev"> Proses Revisi</label>
             </div>
         `;
 
@@ -122,10 +123,13 @@
                 tableDocument.column(3).search("").draw();
                 labelText = "Menampilkan: Semua";
             } else if (filterValue === "aktif") {
-                tableDocument.column(3).search("approved", true, false).draw();
+                tableDocument.column(3).search("Disetujui", true, false).draw();
                 labelText = "Menampilkan: Aktif";
             } else if (filterValue === "kadaluarsa") {
-                tableDocument.column(3).search("pending", true, false).draw();
+                tableDocument.column(3).search("Expired", true, false).draw();
+                labelText = "Menampilkan: Kadaluarsa";
+            } else if (filterValue === "prosesrev") {
+                tableDocument.column(3).search("Proses Revisi", true, false).draw();
                 labelText = "Menampilkan: Kadaluarsa";
             }
 

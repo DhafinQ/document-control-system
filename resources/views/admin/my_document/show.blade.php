@@ -108,7 +108,7 @@
                                 <li class="@if ($documentRevision->latestRevision()->acc_format && $documentRevision->latestRevision()->acc_content) active @endif">
                                     <span class="icon"><i class="bi bi-file-earmark-break"></i></span>
                                     <span class="fw-semibold text-sm">Pengecekan Konten</span>
-                                    <small>{{ empty($documentRevision->latestRevision()->accContent()) || !$documentRevision->latestRevision()->acc_format && $documentRevision->latestRevision()->acc_content ? '-' : $documentRevision->latestRevision()->accContent()->created_at->format('d-m-Y') }}</small>
+                                    <small>{{ empty($documentRevision->latestRevision()->accContent()) || !$documentRevision->latestRevision()->acc_format && !$documentRevision->latestRevision()->acc_content ? '-' : $documentRevision->latestRevision()->accContent()->created_at->format('d-m-Y') }}</small>
                                 </li>
                                 <li class="@if (
                                     ($documentRevision->latestRevision()->document->is_active) || $documentRevision->status == 'Expired') active @endif">

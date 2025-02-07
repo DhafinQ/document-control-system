@@ -23,10 +23,16 @@ class Document extends Model
         return $this->hasMany(DocumentRevision::class);
     }
 
+    public function latestRevision()
+    {
+        return $this->hasOne(DocumentRevision::class)->latestOfMany();
+    }
+
     public function currentRevision()
     {
         return $this->belongsTo(DocumentRevision::class, 'current_revision_id');
     }
+
     public function uploader()
     {
         return $this->belongsTo(User::class, 'uploaded_by');
