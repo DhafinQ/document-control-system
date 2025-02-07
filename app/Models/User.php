@@ -6,14 +6,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Itstructure\LaRbac\Interfaces\RbacUserInterface;
-use Itstructure\LaRbac\Traits\Administrable;
 
-
-class User extends Authenticatable implements RbacUserInterface
+class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, Administrable;
+    use HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -24,7 +21,6 @@ class User extends Authenticatable implements RbacUserInterface
         'name',
         'email',
         'password',
-        'roles'
     ];
 
     /**
@@ -49,17 +45,4 @@ class User extends Authenticatable implements RbacUserInterface
             'password' => 'hashed',
         ];
     }
-
-  /**
-     * Periksa apakah pengguna memiliki peran tertentu.
-     *
-     * @param string $role
-     * @return bool
-     */
-    public function isRole($roles): bool
-    {
-        $roles = is_array($roles) ? $roles : [$roles];
-        return $this->roles()->whereIn('slug', $roles)->exists();
-    }
-
 }
