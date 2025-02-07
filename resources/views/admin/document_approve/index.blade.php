@@ -25,60 +25,68 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($revisions as $rev)
+                                    @foreach ($documents as $document)
+                                    @php
+                                        $latestDocRevision = $document->currentRevision->latestRevision($document->id);
+                                    @endphp
                                         <tr>
-                                            <td>{{ $rev->document->code }}</td>
-                                            <td>{{ $rev->document->title }}</td>
+                                            <td>{{ $document->code . ' ' . ($roles->contains('bagian-mutu') && $latestDocRevision->acc_content || $roles->contains('bagian-mutu') && !$latestDocRevision->format)}}</td>
+                                            <td>{{ $document->title }}</td>
                                             <td>
                                                 <ul class="list-group">
-                                                    @foreach ($rev->revisedDocument() as $doc)
+                                                    @foreach ($latestDocRevision->revisedDocument() as $doc)
                                                         <li class="list-group-item">
-                                                            <a href="{{route('document_revision.show-file', ['filename' => $doc->currentRevision->file_path])}}" target="blank">{{$doc->title}}</a>
+                                                            <a href="{{route('document_revision.show-file', ['filename' => $doc->currentRevision->latestRevision($doc->id)->file_path])}}" target="blank">{{$doc->title}}</a>
                                                         </li>
                                                     @endforeach
-                                                    @if (count($rev->revisedDocument()) == 0)
+                                                    @if (count($latestDocRevision->revisedDocument()) == 0)
                                                         <li class="list-group-item">-</li>
                                                     @endif
                                                 </ul>
                                             </td>
                                             <td>
                                                 <span class="badge
-                                                    @if ($rev->status === 'Disetujui')
+                                                    @if ($latestDocRevision->status === 'Disetujui' && $document->is_active)
                                                         bg-admin 
-                                                    @else
+                                                    @elseif($latestDocRevision->status === 'Proses Revisi' || $latestDocRevision->status === 'Pengajuan Revisi')
+                                                        bg-warning
+                                                    @elseif($latestDocRevision->status === 'Draft')
                                                         bg-light text-dark
+                                                    @else
+                                                        bg-danger
                                                     @endif
                                                 ">
-                                                    {{ $rev->status }}
+                                                    {{ $latestDocRevision->status }}
                                                 </span>
                                             </td>
-                                            <td><a href="{{ route('document_revision.show-file', ['filename' => $rev->file_path]) }}"
+                                            <td><a href="{{ route('document_revision.show-file', ['filename' => $latestDocRevision->file_path]) }}"
                                                     target="_blank">Lihat File</a></td>
                                             @can('edit-approval')
-                                                @if (($roles->contains('administrator') && $rev->acc_format && $rev->acc_content) || ($roles->contains('bagian-mutu') && $rev->acc_content) || ($roles->contains('pengendali-dokumen') && $rev->acc_format) || $rev->status === 'Disetujui')
+                                                @if (($roles->contains('administrator') && $latestDocRevision->acc_format && $latestDocRevision->acc_content) || ($roles->contains('bagian-mutu') && $latestDocRevision->acc_content || $roles->contains('bagian-mutu') && !$latestDocRevision->acc_format) || ($roles->contains('pengendali-dokumen') && $latestDocRevision->acc_format) || $latestDocRevision->status !== 'Draft' || ($roles->contains('kepala-puskesmas') && (!$latestDocRevision->acc_format || !$latestDocRevision->acc_content)))
                                                 <td>
                                                     <button type="button" id="btn-modalTerima" class="btn btn-secondary btn-sm"
                                                         data-bs-toggle="modal" data-bs-target="#modalTerima"
-                                                        data-id="{{ $rev->id }}">
+                                                        data-id="{{ $latestDocRevision->id }}">
                                                         Detail
                                                     </button>
                                                 </td>
                                                 @else
                                                 <td>
-                                                    @if(auth()->user()->isRole('kepala-puskesmas'))
-                                                        <a href="{{route('document_approval.edit',['documentRevision' => $rev->id])}}" class="btn btn-admin btn-sm">
+                                                    @if(auth()->user()->isRole('kepala-puskesmas') && $latestDocRevision->acc_format && $latestDocRevision->acc_content)
+                                                        <span style="display: none">z</span>
+                                                        <a href="{{route('document_approval.edit',['documentRevision' => $latestDocRevision->id])}}" class="btn btn-admin btn-sm">
                                                             Terima
                                                         </a>
                                                     @else
                                                     <button type="button" id="btn-modalTerima" class="btn btn-admin btn-sm"
                                                         data-bs-toggle="modal" data-bs-target="#modalTerima"
-                                                        data-id="{{ $rev->id }}">
+                                                        data-id="{{ $latestDocRevision->id }}">
                                                         Terima
                                                     </button>
                                                     @endif
                                                     <button type="button" id="btn-modalTolak" class="btn btn-approver btn-sm"
                                                         data-bs-toggle="modal" data-bs-target="#modalTolak"
-                                                        data-id="{{ $rev->id }}">
+                                                        data-id="{{ $latestDocRevision->id }}">
                                                         Revisi
                                                     </button>
                                                 </td>
@@ -253,7 +261,7 @@
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary"
                                                 data-bs-dismiss="modal">Batal</button>
-                                            <button type="submit" class="btn btn-success" id="acc-btn">Konfirmasi Pengesahan</button>
+                                            <button type="submit" class="btn btn-success" id="acc-btn" style="display: none">Konfirmasi Pengesahan</button>
                                         </div>
                                         </form>
                                     </div>
@@ -318,15 +326,21 @@
             $('#rev_uploader_doc').val(data.uploader);
             $('#rev_url_doc').attr('href', data.url);
 
-            if (data.status === 'Disetujui' || 
+            if (data.status !== 'Draft' || 
                 (data.roles.includes("administrator") && data.acc_format && data.acc_content) || 
                 (data.roles.includes("bagian-mutu") && data.acc_content) || 
-                (data.roles.includes("pengendali-dokumen") && data.acc_format)) {
+                (data.roles.includes("pengendali-dokumen") && data.acc_format) ||
+                (data.roles.includes("bagian-mutu") && !data.acc_format) ||
+                (data.roles.includes("kepala-puskesmas") && (!data.acc_format || !data.acc_content))) {
                 
                 $('#acc-btn').css('display', 'none');
                 $('#acc_status1_doc').prop('disabled', true);
                 $('#acc_status2_doc').prop('disabled', true);
             } else {
+                if(data.roles.includes("administrator")){
+                    $('#acc_status1_doc').prop('disabled', false);
+                    $('#acc_status2_doc').prop('disabled', false);
+                }
                 $('#acc-btn').css('display', 'block');
             }   
 

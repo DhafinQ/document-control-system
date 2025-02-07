@@ -72,7 +72,9 @@ class DocumentController extends Controller
 
     public function indexActive()
     {
-        $documents = Document::with(['category', 'uploader', 'currentRevision'])->where('is_active','=',true)->get();
+        $documents = Document::whereHas('latestRevision', function ($query) {
+                    $query->whereNotIn('status', ['Draft','Pengajuan Revisi']);
+                })->with(['category', 'uploader', 'latestRevision'])->get();
 
         return view('admin.active_document.index', compact('documents'));
     }
@@ -144,7 +146,9 @@ class DocumentController extends Controller
     }
 
     public function show(Document $document){
-        // dd(Auth::user()->can('view-histories'));
+        if(in_array($document->latestRevision()->first()->status,['Draft','Pengajuan Revisi'])){
+            abort(404);
+        }
         return view('admin.documents.show',compact('document'));
     }
 

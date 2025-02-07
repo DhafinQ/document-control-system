@@ -44,7 +44,7 @@ class DocumentHistoryController extends Controller
         $userRoles = auth()->user()->roles->pluck('id');
 
         $rightRole = $reviserRole->intersect($userRoles)->isNotEmpty();
-        if($rightRole){
+        if($rightRole || auth()->user()->isRole('kepala-puskesmas')){
             $documentHistory->load(['document', 'revision.reviser', 'performer']);
 
             return view('admin.document_histories.show', compact('documentHistory'));

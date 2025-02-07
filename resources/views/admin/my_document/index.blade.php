@@ -62,11 +62,11 @@
                                         </span>
                                     </td>
                                     <td>{{$document->uploader->name}}</td>
-                                    <td>{{ \Carbon\Carbon::parse($document->created_at)->format('H:i:s-d/m/Y') }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($document->created_at)->format('d/m/Y-H:i:s') }}</td>
                                     <td>
                                         @canany(['edit-documents','edit-revisions'])
                                         <div class="d-flex">
-                                            <a href="{{ route('document.active') }}" class="btn btn-sm btn-admin me-1">Detail</a>
+                                            <a href="{{ route('document_revision.show',['documentRevision' => $document->latestHistory->revision->id]) }}" class="btn btn-sm btn-admin me-1">Detail</a>
                                             @if ($document->currentRevision->document_id === $document->id && ($document->latestHistory->revision->status == 'Disetujui' || $document->latestHistory->revision->status == 'Pengajuan Revisi'))
                                             <a href="{{ route('document_revision.edit', $document->latestHistory->revision->id) }}" class="btn btn-sm btn-approver">Revisi</a>
                                             @endif

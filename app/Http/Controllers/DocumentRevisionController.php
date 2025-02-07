@@ -26,28 +26,13 @@ class DocumentRevisionController extends Controller
 
     public function indexApproval()
     {
-        $revisionsQuery = DocumentRevision::whereIn('status', ['Draft','Disetujui'])->with(['document', 'reviser']);
-        if (auth()->user()->isRole('Kepala-Puskesmas')) {
-            $revisionsQuery->where(function($query) {
-                $query->where('acc_content', true)
-                      ->where('acc_format', true);
-            })->orWhere('status', 'Disetujui');
-        } elseif (auth()->user()->isRole('Bagian-Mutu')) {
-            $revisionsQuery->where(function($query) {
-                $query->where('acc_format', true);
-            })->orWhere('status', 'Disetujui');
-        } elseif ((auth()->user()->isRole('Pengendali-Dokumen'))){
-            $revisionsQuery->where(function($query) {
-                $query->where('acc_content', false);
-            })->orWhere('status', 'Disetujui');
-        }
+        $documents = Document::with('currentRevision','uploader','latestHistory')
+                        ->get();
 
-        
-        $revisions = $revisionsQuery->get();
         $roles = Auth::user()->roles->pluck('slug');
         
         $categories = Category::all();
-        return view('admin.document_approve.index', compact('revisions','categories','roles'));
+        return view('admin.document_approve.index', compact('documents','categories','roles'));
     }
 
     public function getDoc(Request $req){
@@ -153,12 +138,17 @@ class DocumentRevisionController extends Controller
         return redirect()->route('document_revision.index')->with('success', 'Document Updated successfully.');
     }
 
+    public function show(DocumentRevision $documentRevision){
+        if($documentRevision->checkUploaderRoles()){
+            return view('admin.my_document.show',compact('documentRevision'));
+        }
+
+        abort(404);
+    }
+
     public function edit(DocumentRevision $documentRevision)
     {
-        $reviserRole = $documentRevision->reviser->roles->pluck('id');
-        $userRoles = auth()->user()->roles->pluck('id');
-
-        $rightRole = $reviserRole->intersect($userRoles)->isNotEmpty();
+       $rightRole = $documentRevision->checkUploaderRoles();
         if(($documentRevision->status === 'Disetujui' || $documentRevision->status === 'Pengajuan Revisi') && $rightRole){
             $reason = $documentRevision->status === 'Pengajuan Revisi' ? DocumentHistory::with('revision')->where('document_id',$documentRevision->document->id)->where('revision_id',$documentRevision->id)->where('action','Rejected')->first()->reason:'';
             $approvedDocs = Document::where('is_active',true)
@@ -166,6 +156,7 @@ class DocumentRevisionController extends Controller
                 $query->where('status', 'Disetujui');
             })
             ->where('id', '!=', $documentRevision->document_id)
+            ->where('category_id', $documentRevision->document->category_id)
             ->with('currentRevision')
             ->get();
             $categories = Category::all();
@@ -205,10 +196,10 @@ class DocumentRevisionController extends Controller
         $file = $request->file('file_path');
         $fileExtension = $file->getClientOriginalExtension();
         $fileName = str_replace(['/', '\\'], '-', $validated['code']) . '_' . preg_replace('/[\/\\\?\%\*\:\|\\"\<\>\.\(\)]/', '_', $validated['title']) . '.' . $fileExtension;
-        Storage::disk('dokumen-revision')->put($fileName, file_get_contents($file));
         if (Storage::disk('dokumen-revision')->exists($documentRevision->file_path)){
             Storage::disk('dokumen-revision')->delete($documentRevision->file_path);
         }
+        Storage::disk('dokumen-revision')->put($fileName, file_get_contents($file));
         $documentRevision->update([
             'status' => 'Proses Revisi'
         ]);
@@ -292,7 +283,7 @@ class DocumentRevisionController extends Controller
         $data = [
             'status' => $validated['status'],
             'acc_format' => $validated['status'] == 'Pengajuan Revisi' ? false : (auth()->user()->isRole('Pengendali-Dokumen') ? true : $validated['acc_format'] ?? $documentRevision->acc_format),
-            'acc_content' => $validated['status'] == 'engajuan Revisi' ? false : (auth()->user()->isRole('Bagian-Mutu') ? true : $validated['acc_content'] ?? $documentRevision->acc_content),
+            'acc_content' => $validated['status'] == 'Pengajuan Revisi' ? false : (auth()->user()->isRole('Bagian-Mutu') ? true : $validated['acc_content'] ?? $documentRevision->acc_content),
         ];
 
         $documentRevision->update($data);

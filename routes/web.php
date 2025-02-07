@@ -255,6 +255,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/document_revision/{documentRevision}/edit', [DocumentRevisionController::class, 'edit'])->name('document_revision.edit')->middleware('can:edit-revisions');
     Route::get('/document_approval/{documentRevision}/edit', [DocumentRevisionController::class, 'editApproval'])->name('document_approval.edit')->middleware('can:edit-approval');
     Route::put('/document_revision/{documentRevision}', [DocumentRevisionController::class, 'update'])->name('document_revision.update')->middleware('can:edit-revisions');
+    Route::get('/document_revision/detail/{documentRevision}', [DocumentRevisionController::class, 'show'])->name('document_revision.show')->middleware('can:edit-revisions');
     Route::get('/document_revision/data', [DocumentRevisionController::class, 'getDoc'])->name('documents.get.document')->middleware('can:edit-approval');
     Route::put('/document_approval/{documentRevision}', [DocumentRevisionController::class, 'updateApproval'])->name('document_approval.update')->middleware('can:edit-approval');
 
