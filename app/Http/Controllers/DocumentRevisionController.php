@@ -156,6 +156,7 @@ class DocumentRevisionController extends Controller
                 $query->where('status', 'Disetujui');
             })
             ->where('id', '!=', $documentRevision->document_id)
+            ->where('category_id', $documentRevision->document->category_id)
             ->with('currentRevision')
             ->get();
             $categories = Category::all();
