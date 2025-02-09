@@ -59,22 +59,35 @@ class DocumentController extends Controller
         $query = $request->input('q');
         $id = $request->input('id');
         $oldIds = $request->input('ids');
+        $category_id = $request->input('categoryID');
+        // dd($request);
         $documents = Document::where('is_active','=' ,true)
-                            ->whereHas('currentRevision', function ($query) {
-                                $query->whereIn('status', ['Disetujui','Proses Revisi']);
-                            })
                             ->whereHas('uploader.roles', function ($query) {
                                 $query->whereIn('id', auth()->user()->roles->pluck('id'));
                             })
                             ->where('title', 'like', '%' . $query . '%')
                             ->with(['category','currentRevision']);
         
+        // Check agar document yang direvisi tidak muncul
         if($id){
             $documents = $documents->where('id', '!=', $id);
         }
+        // Check agar document sesuai dengan kategori
+        if($category_id){
+            $documents = $documents->where('category_id', $category_id);
+        }
+        // Check agar dokumen yang direvisi muncul di input
         if($oldIds){
             $idsArray = explode(',', $oldIds);
-            $documents = $documents->whereIn('id', $idsArray);
+            $documents = $documents->whereIn('id', $idsArray)
+                ->whereHas('currentRevision', function ($query) {
+                    $query->whereIn('status', ['Disetujui','Proses Revisi']);
+            });
+            
+        }else{
+            $documents = $documents->whereHas('currentRevision', function ($query) {
+                    $query->whereIn('status', ['Disetujui']);
+            });
         }
 
         $documents = $documents->get();
