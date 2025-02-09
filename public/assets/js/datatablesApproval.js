@@ -108,7 +108,11 @@ $(document).ready(function () {
             $('#acc-btn').css('display', 'block');
         }   
 
-        $('#formTolak').attr('action', '{{ url('/document_approval/') }}' + '/' + data.id);
-        $('#formTerima').attr('action', '{{ url('/document_approval/') }}' + '/' + data.id);
+        const dataId = data.id;
+        const baseUrl = '/document_approval/';
+        
+        $('#formTolak').attr('action', `${baseUrl}${dataId}`);
+        $('#formTerima').attr('action', `${baseUrl}${dataId}`);
+        
     }
 });
