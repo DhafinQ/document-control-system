@@ -85,10 +85,7 @@
                                                 Mengubah:
                                             </div>
                                             <div class="p-2">
-                                                <select id="my-select" name="rev[]" multiple="multiple" class="form-control" form="document-revision-form">
-                                                    @foreach ($approvedDocs as $doc)
-                                                      <option value="{{$doc->id}}" {{ in_array($doc->id, old('rev', $documentRevision->revised_doc) ?? []) ? 'selected' : '' }}>{{$doc->title}}</option>
-                                                    @endforeach
+                                                <select id="my-select" name="rev[]" multiple="multiple" class="form-control">
                                                 </select>
                                             </div>
                                         </div>

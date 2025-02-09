@@ -35,15 +35,15 @@ class DocumentController extends Controller
     {
         if (str_ends_with($filename, '(Signed).pdf')) {
             $filePath = Storage::disk('dokumen-approved')->path($filename);
-            
+
             $mimeType = mime_content_type($filePath);
 
             return Response::file($filePath, [
                 'Content-Type' => $mimeType
             ]);
-        }else if(Storage::disk('dokumen-revision')->exists($filename)){
+        } else if (Storage::disk('dokumen-revision')->exists($filename)) {
             $filePath = Storage::disk('dokumen-revision')->path($filename);
-            
+
             $mimeType = mime_content_type($filePath);
 
             return Response::file($filePath, [
@@ -54,13 +54,42 @@ class DocumentController extends Controller
         return abort(404);
     }
 
-    public function dashboard(){
-        $totalDocs = Document::with('revisions')->count();
-        $totalApprovedDocs = DocumentRevision::with('document')->where('status','=','Disetujui')->count();
-        $totalDeniedDocs = DocumentRevision::with('document')->where('status','=','Ditolak')->count();
-        $totalRevisedDocs = DocumentRevision::with('document')->where('status','=','Draft')->count();
+    public function getDocByCategory(Request $request)
+    {
+        $query = $request->input('q');
+        $id = $request->input('id');
+        $oldIds = $request->input('ids');
+        $documents = Document::where('is_active','=' ,true)
+                            ->whereHas('currentRevision', function ($query) {
+                                $query->whereIn('status', ['Disetujui','Proses Revisi']);
+                            })
+                            ->whereHas('uploader.roles', function ($query) {
+                                $query->whereIn('id', auth()->user()->roles->pluck('id'));
+                            })
+                            ->where('title', 'like', '%' . $query . '%')
+                            ->with(['category','currentRevision']);
+        
+        if($id){
+            $documents = $documents->where('id', '!=', $id);
+        }
+        if($oldIds){
+            $idsArray = explode(',', $oldIds);
+            $documents = $documents->whereIn('id', $idsArray);
+        }
 
-        return view('admin.home',compact('totalDocs','totalApprovedDocs','totalDeniedDocs','totalRevisedDocs'));
+        $documents = $documents->get();
+
+        return response()->json($documents);
+    }
+
+    public function dashboard()
+    {
+        $totalDocs = Document::with('revisions')->count();
+        $totalApprovedDocs = DocumentRevision::with('document')->where('status', '=', 'Disetujui')->count();
+        $totalDeniedDocs = DocumentRevision::with('document')->where('status', '=', 'Ditolak')->count();
+        $totalRevisedDocs = DocumentRevision::with('document')->where('status', '=', 'Draft')->count();
+
+        return view('admin.home', compact('totalDocs', 'totalApprovedDocs', 'totalDeniedDocs', 'totalRevisedDocs'));
     }
 
     public function index()
@@ -73,8 +102,8 @@ class DocumentController extends Controller
     public function indexActive()
     {
         $documents = Document::whereHas('latestRevision', function ($query) {
-                    $query->whereNotIn('status', ['Draft','Pengajuan Revisi']);
-                })->with(['category', 'uploader', 'latestRevision'])->get();
+            $query->whereNotIn('status', ['Draft', 'Pengajuan Revisi']);
+        })->with(['category', 'uploader', 'latestRevision'])->get();
 
         return view('admin.active_document.index', compact('documents'));
     }
@@ -94,7 +123,7 @@ class DocumentController extends Controller
             'file_path' => 'required|file|mimes:pdf,doc,docx,ppt,pptx|max:5120',
             'description' => 'required|string',
         ]);
-        
+
         $file = $request->file('file_path');
         $fileExtension = $file->getClientOriginalExtension();
         $fileName = str_replace(['/', '\\'], '-', $validated['code']) . '_' . preg_replace('/[\/\\\?\%\*\:\|\\"\<\>\.\(\)]/', '_', $validated['title']) . '.' . $fileExtension;
@@ -138,18 +167,18 @@ class DocumentController extends Controller
             'reason' => null,
         ]);
 
-        event(new NewCreatedDocument($document,'Dokumen ' . $document->title . ' telah dibuat oleh ' . $document->uploader->name . '.'));
+        event(new NewCreatedDocument($document, 'Dokumen ' . $document->title . ' telah dibuat oleh ' . $document->uploader->name . '.'));
 
         // return redirect()->route('documents.index')->with('success', 'Document created successfully.');
         return redirect()->route('document_revision.index')->with('success', 'Document Created successfully.');
-
     }
 
-    public function show(Document $document){
-        if(in_array($document->latestRevision()->first()->status,['Draft','Pengajuan Revisi'])){
+    public function show(Document $document)
+    {
+        if (in_array($document->latestRevision()->first()->status, ['Draft', 'Pengajuan Revisi'])) {
             abort(404);
         }
-        return view('admin.documents.show',compact('document'));
+        return view('admin.documents.show', compact('document'));
     }
 
     public function edit(Document $document)

@@ -10,11 +10,11 @@
 
 <!-- jQuery (CDN & Local) -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="jQuery.js"></script>
 
-<!-- Searchable Option List (SOL) -->
-<script src="{{ asset('assets/js/sol-2.0.0.js') }}"></script>
-<link rel="stylesheet" href="{{ asset('assets/css/searchableOptionList.css') }}">
+{{-- Select 2 SearchBox --}}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
 
 <!-- DataTables -->
 <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
@@ -23,59 +23,132 @@
 <!-- Dropdown Notification -->
 <script src="{{ asset('assets/js/dropdownNotification.js') }}"></script>
 
-<!-- Inisialisasi Searchable Option List -->
-<script>
-    $(function () {
-        $('#my-select').searchableOptionList();
-    });
-</script>
 
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    const selectElement = document.getElementById("exampleFormControlSelect1");
-    const labelElement = document.getElementById("labelToChange"); // Ganti dengan ID label yang ingin diubah
+    $(document).ready(function() {
+        var oldSelections = @json(old('rev', isset($documentRevision) ? $documentRevision->revised_doc : []));
 
-    const categoryLabels = {
-        "1": "Standard Operating Procedure",
-        "2": "Medical Records",
-        "3": "Monthly Report",
-        "4": "Staff Training Document"
-    };
-
-    selectElement.addEventListener("change", function () {
-        let selectedOption = selectElement.value;
-        let labelText = "Kategori Dokumen"; // Default text
-
-        if (selectedOption === "1") {
-            labelText = "Standard Operating Procedure";
-        } else if (selectedOption === "2") {
-            labelText = "Medical Records";
-        } else if (selectedOption === "3") {
-            labelText = "Monthly Report";
-        } else if (selectedOption === "4") {
-            labelText = "Staff Training Document";
+        // Function to format the initial selections
+        function formatInitialSelections(data) {
+            return data.map(function(doc) {
+                return {
+                    id: doc.id,
+                    text: doc.title
+                };
+            });
         }
 
-        labelElement.textContent = labelText;
+        if (oldSelections.length > 0) {
+            $.ajax({
+                url: '/documents_category',
+                dataType: 'json',
+                data: {
+                    ids: oldSelections.join(',')
+                },
+                success: function(data) {
+                    var initialSelections = formatInitialSelections(data);
+                    $('#my-select').select2({
+                        data: initialSelections,
+                        ajax: {
+                            url: '/documents_category',
+                            dataType: 'json',
+                            delay: 250, // Delay in milliseconds to prevent too many requests
+                            data: function(params) {
+                                var queryParameters = {
+                                    q: params.term // Search term
+                                };
+
+                                // Conditionally set selectedOption based on $documentRevision->id
+                                @if (isset($documentRevision) && !is_null($documentRevision->id))
+                                    var selectedOption = {{ $documentRevision->document_id }};
+                                    queryParameters.id = selectedOption;
+                                @endif
+
+                                return queryParameters;
+                            },
+                            processResults: function(data) {
+                                return {
+                                    results: data.map(function(doc) {
+                                        return {
+                                            id: doc.id,
+                                            text: doc.title
+                                        };
+                                    })
+                                };
+                            },
+                            cache: true
+                        },
+                        placeholder: 'Select documents',
+                        allowClear: true,
+                        multiple: true,
+                        minimumInputLength: 2 // Minimum number of characters required to trigger the search
+                    });
+
+                    // Set the initial selections
+                    $('#my-select').val(oldSelections).trigger('change');
+                },
+                error: function(error) {
+                    console.error('Error fetching initial selections:', error);
+                }
+            });
+        } else {
+            $('#my-select').select2({
+                ajax: {
+                    url: '/documents_category', // URL endpoint for your search
+                    dataType: 'json',
+                    delay: 250, // Delay in milliseconds to prevent too many requests
+                    data: function(params) {
+                        var queryParameters = {
+                            q: params.term // Search term
+                        };
+
+                        // Add id parameter if it exists
+                        @if (isset($documentRevision) ? $documentRevision->id : 0)
+                            var selectedOption = {{ $documentRevision->document_id }};
+                            queryParameters.id = selectedOption;
+                        @endif
+
+                        return queryParameters;
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: data.map(function(doc) {
+                                return {
+                                    id: doc.id,
+                                    text: doc.title
+                                };
+                            })
+                        };
+                    },
+                    cache: true
+                },
+                placeholder: 'Select documents',
+                allowClear: true,
+                multiple: true,
+                minimumInputLength: 3,
+            });
+        }
     });
-});
-
-
-
 </script>
 
 <!-- Inisialisasi DataTable -->
 <script>
-    $(document).ready(function () {
+    $(document).ready(function() {
         var url = window.location.pathname;
         var orderConfig;
 
         if (url === '/notifications') {
-            orderConfig = [[2, "desc"]];
+            orderConfig = [
+                [2, "desc"]
+            ];
         } else if (url === '/categories') {
-            orderConfig = [[0, "asc"]];
+            orderConfig = [
+                [0, "asc"]
+            ];
         } else {
-            orderConfig = [[5, "desc"]];
+            orderConfig = [
+                [5, "desc"]
+            ];
         }
 
         // DataTable Biasa
@@ -83,7 +156,7 @@ document.addEventListener("DOMContentLoaded", function () {
             "paging": true,
             "searching": true,
             "ordering": true,
-            "order": orderConfig 
+            "order": orderConfig
         });
 
         // DataTable Approval
@@ -92,7 +165,7 @@ document.addEventListener("DOMContentLoaded", function () {
             "searching": true,
             "ordering": true,
             "dom": "<'d-flex justify-content-between'lf>rtip",
-            "order": orderConfig 
+            "order": orderConfig
         });
 
         let searchBoxApproval = $('#tableApproval_wrapper .dataTables_filter');
@@ -108,7 +181,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         searchBoxApproval.prepend(radioButtonsApproval);
 
-        $('input[name="filterApproval"]').on('change', function () {
+        $('input[name="filterApproval"]').on('change', function() {
             let filterValue = $('input[name="filterApproval"]:checked').val();
             let labelText = "Menampilkan: Semua";
             //masukin fungsi untuk setiap radio disini
@@ -132,7 +205,7 @@ document.addEventListener("DOMContentLoaded", function () {
             "searching": true,
             "ordering": true,
             "dom": "<'d-flex justify-content-between'lf>rtip",
-            "order": orderConfig 
+            "order": orderConfig
         });
 
         let searchBoxDocument = $('#tableDocument_wrapper .dataTables_filter');
@@ -149,7 +222,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         searchBoxDocument.prepend(radioButtonsDocument);
 
-        $('input[name="filterDocument"]').on('change', function () {
+        $('input[name="filterDocument"]').on('change', function() {
             let filterValue = $('input[name="filterDocument"]:checked').val();
             let labelText = "Menampilkan: Semua";
             //masukin fungsi untuk setiap radio disini
@@ -174,4 +247,5 @@ document.addEventListener("DOMContentLoaded", function () {
 
 @yield('customJS')
 </body>
+
 </html>

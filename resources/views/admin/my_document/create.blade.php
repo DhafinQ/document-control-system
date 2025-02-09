@@ -33,7 +33,7 @@
                         <div class="col-md-6">
                           <div class="form-group">
                             <label for="exampleInputEmail1" class="form-label">Kategori Dokumen<span class="text-danger">*</span></label>
-                            <select class="form-control" id="exampleFormControlSelect1" name="category_id">
+                            <select class="form-control" id="kategori_select" name="category_id">
                               <option value="">-- Pilih --</option>
                               @foreach ($categories as $category)
                                 <option value="{{$category->id}}" {{old('category_id') ? 'selected' : ''}}>{{$category->name}}</option>
@@ -80,11 +80,7 @@
                                 Mengubah:
                             </div>
                             <div class="p-2">
-                              <select id="my-select" name="rev[]" multiple="multiple" class="form-control" form="document-revision-form">
-                                @foreach ($approvedDocs as $doc)
-                                  <option value="{{$doc->id}}" {{ in_array($doc->id, old('rev', [])) ? 'selected' : '' }}>{{$doc->title}}</option>
-                                @endforeach
-                              </select>
+                              <select id="my-select" name="rev[]" multiple="multiple" class="form-control"></select>
                             </div>
                           </div>
                         </div>
