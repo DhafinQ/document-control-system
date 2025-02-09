@@ -13,6 +13,8 @@
                 <div class="col-md-8">
                   <div class="card">
                     <div class="card-body">
+                      <label id="labelToChange" class="form-label">Kategori Dokumen</label>
+
                       <h5 class="card-title fw-semibold mb-4">Perbarui Dokumen </h5>
                       @if ($errors->any())
                           <div class="alert alert-danger">

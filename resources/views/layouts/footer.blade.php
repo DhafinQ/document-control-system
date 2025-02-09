@@ -30,6 +30,40 @@
     });
 </script>
 
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const selectElement = document.getElementById("exampleFormControlSelect1");
+    const labelElement = document.getElementById("labelToChange"); // Ganti dengan ID label yang ingin diubah
+
+    const categoryLabels = {
+        "1": "Standard Operating Procedure",
+        "2": "Medical Records",
+        "3": "Monthly Report",
+        "4": "Staff Training Document"
+    };
+
+    selectElement.addEventListener("change", function () {
+        let selectedOption = selectElement.value;
+        let labelText = "Kategori Dokumen"; // Default text
+
+        if (selectedOption === "1") {
+            labelText = "Standard Operating Procedure";
+        } else if (selectedOption === "2") {
+            labelText = "Medical Records";
+        } else if (selectedOption === "3") {
+            labelText = "Monthly Report";
+        } else if (selectedOption === "4") {
+            labelText = "Staff Training Document";
+        }
+
+        labelElement.textContent = labelText;
+    });
+});
+
+
+
+</script>
+
 <!-- Inisialisasi DataTable -->
 <script>
     $(document).ready(function () {
