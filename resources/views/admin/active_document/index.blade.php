@@ -64,4 +64,7 @@
         </div>
     </div>
 </div>
+@section('customJS')
+    <script src="{{asset('assets/js/datatablesDocuments.js')}}"></script>
+@endsection
 @endsection

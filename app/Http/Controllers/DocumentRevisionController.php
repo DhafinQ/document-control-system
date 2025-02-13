@@ -71,16 +71,7 @@ class DocumentRevisionController extends Controller
 
     public function create(){
         $categories = Category::all();
-        $approvedDocs = Document::where('is_active','=' ,true)
-        ->whereHas('currentRevision', function ($query) {
-            $query->where('status', 'Disetujui');
-        })
-        ->whereHas('uploader.roles', function ($query) {
-            $query->whereIn('id', auth()->user()->roles->pluck('id'));
-        })
-        ->with('currentRevision')
-        ->get();
-        return view('admin.my_document.create',compact('categories','approvedDocs'));
+        return view('admin.my_document.create',compact('categories'));
     }
 
     public function store(Request $request){
