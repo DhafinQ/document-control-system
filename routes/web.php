@@ -203,7 +203,6 @@ Route::get('/user/settings/change_password', function () {
 Route::middleware(['auth'])->group(function () {
 
     Route::get('/active_document',[DocumentController::class,'indexActive'])->name('document.active');
-    Route::get('/dashboard',[DocumentController::class,'dashboard'])->name('dashboard');
 
     // Route::middleware(['role:Admin'])->group(function () {
     //     Route::get('/users/create', [UserController::class, 'create'])->name('create_users');

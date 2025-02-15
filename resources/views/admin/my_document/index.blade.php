@@ -45,7 +45,7 @@
                                     <td>{{$document->category->name}}</td>
                                     <td>
                                         @php
-                                            $currentStatus = ($document->currentRevision->document_id === $document->id) ? $document->latestHistory->revision->status : 'Expired'
+                                            $currentStatus = ($document->currentRevision->document_id === $document->id) ? $document->latestRevision->status : 'Expired'
                                         @endphp
                                         <span class="badge
                                         @if ($currentStatus === 'Draft')
@@ -58,7 +58,7 @@
                                             bg-danger
                                         @endif
                                         ">
-                                            {{ $document->latestHistory->revision->status }}
+                                            {{ $document->latestRevision->status }}
                                         </span>
                                     </td>
                                     <td>{{$document->uploader->name}}</td>
