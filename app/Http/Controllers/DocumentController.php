@@ -97,12 +97,47 @@ class DocumentController extends Controller
 
     public function dashboard()
     {
-        $totalDocs = Document::with('revisions')->count();
-        $totalApprovedDocs = DocumentRevision::with('document')->where('status', '=', 'Disetujui')->count();
-        $totalDeniedDocs = DocumentRevision::with('document')->where('status', '=', 'Ditolak')->count();
-        $totalRevisedDocs = DocumentRevision::with('document')->where('status', '=', 'Draft')->count();
+        $roles = Auth::user()->roles->pluck('name')->toArray();
+        $commonRoles = array_intersect(['Administrator', 'Pengendali Dokumen', 'Bagian Mutu', 'Kepala Puskesmas'], $roles);
+        
+        // PJ Program data
+        if(empty($commonRoles)){
+            $totalDocs = Document::whereHas('uploader.roles', function ($query) {
+                $query->whereIn('id', auth()->user()->roles->pluck('id'));
+            })->with(['uploader','latestHistory'])->count();
+            $totalApprovedDocs = Document::whereHas('uploader.roles', function ($query) {
+                $query->whereIn('id', auth()->user()->roles->pluck('id'));
+            })->whereHas('revisions', function ($query){
+                $query->whereIn('status',['Disetujui','Proses Revisi']);
+            })->where('is_active',true)->count();
+            $totalDeniedDocs = Document::whereHas('uploader.roles', function ($query) {
+                $query->whereIn('id', auth()->user()->roles->pluck('id'));
+            })->whereHas('revisions', function ($query){
+                $query->where('status','Expired');
+            })->where('is_active',false)->count();
+            $totalRevisedDocs = Document::whereHas('uploader.roles', function ($query) {
+                $query->whereIn('id', auth()->user()->roles->pluck('id'));
+            })->whereHas('revisions', function ($query){
+                $query->whereIn('status',['Draft','Proses Revisi','Pengajuan Revisi']);
+            })->where('is_active',false)->count();
+            $documents = Document::whereHas('uploader.roles', function ($query) {
+                $query->whereIn('id', auth()->user()->roles->pluck('id'));
+            })->with(['revisions','currentRevision'])->orderBy('created_at', 'desc')->take(5)->get();
+        }else{
+            $totalDocs = Document::with('revisions')->count();
+            $totalApprovedDocs = Document::whereHas('revisions', function ($query){
+                $query->whereIn('status',['Disetujui','Proses Revisi']);
+            })->where('is_active',true)->count();
+            $totalDeniedDocs = Document::whereHas('revisions', function ($query){
+                $query->where('status','Expired');
+            })->where('is_active',false)->count();
+            $totalRevisedDocs = Document::whereHas('revisions', function ($query){
+                $query->where('status','Draft');
+            })->where('is_active',false)->count();
+            $documents = Document::with(['revisions','currentRevision'])->orderBy('created_at', 'desc')->take(5)->get();
+        }
 
-        return view('admin.home', compact('totalDocs', 'totalApprovedDocs', 'totalDeniedDocs', 'totalRevisedDocs'));
+        return view('admin.home', compact('totalDocs', 'totalApprovedDocs', 'totalDeniedDocs', 'totalRevisedDocs','documents'));
     }
 
     public function index()

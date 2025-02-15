@@ -35,16 +35,14 @@
           <div class="col-sm-6 col-xl-3">
             <div class="card overflow-hidden rounded-2">
               <div class="card-body pt-3 p-4">
-              <h5 class="card-title mb-9 fw-semibold">Total Dokumen</h5>
+              <h5 class="card-title mb-9 fw-semibold">
+                <span>
+                  <i class="ti ti-files"></i>
+                </span>
+                Total Dokumen
+              </h5>
                 <div class="col-8">
                   <h4 class="fw-semibold mb-3">{{$totalDocs}}</h4>
-                    <div class="d-flex align-items-center mb-3">
-                      <span class="me-1 rounded-circle bg-light-success round-20 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-arrow-up-left text-success"></i>
-                      </span>
-                      <p class="text-dark me-1 fs-3 mb-0">+9%</p>
-                      <p class="fs-3 mb-0">last year</p>
-                    </div>
                 </div>
               </div>
             </div>
@@ -52,16 +50,14 @@
           <div class="col-sm-6 col-xl-3">
             <div class="card overflow-hidden rounded-2">
               <div class="card-body pt-3 p-4">
-              <h5 class="card-title mb-9 fw-semibold">Dokumen Yang Disetujui</h5>
+              <h5 class="card-title mb-9 fw-semibold">
+                <span class="text-success">
+                  <i class="ti ti-checkbox"></i>
+                </span>
+                Dokumen Aktif
+              </h5>
                 <div class="col-8">
                   <h4 class="fw-semibold mb-3">{{$totalApprovedDocs}}</h4>
-                    <div class="d-flex align-items-center mb-3">
-                      <span class="me-1 rounded-circle bg-light-success round-20 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-arrow-up-left text-success"></i>
-                      </span>
-                      <p class="text-dark me-1 fs-3 mb-0">+9%</p>
-                      <p class="fs-3 mb-0">last year</p>
-                    </div>
                 </div>
               </div>
             </div>
@@ -69,38 +65,34 @@
           <div class="col-sm-6 col-xl-3">
             <div class="card overflow-hidden rounded-2">
               <div class="card-body pt-3 p-4">
-              <h5 class="card-title mb-9 fw-semibold">Dokumen Yang Ditolak</h5>
-                <div class="col-8">
-                  <h4 class="fw-semibold mb-3">{{$totalDeniedDocs}}</h4>
-                    <div class="d-flex align-items-center mb-3">
-                      <span class="me-1 rounded-circle bg-light-success round-20 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-arrow-up-left text-success"></i>
-                      </span>
-                      <p class="text-dark me-1 fs-3 mb-0">+9%</p>
-                      <p class="fs-3 mb-0">last year</p>
-                    </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-sm-6 col-xl-3">
-            <div class="card overflow-hidden rounded-2">
-              <div class="card-body pt-3 p-4">
-              <h5 class="card-title mb-9 fw-semibold">Dokumen Yang Direvisi</h5>
+                <h5 class="card-title mb-9 fw-semibold">
+                  <span class="text-warning">
+                    <i class="ti ti-clock"></i>
+                  </span>
+                Proses Pengajuan
+              </h5>
                 <div class="col-8">
                   <h4 class="fw-semibold mb-3">{{$totalRevisedDocs}}</h4>
-                    <div class="d-flex align-items-center mb-3">
-                      <span class="me-1 rounded-circle bg-light-success round-20 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-arrow-up-left text-success"></i>
-                      </span>
-                      <p class="text-dark me-1 fs-3 mb-0">+9%</p>
-                      <p class="fs-3 mb-0">last year</p>
-                    </div>
                 </div>
               </div>
             </div>
           </div>
-
+          <div class="col-sm-6 col-xl-3">
+            <div class="card overflow-hidden rounded-2">
+              <div class="card-body pt-3 p-4">
+              <h5 class="card-title mb-9 fw-semibold">
+                <span class="text-danger">
+                  <i class="ti ti-x"></i>
+                </span>
+                Dokumen Expired
+              </h5>
+                <div class="col-8">
+                  <h4 class="fw-semibold mb-3">{{$totalDeniedDocs}}</h4>
+                </div>
+              </div>
+            </div>
+          </div>
+          <h4>Dokumen Terbaru</h4>
           <div class="table-responsive mt-4">
             <table id="tableDocument" class="table table-striped">
                 <thead>
@@ -114,51 +106,15 @@
                         <th>Aksi</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                      <td>1</td>
-                      <td>Tutorial Laravel</td>
-                      <td>Programming</td>
-                      <td>Published</td>
-                      <td>Andika</td>
-                      <td>2025-02-14</td>
-                      <td>
-                        <button>Edit</button>
-                        <button>Delete</button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>2</td>
-                      <td>Introduction to AR</td>
-                      <td>Technology</td>
-                      <td>Draft</td>
-                      <td>Andika</td>
-                      <td>2025-02-13</td>
-                      <td>
-                        <button>Edit</button>
-                        <button>Delete</button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>3</td>
-                      <td>Unity Game Development</td>
-                      <td>Game Development</td>
-                      <td>Published</td>
-                      <td>Andika</td>
-                      <td>2025-02-12</td>
-                      <td>
-                        <button>Edit</button>
-                        <button>Delete</button>
-                      </td>
-                    </tr>                  
-                    {{-- @foreach ($documents as $document)
+                <tbody>                 
+                    @foreach ($documents as $document)
                     <tr>
                         <td>{{$document->code}}</td>
                         <td>{{$document->title}}</td>
                         <td>{{$document->category->name}}</td>
                         <td>
                             @php
-                                $currentStatus = ($document->currentRevision->document_id === $document->id) ? $document->latestHistory->revision->status : 'Expired'
+                                $currentStatus = ($document->currentRevision->document_id === $document->id) ? $document->latestRevision->status : 'Expired'
                             @endphp
                             <span class="badge
                             @if ($currentStatus === 'Draft')
@@ -171,23 +127,33 @@
                                 bg-danger
                             @endif
                             ">
-                                {{ $document->latestHistory->revision->status }}
+                                {{ $document->latestRevision->status }}
                             </span>
                         </td>
                         <td>{{$document->uploader->name}}</td>
                         <td>{{ \Carbon\Carbon::parse($document->created_at)->format('d/m/Y-H:i:s') }}</td>
                         <td>
+                          <div class="d-flex">
+                            
                             @canany(['edit-documents','edit-revisions'])
-                            <div class="d-flex">
-                                <a href="{{ route('document_revision.show',['documentRevision' => $document->latestHistory->revision->id]) }}" class="btn btn-sm btn-admin me-1">Detail</a>
+                              @if ($document->currentRevision->checkUploaderRoles())
+                                <a href="{{ route('document_revision.show',['documentRevision' => $document->currentRevision->latestRevision($document->id)->id]) }}" class="btn btn-sm btn-admin me-1">Lihat</a>
                                 @if ($document->currentRevision->document_id === $document->id && ($document->latestHistory->revision->status == 'Disetujui' || $document->latestHistory->revision->status == 'Pengajuan Revisi'))
-                                <a href="{{ route('document_revision.edit', $document->latestHistory->revision->id) }}" class="btn btn-sm btn-approver">Revisi</a>
+                                  <a href="{{ route('document_revision.edit', $document->latestHistory->revision->id) }}" class="btn btn-sm btn-approver">Revisi</a>
                                 @endif
-                            </div>
+                              @elseif($document->is_active || $document->currentRevision->latestRevision($document->id)->status === 'Expired'))
+                                <a href="{{ route('documents.show',['document' => $document->id]) }}" class="btn btn-sm btn-admin me-1">Lihat</a>
+                              @endif
+
+                            @else
+                              @if ($document->is_active || $document->currentRevision->latestRevision($document->id)->status === 'Expired')
+                                <a href="{{ route('documents.show',['document' => $document->id]) }}" class="btn btn-sm btn-admin me-1">Lihat</a>
+                              @endif
                             @endcanany
+                          </div>
                         </td>
                     </tr>
-                    @endforeach --}}
+                    @endforeach
                 </tbody>
             </table>
           </div>
