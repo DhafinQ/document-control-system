@@ -98,7 +98,7 @@ class DocumentController extends Controller
     public function dashboard()
     {
         $roles = Auth::user()->roles->pluck('name')->toArray();
-        $commonRoles = array_intersect(['Administrator', 'Pengendali Dokumen', 'Bagian Mutu', 'Kepala Puskesmas'], $roles);
+        $commonRoles = array_intersect(['Administrator', 'Pengendali Dokumen', 'Bagian Mutu', 'Kepala Puskesmas','Staff'], $roles);
         
         // PJ Program data
         if(empty($commonRoles)){
